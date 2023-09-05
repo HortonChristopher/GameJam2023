@@ -124,7 +124,7 @@ void GamePlay::Initialize()
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 1.0f, 1.0f, 1.0f });
+	ground->SetScale({ 10.0f, 1.0f, 10.0f });
 
 	// プレイヤー
 	player->SetPosition({ 0.0f, 0.0f, 0.0f });
