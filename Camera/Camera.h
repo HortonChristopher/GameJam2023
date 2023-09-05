@@ -115,17 +115,16 @@ protected: // メンバ変数
 	XMFLOAT3 up = { 0, 1, 0 };
 	// アスペクト比
 	float aspectRatio = 1.0f;
-
 	
 	float nowTheta;
 
 	XMMATRIX matRot = DirectX::XMMatrixIdentity();
-	float distance = 48;
+	float distance = 48.0f;
 
 public:
 	// ビュー行列ダーティフラグ
-	float phi;
-	float theta;
+	float phi = 270.0f * 3.141592654f / 180.0f;
+	float theta = 20.0f * 3.141592654f / 180.0f;
 	float debugDot = 0.0f;
 	bool viewDirty = false;
 	bool dirty = false;

@@ -194,6 +194,7 @@ void GamePlay::Update()
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
 	camera->Update();
+	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
 }
 
