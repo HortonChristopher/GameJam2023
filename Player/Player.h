@@ -103,6 +103,8 @@ private: // メンバ変数
 	float yChange = 0.0f;
 	float collisionSphereRadius = 3.0f;
 
+	const float rotateSpeed = 22.5f; // Currently using frame time, 1350.0f if using delta time
+
 	//プレイヤースピード
 	float totalSpeed = 2.0f;
 

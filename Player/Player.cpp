@@ -43,13 +43,7 @@ bool Player::Initialize()
 	// デバッグテキスト初期化
 	debugText.Initialize(0);
 
-	SetScale({ 10.0f, 10.0f, 10.0f });
-
-	axis = { position.x + cosf(XMConvertToRadians(xAngle)) * 50.0f, 0.0f, position.z + sinf(XMConvertToRadians(xAngle)) * 50.0f };
-	x = (axis.x - position.x);
-	z = (axis.z - position.z);
-	y = (axis.y - position.y);
-	hypotenuse = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+	SetScale({ 1.0f, 1.0f, 1.0f });
 
 	return true;
 }
@@ -60,15 +54,15 @@ void Player::Update()
 
 	//ブースト
 	//Boost();
-	BoostTest();
+	//BoostTest();
 
 	// オブジェクト移動
 	Move();
 
 	// ローリング
-	Rolling();
+	//Rolling();
 
-	DebugTextUpdate();
+	//DebugTextUpdate();
 }
 
 void Player::Draw()
@@ -152,115 +146,80 @@ void Player::DebugTextDraw()
 // 前方向移動処理
 void Player::Move()
 {
-	prevPos = position;
+	XMMATRIX camMatWorld = XMMatrixInverse(nullptr, camera->GetViewMatrix());
+	const Vector3 camDirectionZ = Vector3(camMatWorld.r[2].m128_f32[0], 0, camMatWorld.r[2].m128_f32[2]).Normalize();
+	const Vector3 camDirectionY = Vector3(camMatWorld.r[1].m128_f32[0], 0, camMatWorld.r[1].m128_f32[2]).Normalize();
+	const Vector3 camDirectionX = Vector3(camMatWorld.r[0].m128_f32[0], 0, camMatWorld.r[0].m128_f32[2]).Normalize();
 
 	Input* input = Input::GetInstance();
 
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_A) || input->PushKey(DIK_D))
+	if (input->PushKey(DIK_A) || input->PushKey(DIK_D) || input->PushKey(DIK_S) || input->PushKey(DIK_W))
 	{
-		if (input->PushKey(DIK_A) || input->PushKey(DIK_D))
-		{
-			if (input->PushKey(DIK_A))
-			{
-				xAngle += 2.0f;
-			}
-			else if (input->PushKey(DIK_D))
-			{
-				xAngle -= 2.0f;
-			}
-			if (xAngle > 360.0f)
-			{
-				xAngle -= 360.0f;
-			}
-			else if (xAngle < 0.0f)
-			{
-				xAngle += 360.0f;
-			}
-			axis.x = position.x + cosf(XMConvertToRadians(xAngle)) * 50.0f;
-			axis.z = position.z + sinf(XMConvertToRadians(xAngle)) * 50.0f;
-			x = (axis.x - position.x);
-			z = (axis.z - position.z);
-		}
-		if (input->PushKey(DIK_S) || input->PushKey(DIK_W))
-		{
-			if (input->PushKey(DIK_S))
-			{
-				yVel -= 0.4f;
-			}
-			else if (input->PushKey(DIK_W))
-			{
-				yVel += 0.4f;
-			}
+		moveDirection = {};
 
-			if (yVel > 0.8f)
-			{
-				yVel = 0.8f;
-			}
-			else if (yVel < -0.8f)
-			{
-				yVel = -0.8f;
-			}
+		if (input->PushKey(DIK_A))
+		{
+			moveDirection += camDirectionX * -1;
+		}
+		else if (input->PushKey(DIK_D))
+		{
+			moveDirection += camDirectionX;
+		}
+		if (input->PushKey(DIK_S))
+		{
+			moveDirection += camDirectionZ * -1;
+		}
+		else if (input->PushKey(DIK_W))
+		{
+			moveDirection += camDirectionZ;
 		}
 
-		hypotenuse = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
-		radians = atan2(z, x);
-		degrees = XMConvertToDegrees(radians);
-	}
-	else
-	{
-		yVel = 0.0f;
-	}
+		moveDirection.Normalize();
+		direction.Normalize();
 
-	axis.y += yVel;
-	if (axis.y > 140.0f)
-	{
-		axis.y = 140.0f;
-		yVel = 0.0f;
-	}
-	else if (axis.y < -140.0f)
-	{
-		axis.y = -140.0f;
-		yVel = 0.0f;
-	}
+		float cosA = direction.Dot(moveDirection);
 
-	y = (axis.y - position.y);
-	if (!std::isnan((y / hypotenuse)))
-	{
-		radians2 = asin(y / hypotenuse);
-		degrees2 = XMConvertToDegrees(radians2);
-	}
+		if (cosA > 1.0f)
+		{
+			cosA = 1.0f;
+		}
+		else if (cosA < -1.0f)
+		{
+			cosA = -1.0f;
+		}
 
-	if (degrees2 > 30.0f)
-	{
-		degrees2 = 30.0f;
-	}
-	else if (degrees2 < -30.0f)
-	{
-		degrees2 = -30.0f;
-	}
+		float rotY = (float)acos(cosA) * 180 / 3.14159365f;
+		const Vector3 CrossVec = direction.Cross(moveDirection);
 
-	if (totalSpeed == 0.0f)
-	{
-		Vel = { 0.0f, 0.0f, 0.0f };
+		float rotSpeed = rotateSpeed;
+
+		if (abs(rotY) < 55)
+		{
+			position.x += moveDirection.x * speed;
+			position.y += moveDirection.y * speed;
+			position.z += moveDirection.z * speed;
+		}
+
+		if (rotSpeed > abs(rotY))
+		{
+			rotSpeed = rotY;
+		}
+
+		if (CrossVec.y < 0)
+		{
+			rotSpeed *= -1;
+		}
+
+		rotation.y += rotSpeed;
+
+		XMMATRIX matRotation = XMMatrixRotationY(XMConvertToRadians(rotSpeed));
+		XMVECTOR dir = { direction.x, direction.y, direction.z, 0 };
+		dir = XMVector3TransformNormal(dir, matRotation);
+		direction = dir;
+
+		SetPosition(position);
+		SetRotation(rotation);
 	}
-	else
-	{
-		Vel.x = (x / hypotenuse);
-		Vel.y = (y / hypotenuse);
-		Vel.z = (z / hypotenuse);
-	}
-
-	position.x += totalSpeed * Vel.x;
-	position.y += totalSpeed * Vel.y;
-	position.z += totalSpeed * Vel.z;
-
-	/*if (!input->PushKey(DIK_S) && !input->PushKey(DIK_W))
-	{
-		axis.y = position.y + rotation.x;
-	}*/
-
-	SetPosition(position);
-	SetRotation({ -degrees2, -degrees + 90.0f, rotation.z });
 }
 
 // 前方向時の自機の傾き
