@@ -114,14 +114,29 @@ void GamePlay::Initialize()
 
 	StoragePos = Sprite::Create(TextureNumber::reticle, { (float)mousePosition.x, (float)mousePosition.y });
 
-	
+	// プレイヤー
+	player = Player::Create();
+
+	// 3D OBJ
+	ground = ObjObject::Create();
+	modelGround = ObjModel::CreateFromOBJ("untitled");
+	ground->SetModel(modelGround);
+
+	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
+	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
+	ground->SetScale({ 1.0f, 1.0f, 1.0f });
+
+	// プレイヤー
+	player->SetPosition({ 0.0f, 0.0f, 0.0f });
+	player->SetRotation({ 0.0f, 0.0f, 0.0f });
+	player->SetScale({ 1.0f, 1.0f, 1.0f });
+
 	// パーティクル
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
 
-
 	// 座標のセット
-	camera->SetTarget({ 0, 0, 0 });
-	camera->SetEye({ 0, 30, -10 });
+	camera->SetTarget(player->GetPosition());
+	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
 
 	ShowCursor(false);
@@ -175,6 +190,11 @@ void GamePlay::Update()
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
+
+	camera->SetTarget(player->GetPosition());
+	ground->Update();
+	camera->Update();
+	player->Update();
 }
 
 void GamePlay::Draw()
@@ -199,6 +219,8 @@ void GamePlay::Draw()
 	ObjObject::PreDraw(cmdList);
 
 	// 3Dオブクジェクトの描画
+	ground->Draw();
+	player->Draw();
 
 	// パーティクルの描画
 	circleParticle->Draw(cmdList);

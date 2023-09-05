@@ -146,6 +146,14 @@ private: // メンバ変数
 	Sprite* Reticle = nullptr;
 	Sprite* StoragePos = nullptr;
 
+	ObjObject* ground = nullptr;
+
+	ObjModel* modelGround = nullptr;
+
+	Player* player = nullptr;
+
+	
+
 	//レティクル座標
 	XMFLOAT2 ReticlePos = { 0.0f, 0.0f };
 
