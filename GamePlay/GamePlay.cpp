@@ -122,6 +122,10 @@ void GamePlay::Initialize()
 	modelGround = ObjModel::CreateFromOBJ("untitled");
 	ground->SetModel(modelGround);
 
+	skydome = ObjObject::Create();
+	modelSkydome = ObjModel::CreateFromOBJ("skydome");
+	skydome->SetModel(modelSkydome);
+
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
 	ground->SetScale({ 10.0f, 1.0f, 10.0f });
@@ -193,6 +197,7 @@ void GamePlay::Update()
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
+	skydome->Update();
 	camera->Update();
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
@@ -221,6 +226,7 @@ void GamePlay::Draw()
 
 	// 3Dオブクジェクトの描画
 	ground->Draw();
+	skydome->Draw();
 	player->Draw();
 
 	// パーティクルの描画
@@ -235,7 +241,7 @@ void GamePlay::Draw()
 	Sprite::PreDraw(cmdList);
 	
 	// 前景スプライト描画
-	Reticle->Draw();
+	//Reticle->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

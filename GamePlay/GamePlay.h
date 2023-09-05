@@ -147,8 +147,10 @@ private: // メンバ変数
 	Sprite* StoragePos = nullptr;
 
 	ObjObject* ground = nullptr;
+	ObjObject* skydome = nullptr;
 
 	ObjModel* modelGround = nullptr;
+	ObjModel* modelSkydome = nullptr;
 
 	Player* player = nullptr;
 
