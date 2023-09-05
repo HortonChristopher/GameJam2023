@@ -18,7 +18,50 @@ Camera::Camera(int window_width, int window_height)
 
 void Camera::Update()
 {
+	Input* input = Input::GetInstance();
+
+	bool dirty = false;
+	float angleX = 0.0f;
+	float angleY = 0.0f;
+
+	// Get mouse input
+	Input::MouseMove mouseMove = input->GetMouseMove();
+
+	// Rotate the camera if the right mouse button is pressed
+	if (input->PushMouseRight())
+	{
+		phi += 3.141592654f / 180.0f * mouseMove.lX / 7;
+		theta += 3.141592654f / 180.0f * mouseMove.lY / 7;
+		if (theta > 40 * 3.141592654f / 180.0f)
+			theta = 40 * 3.141592654f / 180.0f;
+		else if (theta < -40 * 3.141592654f / 180.0f)
+			theta = -40 * 3.141592654f / 180.0f;
+
+		if (phi > 360 * 3.141592654f / 180.0f)
+			phi -= 360 * 3.141592654f / 180.0f;
+		else if (phi < 0)
+			phi += 360 * 3.141592654f / 180.0f;
+
+		if (theta < 0)
+		{
+			distance = 48 * (1 + theta * 1.1f);
+		}
+		viewDirty = true;
+	}
+
+	//  Change the distance with wheel input
+	if (mouseMove.lZ != 0) {
+		distance -= mouseMove.lZ / 100.0f;
+		distance = max(distance, 1.0f);
+		viewDirty = true;
+	}
+
 	if (viewDirty || projectionDirty) {
+		float nowTheta = theta;
+		if (theta < 0)
+			nowTheta = 0;
+		eye = Vector3(cos(phi) * cos(nowTheta), sin(nowTheta), sin(phi) * cos(nowTheta)) * distance + target;
+
 		// 再計算必要なら
 		if (viewDirty) {
 			// ビュー行列更新
