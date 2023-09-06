@@ -141,8 +141,11 @@ void GamePlay::Initialize()
 
 	modelBullet = ObjModel::CreateFromOBJ("bullet2");
 
-	std::unique_ptr<Tori> newTori = Tori::Create(modelBullet, { 0.0f, player->GetPosition().y, 0.0f }, { 2.0f, 2.0f, 2.0f });
-	toriList.push_back(std::move(newTori));
+	for (int i = 0; i < 10; i++)
+	{
+		std::unique_ptr<Tori> newTori = Tori::Create(modelBullet, { 0.0f, player->GetPosition().y, 0.0f }, { 2.0f, 2.0f, 2.0f });
+		toriList.push_back(std::move(newTori));
+	}
 
 	ShowCursor(false);
 }

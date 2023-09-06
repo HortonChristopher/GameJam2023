@@ -33,6 +33,8 @@ private: // メンバ変数
 	float speed = 0.2f;
 	float timer = 0.0f;
 
+	float randomCooldown = 0.0f;
+
 	bool moving = false;
 public:
 	// デスフラグ

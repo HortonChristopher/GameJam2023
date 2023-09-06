@@ -38,9 +38,9 @@ void Tori::Update()
 {
 	ObjObject::Update();
 
-	if (!goalFlag && timer >= 60.0f && !moving)
+	if (!goalFlag && timer >= randomCooldown && !moving)
 	{
-		if (timer >= 60.0f)
+		if (timer >= randomCooldown)
 		{
 			SetNewMovementPosition();
 
@@ -62,12 +62,14 @@ void Tori::Update()
 		moving = false;
 
 		timer = 0.0f;
+
+		randomCooldown = (float)(rand() % 60 + 30);
 	}
 }
 
 void Tori::SetNewMovementPosition()
 {
-	target = { (float)(rand() % 400 - 200), 0.0f, (float)(rand() % 400 - 200) };
+	target = { (float)(rand() % 300 - 150), 0.0f, (float)(rand() % 300 - 150) };
 
 	float magnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
