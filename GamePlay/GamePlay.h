@@ -17,6 +17,8 @@
 #include "FbxObject.h"
 #include "WinApp.h"
 
+#include "Tori.h"
+
 #include "Player.h"
 #include "Bullet.h"
 #include "Boss.h"
@@ -142,6 +144,8 @@ private: // メンバ変数
 
 	ParticleManager* circleParticle = nullptr;
 
+	std::list<std::unique_ptr<Tori>> toriList;
+
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;
 	Sprite* StoragePos = nullptr;
@@ -149,6 +153,8 @@ private: // メンバ変数
 	ObjObject* ground = nullptr;
 
 	ObjModel* modelGround = nullptr;
+
+	ObjModel* modelBullet = nullptr;
 
 	Player* player = nullptr;
 

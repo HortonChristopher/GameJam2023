@@ -107,6 +107,9 @@
     <Filter Include="GameBase">
       <UniqueIdentifier>{e95835f3-35b7-4422-8d0f-a728607eb905}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AnimalBehavior">
+      <UniqueIdentifier>{d4706e4d-ffa9-4357-ab55-22b7c52609dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -246,6 +249,9 @@
     </ClCompile>
     <ClCompile Include="ProcessUI.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalBehavior\Tori.cpp">
+      <Filter>AnimalBehavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -440,5 +446,8 @@
     </ClInclude>
     <ClInclude Include="MeterUI.h" />
     <ClInclude Include="ProcessUI.h" />
+    <ClInclude Include="AnimalBehavior\Tori.h">
+      <Filter>AnimalBehavior</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
