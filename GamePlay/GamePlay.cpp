@@ -193,6 +193,12 @@ void GamePlay::Update()
 		ReticlePos.y = 575.0f;
 	}
 
+	if (input->PushMouseLeft())
+	{
+		std::unique_ptr<Esa> newEsa = Esa::Create(modelBullet, player->GetPosition(), {0.5f, 0.5f, 0.5f});
+		esaList.push_back(std::move(newEsa));
+	}
+
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		//シーン切り替え
@@ -209,6 +215,17 @@ void GamePlay::Update()
 	{
 		tori->Update();
 	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Update();
+	}
+
+	esaList.remove_if([](std::unique_ptr<Esa>& esa)
+		{
+			return esa->GetDeathFlag();
+		}
+	);
 }
 
 void GamePlay::Draw()
@@ -239,6 +256,11 @@ void GamePlay::Draw()
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{
 		tori->Draw();
+	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Draw();
 	}
 
 	// パーティクルの描画

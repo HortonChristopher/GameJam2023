@@ -18,6 +18,7 @@
 #include "WinApp.h"
 
 #include "Tori.h"
+#include "Esa.h"
 
 #include "Player.h"
 #include "Bullet.h"
@@ -145,6 +146,7 @@ private: // メンバ変数
 	ParticleManager* circleParticle = nullptr;
 
 	std::list<std::unique_ptr<Tori>> toriList;
+	std::list<std::unique_ptr<Esa>> esaList;
 
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;
@@ -157,8 +159,6 @@ private: // メンバ変数
 	ObjModel* modelBullet = nullptr;
 
 	Player* player = nullptr;
-
-	
 
 	//レティクル座標
 	XMFLOAT2 ReticlePos = { 0.0f, 0.0f };
