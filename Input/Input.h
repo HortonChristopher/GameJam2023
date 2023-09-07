@@ -34,9 +34,10 @@ public: // メンバ関数
 	bool PushKey(BYTE keyNumber);
 
 	bool PushMouseRight();
+	bool TriggerMouseRight();
 
 	bool PushMouseLeft();
-
+	bool TriggerMouseLeft();
 
 	MouseMove GetMouseMove();
 

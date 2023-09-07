@@ -172,6 +172,7 @@
     <ClCompile Include="DeltaGageUI.cpp" />
     <ClCompile Include="GageUI.cpp" />
     <ClCompile Include="Items\Esa.cpp" />
+    <ClCompile Include="Items\Teki.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="EngineBase\DirectXCommon.cpp" />
     <ClCompile Include="EngineBase\WinApp.cpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="DebugText\DebugText.h" />
     <ClInclude Include="Items\Esa.h" />
+    <ClInclude Include="Items\Teki.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="EngineBase\DirectXCommon.h" />
     <ClInclude Include="EngineBase\SafeDelete.h" />

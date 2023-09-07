@@ -19,6 +19,7 @@
 
 #include "Tori.h"
 #include "Esa.h"
+#include "Teki.h"
 
 #include "Player.h"
 #include "Bullet.h"
@@ -51,6 +52,8 @@
 #include <memory>
 #include <list>
 #include <array>
+
+#include <limits>
 
 class Player;
 class Bullet;
@@ -147,6 +150,7 @@ private: // メンバ変数
 
 	std::list<std::unique_ptr<Tori>> toriList;
 	std::list<std::unique_ptr<Esa>> esaList;
+	std::list<std::unique_ptr<Teki>> tekiList;
 
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;
