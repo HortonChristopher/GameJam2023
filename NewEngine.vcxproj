@@ -317,6 +317,7 @@
     <ClInclude Include="Bullet\Bullet.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="DebugText\DebugText.h" />
+    <ClInclude Include="GamePlay\Goal.h" />
     <ClInclude Include="Items\Esa.h" />
     <ClInclude Include="Items\Teki.h" />
     <ClInclude Include="Math\Easing.h" />
