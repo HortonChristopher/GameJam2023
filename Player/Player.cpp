@@ -89,50 +89,6 @@ void Player::DebugTextUpdate()
 		<< rotation.y << "," // y
 		<< rotation.z << ")"; // z
 	debugText.Print(PlayerRotation.str(), 10, 110, 1.0f);
-
-	//std::ostringstream TotalSpeed;
-	//TotalSpeed << "TotalSpeed:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< totalSpeed << ")"; // z
-	//debugText.Print(TotalSpeed.str(), 10, 130, 1.0f);
-
-	//std::ostringstream BaseSpeed;
-	//BaseSpeed << "BaseSpeed:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< baseSpeed << ")"; // z
-	//debugText.Print(BaseSpeed.str(), 10, 150, 1.0f);
-
-	//std::ostringstream ShootSpeed;
-	//ShootSpeed << "ShootSpeed:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< shootSpeed << ")"; // z
-	//debugText.Print(ShootSpeed.str(), 10, 170, 1.0f);
-
-	//std::ostringstream BoostSpeed;
-	//BoostSpeed << "BoostSpeed:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< boostSpeed << ")"; // z
-	//debugText.Print(BoostSpeed.str(), 10, 190, 1.0f);
-
-	//std::ostringstream RollRotation;
-	//RollRotation << "RollRotation:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< rollRotation.x << "," // x
-	//	<< rollRotation.y << "," // y
-	//	<< rollRotation.z << ")"; // z
-	//debugText.Print(RollRotation.str(), 10, 170, 1.0f);
-
-	//std::ostringstream BoostPow_;
-	//BoostPow_ << "BoostPowNow:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< BoostPowNow << ")"; // z
-	//debugText.Print(BoostPow_.str(), 10, 210, 1.0f);
-
-	//std::ostringstream BoostFlag_;
-	//BoostFlag_ << "BoostFlag:("
-	//	<< std::fixed << std::setprecision(2)
-	//	<< BoostFlag << ")"; // z
-	//debugText.Print(BoostFlag_.str(), 10, 230, 1.0f);
 }
 
 void Player::DebugTextDraw()

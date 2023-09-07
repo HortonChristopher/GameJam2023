@@ -44,10 +44,10 @@ public: // ÉÅÉìÉoä÷êî
 	void SetNewMovementPosition();
 	void Move(bool forwardBackwards); // true = forwards
 
-	void UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition);
+	void UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XMFLOAT3 playerPosition);
 	bool ItemIntersection(float radius1, const XMFLOAT3& center2, float radius2);
 	void EsaInRange(XMFLOAT3 esaPosition);
-	void TekiInRange(XMFLOAT3 tekiPosition);
+	void TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition);
 
 	float SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2);
 

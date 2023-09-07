@@ -47,7 +47,7 @@ void Tori::Update()
 		case Teki_Set:
 			break;
 		case Teki_Moving:
-			Move(false); // Moving AWAY from target
+			Move(true); // Moving AWAY from teki in direction Player is facing
 			break;
 		case Teki_Standing:
 			if (timer >= 300.0f)
@@ -135,24 +135,33 @@ void Tori::Move(bool forwardBackwards)
 {
 	if (forwardBackwards)
 	{
-		position.x += velocity.x * speed;
-		position.y += velocity.y * speed;
-		position.z += velocity.z * speed;
+		if (tekiReaction == Teki_Moving)
+		{
+			position.x += velocity.x * speed * 3.5f;
+			position.y += velocity.y * speed * 3.5f;
+			position.z += velocity.z * speed * 3.5f;
+		}
+		else
+		{
+			position.x += velocity.x * speed;
+			position.y += velocity.y * speed;
+			position.z += velocity.z * speed;
+		}
 	}
 	else
 	{
-		position.x -= velocity.x * speed * 2.5f;
-		position.y -= velocity.y * speed * 2.5f;
-		position.z -= velocity.z * speed * 2.5f;
+		position.x -= velocity.x * speed;
+		position.y -= velocity.y * speed;
+		position.z -= velocity.z * speed;
 	}
 
 	SetPosition(position);
 }
 
-void Tori::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition)
+void Tori::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XMFLOAT3 playerPosition)
 {
 	if (tekiPosition.x != 2500 || tekiPosition.y != 2500 || tekiPosition.z != 2500) {
-		TekiInRange(tekiPosition);
+		TekiInRange(tekiPosition, playerPosition);
 	}
 
 	if (tekiReaction == Teki_None)
@@ -207,17 +216,17 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 	}
 }
 
-void Tori::TekiInRange(XMFLOAT3 tekiPosition)
+void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 {
 	if (ItemIntersection(5.0f, tekiPosition, 100.0f))
 	{
 		if (!tekiSet)
 		{
-			float magnitude = (float)sqrt((tekiPosition.x - position.x) * (tekiPosition.x - position.x) + (tekiPosition.y - position.y) * (tekiPosition.y - position.y) + (tekiPosition.z - position.z) * (tekiPosition.z - position.z));
+			float magnitude = (float)sqrt((tekiPosition.x - playerPosition.x) * (tekiPosition.x - playerPosition.x) + (tekiPosition.y - playerPosition.y) * (tekiPosition.y - playerPosition.y) + (tekiPosition.z - playerPosition.z) * (tekiPosition.z - playerPosition.z));
 
-			velocity.x = (tekiPosition.x - position.x) / magnitude;
-			velocity.y = (tekiPosition.y - position.y) / magnitude;
-			velocity.z = (tekiPosition.z - position.z) / magnitude;
+			velocity.x = (tekiPosition.x - playerPosition.x) / magnitude;
+			velocity.y = (tekiPosition.y - playerPosition.y) / magnitude;
+			velocity.z = (tekiPosition.z - playerPosition.z) / magnitude;
 
 			tekiSet = true;
 			timer = 0.0f;

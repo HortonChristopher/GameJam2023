@@ -206,7 +206,16 @@ void GamePlay::Update()
 
 	if (input->TriggerKey(DIK_Q))
 	{
-		std::unique_ptr<Teki> newTeki = Teki::Create(modelBullet, player->GetPosition(), { 0.5f, 0.5f, 0.5f });
+		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
+		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
+		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
+
+		std::unique_ptr<Teki> newTeki = Teki::Create(
+			modelBullet,
+			{ x, 0.0f, z },
+			{ 0.5f, 0.5f, 0.5f }
+		);
+
 		tekiList.push_back(std::move(newTeki));
 	}
 
@@ -251,7 +260,7 @@ void GamePlay::Update()
 		}
 
 		// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-		tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition);
+		tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
 	}
 
 	camera->SetTarget(player->GetPosition());

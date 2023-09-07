@@ -204,7 +204,6 @@
     <ClCompile Include="Math\Spline.cpp" />
     <ClCompile Include="Sprite\Sprite.cpp" />
     <ClCompile Include="StageSelect.cpp" />
-    <ClCompile Include="Test.cpp" />
     <ClCompile Include="Title\Title.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -351,7 +350,6 @@
     <ClInclude Include="Math\Spline.h" />
     <ClInclude Include="Sprite\Sprite.h" />
     <ClInclude Include="StageSelect.h" />
-    <ClInclude Include="Test.h" />
     <ClInclude Include="Title\Title.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
