@@ -202,7 +202,16 @@ void GamePlay::Update()
 
 	if (input->TriggerKey(DIK_E))
 	{
-		std::unique_ptr<Esa> newEsa = Esa::Create(modelBullet, player->GetPosition(), {0.5f, 0.5f, 0.5f});
+		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
+		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
+		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
+
+		std::unique_ptr<Esa> newEsa = Esa::Create(
+			modelBullet,
+			{ x, 0.0f, z },
+			{0.5f, 0.5f, 0.5f}
+		);
+
 		esaList.push_back(std::move(newEsa));
 	}
 
