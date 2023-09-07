@@ -126,10 +126,7 @@ void Tori::SetNewMovementPosition()
 
 	float magnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
-	x = (target.x - position.x);
-	z = (target.z - position.z);
-	float radians = atan2(z, x);
-	degrees = DirectX::XMConvertToDegrees(radians);
+	RotationVectorSet(target, position);
 
 	velocity.x = (target.x - position.x) / magnitude;
 	velocity.y = (target.y - position.y) / magnitude;
@@ -142,11 +139,11 @@ void Tori::Move(bool forwardBackwards)
 	{
 		if (tekiReaction == Teki_Moving)
 		{
-			float randomVarience = (float)(rand() % 21);
+			float randomVarience = ((float)(rand() % 21)) / 10.0f;
 
-			position.x += velocity.x * speed * (2.0f + randomVarience / 10.0f);
-			position.y += velocity.y * speed * (2.0f + randomVarience / 10.0f);
-			position.z += velocity.z * speed * (2.0f + randomVarience / 10.0f);
+			position.x += velocity.x * speed * (2.0f + randomVarience);
+			position.y += velocity.y * speed * (2.0f + randomVarience);
+			position.z += velocity.z * speed * (2.0f + randomVarience);
 		}
 		else
 		{
@@ -207,10 +204,8 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 			velocity.y = (esaPosition.y - position.y) / magnitude;
 			velocity.z = (esaPosition.z - position.z) / magnitude;
 
-			x = (esaPosition.x - position.x);
-			z = (esaPosition.z - position.z);
-			float radians = atan2(z, x);
-			degrees = DirectX::XMConvertToDegrees(radians);
+			RotationVectorSet(esaPosition, position);
+
 			esaSet = true;
 			timer = 0.0f;
 			moving = false;
@@ -240,10 +235,7 @@ void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 			velocity.y = (tekiPosition.y - playerPosition.y) / magnitude;
 			velocity.z = (tekiPosition.z - playerPosition.z) / magnitude;
 
-			x = (tekiPosition.x - playerPosition.x);
-			z = (tekiPosition.z - playerPosition.z);
-			float radians = atan2(z, x);
-			degrees = DirectX::XMConvertToDegrees(radians);
+			RotationVectorSet(tekiPosition, playerPosition);
 
 			tekiSet = true;
 			timer = 0.0f;
@@ -260,6 +252,14 @@ void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 		tekiSet = false;
 		tekiReaction = Teki_None;
 	}
+}
+
+void Tori::RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin)
+{
+	x = (target.x - origin.x);
+	z = (target.z - origin.z);
+	float radians = atan2(z, x);
+	degrees = DirectX::XMConvertToDegrees(radians);
 }
 
 float Tori::SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2) {

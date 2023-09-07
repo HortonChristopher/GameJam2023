@@ -49,6 +49,8 @@ public: // ƒƒ“ƒoŠÖ”
 	void EsaInRange(XMFLOAT3 esaPosition);
 	void TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition);
 
+	void RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin);
+
 	float SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2);
 
 private: // ƒƒ“ƒo•Ï”
