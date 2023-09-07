@@ -119,12 +119,14 @@ void GamePlay::Initialize()
 
 	// 3D OBJ
 	ground = ObjObject::Create();
-	modelGround = ObjModel::CreateFromOBJ("untitled");
+	modelGround = ObjModel::CreateFromOBJ("grand");
 	ground->SetModel(modelGround);
 
 	skydome = ObjObject::Create();
 	modelSkydome = ObjModel::CreateFromOBJ("skydome");
 	skydome->SetModel(modelSkydome);
+
+	skydome->SetScale({2.0f,2.0f,2.0f});
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
