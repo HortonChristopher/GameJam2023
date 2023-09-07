@@ -127,8 +127,6 @@ void GamePlay::Initialize()
 	skydome->SetModel(modelSkydome);
 	skydome->SetScale({ 8.0f, 8.0f, 8.0f });
 
-	skydome->SetScale({2.0f,2.0f,2.0f});
-
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
 	ground->SetScale({ 40.0f, 1.0f, 40.0f });
@@ -137,6 +135,8 @@ void GamePlay::Initialize()
 	player->SetPosition({ 0.0f, 0.0f, 0.0f });
 	player->SetRotation({ 0.0f, 0.0f, 0.0f });
 	player->SetScale({ 1.0f, 1.0f, 1.0f });
+
+	modelPig = ObjModel::CreateFromOBJ("buta");
 
 	// パーティクル
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
@@ -150,7 +150,7 @@ void GamePlay::Initialize()
 
 	for (int i = 0; i < 10; i++)
 	{
-		std::unique_ptr<Tori> newTori = Tori::Create(modelBullet, { 0.0f, player->GetPosition().y, 0.0f }, { 2.0f, 2.0f, 2.0f });
+		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f });
 		toriList.push_back(std::move(newTori));
 	}
 
@@ -267,6 +267,7 @@ void GamePlay::Update()
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
+	skydome->SetPosition(player->GetPosition());
 	skydome->Update();
 	camera->Update();
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });

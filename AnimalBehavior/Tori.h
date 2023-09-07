@@ -63,6 +63,11 @@ private: // メンバ変数
 	float randomCooldown = 0.0f;
 
 	bool moving = false;
+
+	float x = 0.0f;
+	float z = 0.0f;
+	float degrees = 0.0f;
+	float yRotationOffset = 90.0f;
 public:
 	// デスフラグ
 	bool goalFlag = false;

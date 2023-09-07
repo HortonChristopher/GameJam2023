@@ -126,6 +126,11 @@ void Tori::SetNewMovementPosition()
 
 	float magnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
+	x = (target.x - position.x);
+	z = (target.z - position.z);
+	float radians = atan2(z, x);
+	degrees = DirectX::XMConvertToDegrees(radians);
+
 	velocity.x = (target.x - position.x) / magnitude;
 	velocity.y = (target.y - position.y) / magnitude;
 	velocity.z = (target.z - position.z) / magnitude;
@@ -137,9 +142,11 @@ void Tori::Move(bool forwardBackwards)
 	{
 		if (tekiReaction == Teki_Moving)
 		{
-			position.x += velocity.x * speed * 3.5f;
-			position.y += velocity.y * speed * 3.5f;
-			position.z += velocity.z * speed * 3.5f;
+			float randomVarience = (float)(rand() % 21);
+
+			position.x += velocity.x * speed * (2.0f + randomVarience / 10.0f);
+			position.y += velocity.y * speed * (2.0f + randomVarience / 10.0f);
+			position.z += velocity.z * speed * (2.0f + randomVarience / 10.0f);
 		}
 		else
 		{
@@ -155,6 +162,7 @@ void Tori::Move(bool forwardBackwards)
 		position.z -= velocity.z * speed;
 	}
 
+	SetRotation({ rotation.x, -degrees - yRotationOffset, rotation.z });
 	SetPosition(position);
 }
 
@@ -199,6 +207,10 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 			velocity.y = (esaPosition.y - position.y) / magnitude;
 			velocity.z = (esaPosition.z - position.z) / magnitude;
 
+			x = (esaPosition.x - position.x);
+			z = (esaPosition.z - position.z);
+			float radians = atan2(z, x);
+			degrees = DirectX::XMConvertToDegrees(radians);
 			esaSet = true;
 			timer = 0.0f;
 			moving = false;
@@ -227,6 +239,11 @@ void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 			velocity.x = (tekiPosition.x - playerPosition.x) / magnitude;
 			velocity.y = (tekiPosition.y - playerPosition.y) / magnitude;
 			velocity.z = (tekiPosition.z - playerPosition.z) / magnitude;
+
+			x = (tekiPosition.x - playerPosition.x);
+			z = (tekiPosition.z - playerPosition.z);
+			float radians = atan2(z, x);
+			degrees = DirectX::XMConvertToDegrees(radians);
 
 			tekiSet = true;
 			timer = 0.0f;

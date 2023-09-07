@@ -164,6 +164,8 @@ private: // メンバ変数
 
 	ObjModel* modelBullet = nullptr;
 
+	ObjModel* modelPig = nullptr;
+
 	Player* player = nullptr;
 
 	//レティクル座標
