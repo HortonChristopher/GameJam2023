@@ -125,10 +125,11 @@ void GamePlay::Initialize()
 	skydome = ObjObject::Create();
 	modelSkydome = ObjModel::CreateFromOBJ("skydome");
 	skydome->SetModel(modelSkydome);
+	skydome->SetScale({ 8.0f, 8.0f, 8.0f });
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 10.0f, 1.0f, 10.0f });
+	ground->SetScale({ 40.0f, 1.0f, 40.0f });
 
 	// プレイヤー
 	player->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -142,6 +143,14 @@ void GamePlay::Initialize()
 	camera->SetTarget(player->GetPosition());
 	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
+
+	modelBullet = ObjModel::CreateFromOBJ("bullet2");
+
+	for (int i = 0; i < 10; i++)
+	{
+		std::unique_ptr<Tori> newTori = Tori::Create(modelBullet, { 0.0f, player->GetPosition().y, 0.0f }, { 2.0f, 2.0f, 2.0f });
+		toriList.push_back(std::move(newTori));
+	}
 
 	ShowCursor(false);
 }
@@ -189,10 +198,69 @@ void GamePlay::Update()
 		ReticlePos.y = 575.0f;
 	}
 
+	if (input->TriggerKey(DIK_E))
+	{
+		std::unique_ptr<Esa> newEsa = Esa::Create(modelBullet, player->GetPosition(), {0.5f, 0.5f, 0.5f});
+		esaList.push_back(std::move(newEsa));
+	}
+
+	if (input->TriggerKey(DIK_Q))
+	{
+		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
+		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
+		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
+
+		std::unique_ptr<Teki> newTeki = Teki::Create(
+			modelBullet,
+			{ x, 0.0f, z },
+			{ 0.5f, 0.5f, 0.5f }
+		);
+
+		tekiList.push_back(std::move(newTeki));
+	}
+
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+
+	for (std::unique_ptr<Tori>& tori : toriList)
+	{
+		XMFLOAT3 toriPosition = tori->GetPosition(); // Get the position of the current Tori
+
+		XMFLOAT3 closestTekiPosition = { 2500, 2500, 2500 };
+		float closestTekiDistance = 1e30;
+
+		// Find the closest Teki
+		if (!tekiList.empty())
+		{
+			for (std::unique_ptr<Teki>& teki : tekiList) {
+				float distance = tori->SquaredDistance(toriPosition, teki->GetPosition());
+				if (distance < closestTekiDistance) {
+					closestTekiDistance = distance;
+					closestTekiPosition = teki->GetPosition();
+				}
+			}
+		}
+
+		XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+		float closestEsaDistance = 1e30;
+
+		// Find the closest Esa
+		if (!esaList.empty())
+		{
+			for (std::unique_ptr<Esa>& esa : esaList) {
+				float distance = tori->SquaredDistance(toriPosition, esa->GetPosition());
+				if (distance < closestEsaDistance) {
+					closestEsaDistance = distance;
+					closestEsaPosition = esa->GetPosition();
+				}
+			}
+		}
+
+		// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+		tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
 	}
 
 	camera->SetTarget(player->GetPosition());
@@ -201,6 +269,33 @@ void GamePlay::Update()
 	camera->Update();
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
+
+	for (std::unique_ptr<Tori>& tori : toriList)
+	{
+		tori->Update();
+	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Update();
+	}
+
+	for (std::unique_ptr<Teki>& teki : tekiList)
+	{
+		teki->Update();
+	}
+
+	esaList.remove_if([](std::unique_ptr<Esa>& esa)
+		{
+			return esa->GetDeathFlag();
+		}
+	);
+
+	tekiList.remove_if([](std::unique_ptr<Teki>& teki)
+		{
+			return teki->GetDeathFlag();
+		}
+	);
 }
 
 void GamePlay::Draw()
@@ -229,6 +324,21 @@ void GamePlay::Draw()
 	skydome->Draw();
 	player->Draw();
 
+	for (std::unique_ptr<Tori>& tori : toriList)
+	{
+		tori->Draw();
+	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Draw();
+	}
+
+	for (std::unique_ptr<Teki>& teki : tekiList)
+	{
+		teki->Draw();
+	}
+
 	// パーティクルの描画
 	circleParticle->Draw(cmdList);
 
@@ -241,7 +351,7 @@ void GamePlay::Draw()
 	Sprite::PreDraw(cmdList);
 	
 	// 前景スプライト描画
-	//Reticle->Draw();
+	player->DebugTextDraw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

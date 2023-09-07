@@ -17,6 +17,10 @@
 #include "FbxObject.h"
 #include "WinApp.h"
 
+#include "Tori.h"
+#include "Esa.h"
+#include "Teki.h"
+
 #include "Player.h"
 #include "Bullet.h"
 #include "Boss.h"
@@ -48,6 +52,8 @@
 #include <memory>
 #include <list>
 #include <array>
+
+#include <limits>
 
 class Player;
 class Bullet;
@@ -142,6 +148,10 @@ private: // メンバ変数
 
 	ParticleManager* circleParticle = nullptr;
 
+	std::list<std::unique_ptr<Tori>> toriList;
+	std::list<std::unique_ptr<Esa>> esaList;
+	std::list<std::unique_ptr<Teki>> tekiList;
+
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;
 	Sprite* StoragePos = nullptr;
@@ -152,9 +162,9 @@ private: // メンバ変数
 	ObjModel* modelGround = nullptr;
 	ObjModel* modelSkydome = nullptr;
 
-	Player* player = nullptr;
+	ObjModel* modelBullet = nullptr;
 
-	
+	Player* player = nullptr;
 
 	//レティクル座標
 	XMFLOAT2 ReticlePos = { 0.0f, 0.0f };
