@@ -128,7 +128,7 @@ void GamePlay::Initialize()
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 10.0f, 1.0f, 10.0f });
+	ground->SetScale({ 40.0f, 1.0f, 40.0f });
 
 	// プレイヤー
 	player->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -142,6 +142,14 @@ void GamePlay::Initialize()
 	camera->SetTarget(player->GetPosition());
 	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
+
+	modelBullet = ObjModel::CreateFromOBJ("bullet2");
+
+	for (int i = 0; i < 10; i++)
+	{
+		std::unique_ptr<Tori> newTori = Tori::Create(modelBullet, { 0.0f, player->GetPosition().y, 0.0f }, { 2.0f, 2.0f, 2.0f });
+		toriList.push_back(std::move(newTori));
+	}
 
 	ShowCursor(false);
 }
@@ -189,6 +197,12 @@ void GamePlay::Update()
 		ReticlePos.y = 575.0f;
 	}
 
+	if (input->PushMouseLeft())
+	{
+		std::unique_ptr<Esa> newEsa = Esa::Create(modelBullet, player->GetPosition(), {0.5f, 0.5f, 0.5f});
+		esaList.push_back(std::move(newEsa));
+	}
+
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		//シーン切り替え
@@ -201,6 +215,22 @@ void GamePlay::Update()
 	camera->Update();
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
+
+	for (std::unique_ptr<Tori>& tori : toriList)
+	{
+		tori->Update();
+	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Update();
+	}
+
+	esaList.remove_if([](std::unique_ptr<Esa>& esa)
+		{
+			return esa->GetDeathFlag();
+		}
+	);
 }
 
 void GamePlay::Draw()
@@ -229,6 +259,16 @@ void GamePlay::Draw()
 	skydome->Draw();
 	player->Draw();
 
+	for (std::unique_ptr<Tori>& tori : toriList)
+	{
+		tori->Draw();
+	}
+
+	for (std::unique_ptr<Esa>& esa : esaList)
+	{
+		esa->Draw();
+	}
+
 	// パーティクルの描画
 	circleParticle->Draw(cmdList);
 
@@ -241,7 +281,7 @@ void GamePlay::Draw()
 	Sprite::PreDraw(cmdList);
 	
 	// 前景スプライト描画
-	//Reticle->Draw();
+	player->DebugTextDraw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
