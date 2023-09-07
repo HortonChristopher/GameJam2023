@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)FBX;$(ProjectDir)OBJ;$(ProjectDir)Particle;$(ProjectDir)PostEffect;$(ProjectDir)Sound;$(ProjectDir)Input;$(ProjectDir)Camera;$(ProjectDir)Sprite;$(ProjectDir)DebugText;$(ProjectDir)EngineBase;$(ProjectDir)GamePlay;$(ProjectDir)GameBase;$(ProjectDir)Math;$(ProjectDir)ScoreText;$(ProjectDir)Boss;$(ProjectDir)Bullet;$(ProjectDir)StageObject;$(ProjectDir)Player;$(ProjectDir)Title;$(ProjectDir)Result;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)FBX;$(ProjectDir)OBJ;$(ProjectDir)Particle;$(ProjectDir)PostEffect;$(ProjectDir)Sound;$(ProjectDir)Input;$(ProjectDir)Camera;$(ProjectDir)Sprite;$(ProjectDir)DebugText;$(ProjectDir)EngineBase;$(ProjectDir)GamePlay;$(ProjectDir)GameBase;$(ProjectDir)Math;$(ProjectDir)ScoreText;$(ProjectDir)Boss;$(ProjectDir)Bullet;$(ProjectDir)StageObject;$(ProjectDir)Player;$(ProjectDir)Title;$(ProjectDir)Result;$(ProjectDir)AnimalBehavior;$(ProjectDir)Items;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -142,7 +142,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)FBX;$(ProjectDir)OBJ;$(ProjectDir)Particle;$(ProjectDir)PostEffect;$(ProjectDir)Sound;$(ProjectDir)Input;$(ProjectDir)Camera;$(ProjectDir)Sprite;$(ProjectDir)DebugText;$(ProjectDir)EngineBase;$(ProjectDir)GamePlay;$(ProjectDir)GameBase;$(ProjectDir)Math;$(ProjectDir)ScoreText;$(ProjectDir)Boss;$(ProjectDir)Bullet;$(ProjectDir)StageObject;$(ProjectDir)Player;$(ProjectDir)Title;$(ProjectDir)Result;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)FBX;$(ProjectDir)OBJ;$(ProjectDir)Particle;$(ProjectDir)PostEffect;$(ProjectDir)Sound;$(ProjectDir)Input;$(ProjectDir)Camera;$(ProjectDir)Sprite;$(ProjectDir)DebugText;$(ProjectDir)EngineBase;$(ProjectDir)GamePlay;$(ProjectDir)GameBase;$(ProjectDir)Math;$(ProjectDir)ScoreText;$(ProjectDir)Boss;$(ProjectDir)Bullet;$(ProjectDir)StageObject;$(ProjectDir)Player;$(ProjectDir)Title;$(ProjectDir)Result;$(ProjectDir)AnimalBehavior;$(ProjectDir)Items;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimalBehavior\Tori.cpp" />
     <ClCompile Include="BossMainCore.cpp" />
     <ClCompile Include="BossShield.cpp" />
     <ClCompile Include="Boss\BossTurret.cpp" />
@@ -170,6 +171,8 @@
     <ClCompile Include="DebugText\DebugText.cpp" />
     <ClCompile Include="DeltaGageUI.cpp" />
     <ClCompile Include="GageUI.cpp" />
+    <ClCompile Include="Items\Esa.cpp" />
+    <ClCompile Include="Items\Teki.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
     <ClCompile Include="EngineBase\DirectXCommon.cpp" />
     <ClCompile Include="EngineBase\WinApp.cpp" />
@@ -201,7 +204,6 @@
     <ClCompile Include="Math\Spline.cpp" />
     <ClCompile Include="Sprite\Sprite.cpp" />
     <ClCompile Include="StageSelect.cpp" />
-    <ClCompile Include="Test.cpp" />
     <ClCompile Include="Title\Title.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -299,6 +301,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimalBehavior\Tori.h" />
     <ClInclude Include="BossMainCore.h" />
     <ClInclude Include="BossShield.h" />
     <ClInclude Include="Boss\BossTurret.h" />
@@ -314,6 +317,8 @@
     <ClInclude Include="Bullet\Bullet.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="DebugText\DebugText.h" />
+    <ClInclude Include="Items\Esa.h" />
+    <ClInclude Include="Items\Teki.h" />
     <ClInclude Include="Math\Easing.h" />
     <ClInclude Include="EngineBase\DirectXCommon.h" />
     <ClInclude Include="EngineBase\SafeDelete.h" />
@@ -345,7 +350,6 @@
     <ClInclude Include="Math\Spline.h" />
     <ClInclude Include="Sprite\Sprite.h" />
     <ClInclude Include="StageSelect.h" />
-    <ClInclude Include="Test.h" />
     <ClInclude Include="Title\Title.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -113,10 +113,30 @@ bool Input::PushMouseRight()
 	return false;
 }
 
+bool Input::TriggerMouseRight()
+{
+	// 0でなければ押している
+	if (mouseState.rgbButtons[1] && !mouseStatePre.rgbButtons[1]) {
+		return true;
+	}
+
+	return false;
+}
+
 bool Input::PushMouseLeft()
 {
 	// 0でなければ押している
 	if (mouseState.rgbButtons[0]) {
+		return true;
+	}
+
+	return false;
+}
+
+bool Input::TriggerMouseLeft()
+{
+	// 0でなければ押している
+	if (mouseState.rgbButtons[0] && !mouseStatePre.rgbButtons[0]) {
 		return true;
 	}
 
