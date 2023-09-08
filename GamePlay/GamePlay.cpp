@@ -122,6 +122,14 @@ void GamePlay::Initialize()
 	modelGround = ObjModel::CreateFromOBJ("grand");
 	ground->SetModel(modelGround);
 
+	// Spawn barn
+	barn = ObjObject::Create();
+	modelBarn = ObjModel::CreateFromOBJ("RanchHut");
+	barn->SetModel(modelBarn);
+	barn->SetPosition({ 0.0f, 0.0f, 255.0f });
+	barn->SetRotation({ 0.0f, 0.0f, 0.0f });
+	barn->SetScale({ 6.0f, 6.0f, 6.0f });
+
 	// Fences
 	FenceCreation();
 
@@ -285,6 +293,10 @@ void GamePlay::Update()
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
 	
+	// Spawn Barn
+	barn->Update();
+
+	// Fences
 	for (int i = 0; i < 7; i++)
 	{
 		if (i < 6)
@@ -371,6 +383,10 @@ void GamePlay::Draw()
 	skydome->Draw();
 	player->Draw();
 	
+	// Spawn Barn
+	barn->Draw();
+
+	// Fences
 	for (int i = 0; i < 7; i++)
 	{
 		if (i < 6)
