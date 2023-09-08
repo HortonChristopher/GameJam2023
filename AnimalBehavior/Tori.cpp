@@ -50,14 +50,14 @@ void Tori::Update()
 			Move(true); // Moving AWAY from teki in direction Player is facing
 			break;
 		case Teki_Standing:
-			if (timer >= 300.0f)
+			if (timer >= standingTimer)
 			{
 				tekiSet = false;
-				timer = 0.0f;
+				timer = timerReset;
 				tekiReaction = Teki_None;
 			}
 
-			timer += 1.0f;
+			timer += timerOneFrame;
 			break;
 		default:
 			break;
@@ -75,14 +75,14 @@ void Tori::Update()
 			Move(true); // Moving towards target
 			break;
 		case Esa_Standing:
-			if (timer >= 300.0f)
+			if (timer >= standingTimer)
 			{
 				esaSet = false;
-				timer = 0.0f;
+				timer = timerReset;
 				esaReaction = Esa_None;
 			}
 
-			timer += 1.0f;
+			timer += timerOneFrame;
 			break;
 		default:
 			break;
@@ -99,7 +99,7 @@ void Tori::Update()
 				moving = true;
 			}
 
-			timer = 0.0f;
+			timer = timerReset;
 		}
 
 		if (moving)
@@ -107,22 +107,22 @@ void Tori::Update()
 			Move(true); // Moving towards target
 		}
 
-		timer += 1.0f;
+		timer += timerOneFrame;
 
-		if (timer >= 600.0f && moving)
+		if (timer >= wanderMaxTimer && moving)
 		{
 			moving = false;
 
-			timer = 0.0f;
+			timer = timerReset;
 
-			randomCooldown = (float)(rand() % 60 + 30);
+			randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 		}
 	}
 }
 
 void Tori::SetNewMovementPosition()
 {
-	target = { (float)(rand() % 300 - 150), 0.0f, (float)(rand() % 300 - 150) };
+	target = { (float)(rand() % mapBoundariesTimesTwo - mapBoundaries), zeroFloat, (float)(rand() % mapBoundariesTimesTwo - mapBoundaries) };
 
 	float magnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
@@ -139,11 +139,11 @@ void Tori::Move(bool forwardBackwards)
 	{
 		if (tekiReaction == Teki_Moving)
 		{
-			float randomVarience = ((float)(rand() % 21)) / 10.0f;
+			float randomVarience = ((float)(rand() % tekiRandomVarience)) / divideByTen;
 
-			position.x += velocity.x * speed * (2.0f + randomVarience);
-			position.y += velocity.y * speed * (2.0f + randomVarience);
-			position.z += velocity.z * speed * (2.0f + randomVarience);
+			position.x += velocity.x * speed * (tekiFleeMultiplier + randomVarience);
+			position.y += velocity.y * speed * (tekiFleeMultiplier + randomVarience);
+			position.z += velocity.z * speed * (tekiFleeMultiplier + randomVarience);
 		}
 		else
 		{
@@ -165,13 +165,13 @@ void Tori::Move(bool forwardBackwards)
 
 void Tori::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XMFLOAT3 playerPosition)
 {
-	if (tekiPosition.x != 2500 || tekiPosition.y != 2500 || tekiPosition.z != 2500) {
+	if (tekiPosition.x != defaultUpdateEntitiesPosition || tekiPosition.y != defaultUpdateEntitiesPosition || tekiPosition.z != defaultUpdateEntitiesPosition) {
 		TekiInRange(tekiPosition, playerPosition);
 	}
 
 	if (tekiReaction == Teki_None)
 	{
-		if (esaPosition.x != 2500 || esaPosition.y != 2500 || esaPosition.z != 2500) {
+		if (esaPosition.x != defaultUpdateEntitiesPosition || esaPosition.y != defaultUpdateEntitiesPosition || esaPosition.z != defaultUpdateEntitiesPosition) {
 			EsaInRange(esaPosition);
 		}
 	}
@@ -194,7 +194,7 @@ bool Tori::ItemIntersection(float radius1, const XMFLOAT3& center2, float radius
 
 void Tori::EsaInRange(XMFLOAT3 esaPosition)
 {
-	if (ItemIntersection(5.0f, esaPosition, 60.0f) && !ItemIntersection(5.0f, esaPosition, 5.0f))
+	if (ItemIntersection(toriRadius, esaPosition, esaMaxDistance) && !ItemIntersection(toriRadius, esaPosition, esaMinDistance))
 	{
 		if (!esaSet)
 		{
@@ -207,12 +207,12 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 			RotationVectorSet(esaPosition, position);
 
 			esaSet = true;
-			timer = 0.0f;
+			timer = timerReset;
 			moving = false;
 			esaReaction = Esa_Moving;
 		}
 	}
-	else if (ItemIntersection(5.0f, esaPosition, 5.0f))
+	else if (ItemIntersection(toriRadius, esaPosition, esaMinDistance))
 	{
 		esaReaction = Esa_Standing;
 	}
@@ -225,7 +225,7 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 
 void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 {
-	if (ItemIntersection(5.0f, tekiPosition, 100.0f))
+	if (ItemIntersection(toriRadius, tekiPosition, tekiDistance)) // To do: Move this center to in front of the item. TL;DR just place the center half the radius in the forward direction the player is facing at the time of placement.
 	{
 		if (!tekiSet)
 		{
@@ -238,14 +238,10 @@ void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 			RotationVectorSet(tekiPosition, playerPosition);
 
 			tekiSet = true;
-			timer = 0.0f;
+			timer = timerReset;
 			moving = false;
 			tekiReaction = Teki_Moving;
 		}
-	}
-	else if (ItemIntersection(5.0f, tekiPosition, 5.0f))
-	{
-		tekiReaction = Teki_Standing;
 	}
 	else
 	{

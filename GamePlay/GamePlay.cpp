@@ -240,7 +240,7 @@ void GamePlay::Update()
 	{
 		XMFLOAT3 toriPosition = tori->GetPosition(); // Get the position of the current Tori
 
-		XMFLOAT3 closestTekiPosition = { 2500, 2500, 2500 };
+		XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
 		float closestTekiDistance = 1e30;
 
 		// Find the closest Teki

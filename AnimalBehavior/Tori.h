@@ -59,12 +59,37 @@ private: // ƒƒ“ƒo•Ï”
 	float speed = 0.2f;
 	float timer = 0.0f;
 
+	const float zeroFloat = 0.0f;
+
 	bool esaSet = false;
 	bool tekiSet = false;
 
 	float randomCooldown = 0.0f;
 
 	bool moving = false;
+
+	const float defaultUpdateEntitiesPosition = 2500.0f;
+
+	const int mapBoundaries = 150;
+	const int mapBoundariesTimesTwo = 300;
+
+	const float timerOneFrame = 1.0f;
+
+	const float standingTimer = 300.0f;
+	const float wanderMaxTimer = 600.0f;
+
+	const float timerReset = 0.0f;
+	const int randomCooldownTime = 30;
+	const int randomCooldownTimesTwo = 60;
+
+	const float toriRadius = 5.0f;
+	const float tekiDistance = 100.0f;
+	const float esaMaxDistance = 60.0f;
+	const float esaMinDistance = 5.0f;
+
+	const float tekiFleeMultiplier = 2.0f;
+	const int tekiRandomVarience = 21;
+	const float divideByTen = 10.0f;
 
 	float x = 0.0f;
 	float z = 0.0f;
