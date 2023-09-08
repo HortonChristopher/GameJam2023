@@ -67,6 +67,7 @@ private: // ƒƒ“ƒo•Ï”
 
 	float randomCooldown = 0.0f;
 
+	bool initial = true; // Moving out of barn into play area
 	bool moving = false;
 
 	const float defaultUpdateEntitiesPosition = 2500.0f;

@@ -161,7 +161,7 @@ void GamePlay::Initialize()
 
 	for (int i = 0; i < 10; i++)
 	{
-		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f });
+		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f });
 		toriList.push_back(std::move(newTori));
 	}
 
