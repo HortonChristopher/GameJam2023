@@ -1,4 +1,5 @@
 ﻿#include "GamePlay.h"
+#include "FbxObject.h"
 
 using namespace DirectX;
 extern HWND hwnd;
@@ -25,6 +26,15 @@ void GamePlay::Initialize()
 	ObjObject::SetCamera(camera);
 	Player::SetCamera(camera);
 	Boss::SetCamera(camera);
+
+	//FBXカメラセット
+	FbxObject3d::SetCamera(camera);
+	
+	//デバイスをセット
+	FbxObject3d::SetDevice(dxCommon->GetDevice());
+
+	//グラフィックパイプライン生成
+	FbxObject3d::CreateGraphicsPipeline();
 
 	sound->LoadWav("SE/Game/game_player_shot.wav");
 	sound->LoadWav("SE/Game/game_boss_shot.wav");
@@ -116,6 +126,18 @@ void GamePlay::Initialize()
 
 	// プレイヤー
 	player = Player::Create();
+
+	//プレイヤーFBXモデル
+	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
+
+	//プレイヤーFBXオブジェクト
+	objPlayerStop = new FbxObject3d;
+	objPlayerStop->Initialize();
+	objPlayerStop->SetModel(modelPlayerStop);
+
+	objPlayerStop->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerStop->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerStop->SetScale({ 0.5f, 0.5f, 0.5f });
 
 	// 3D OBJ
 	ground = ObjObject::Create();
@@ -216,6 +238,10 @@ void GamePlay::Update()
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
 
+	objPlayerStop->SetPosition(player->GetPosition());
+	objPlayerStop->SetRotation(player->GetRotation());
+	objPlayerStop->Update();
+
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{
 		tori->Update();
@@ -258,6 +284,8 @@ void GamePlay::Draw()
 	ground->Draw();
 	skydome->Draw();
 	player->Draw();
+
+	objPlayerStop->Draw(cmdList);
 
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{

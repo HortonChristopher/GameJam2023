@@ -162,6 +162,22 @@ private: // メンバ変数
 
 	Player* player = nullptr;
 
+	//FBXモデル
+	FbxModel* modelPlayerStop = nullptr;
+	FbxModel* modelPlayerWalking = nullptr;
+	FbxModel* modelPlayerRun = nullptr;
+	FbxModel* modelPlayerThrow = nullptr;
+	FbxModel* modelPlayerCall = nullptr;
+
+	//FBXオブジェクト
+	FbxObject3d* objPlayerStop = nullptr;
+	FbxObject3d* objPlayerWalking = nullptr;
+	FbxObject3d* objPlayerRun = nullptr;
+	FbxObject3d* objPlayerThrow = nullptr;
+	FbxObject3d* PlayerCall = nullptr;
+
+	//FBXオブジェクト
+
 	//レティクル座標
 	XMFLOAT2 ReticlePos = { 0.0f, 0.0f };
 
