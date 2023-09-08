@@ -60,6 +60,7 @@ private: // ƒƒ“ƒo•Ï”
 	float timer = 0.0f;
 
 	const float zeroFloat = 0.0f;
+	const float zeroPointFiveFloat = 0.5f;
 
 	bool esaSet = false;
 	bool tekiSet = false;

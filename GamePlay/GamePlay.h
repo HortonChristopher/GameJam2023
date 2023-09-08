@@ -138,6 +138,8 @@ public: // メンバ関数
 	//デバッグテキスト用関数
 	void DrawDebugText();
 
+	void FenceCreation();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	Input* input = Input::GetInstance();
@@ -158,9 +160,26 @@ private: // メンバ変数
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;
+	// Fences
+	std::array<ObjObject*, 6> westSideNorthFence = { {} };
+	std::array<ObjObject*, 6> westSideSouthFence = { {} };
+	std::array<ObjObject*, 6> southSideWestFence = { {} };
+	std::array<ObjObject*, 6> southSideEastFence = { {} };
+	std::array<ObjObject*, 6> eastSideSouthFence = { {} };
+	std::array<ObjObject*, 6> eastSideNorthFence = { {} };
+	std::array<ObjObject*, 3> westGoalSouthFence = { {} };
+	std::array<ObjObject*, 7> westGoalWestFence = { {} };
+	std::array<ObjObject*, 3> westGoalNorthFence = { {} };
+	std::array<ObjObject*, 3> southGoalWestFence = { {} };
+	std::array<ObjObject*, 7> southGoalSouthFence = { {} };
+	std::array<ObjObject*, 3> southGoalEastFence = { {} };
+	std::array<ObjObject*, 3> eastGoalSouthFence = { {} };
+	std::array<ObjObject*, 7> eastGoalEastFence = { {} };
+	std::array<ObjObject*, 3> eastGoalNorthFence = { {} };
 
 	ObjModel* modelGround = nullptr;
 	ObjModel* modelSkydome = nullptr;
+	ObjModel* modelFence = nullptr;
 
 	ObjModel* modelBullet = nullptr;
 

@@ -238,9 +238,6 @@
     <ClCompile Include="Collision.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Test.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="ReflectBullet.cpp">
       <Filter>Bullet</Filter>
     </ClCompile>
@@ -257,6 +254,9 @@
       <Filter>AnimalBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Items\Esa.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\Teki.cpp">
       <Filter>Items</Filter>
     </ClCompile>
   </ItemGroup>
@@ -443,7 +443,6 @@
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h" />
-    <ClInclude Include="Test.h" />
     <ClInclude Include="ReflectBullet.h">
       <Filter>Bullet</Filter>
     </ClInclude>
@@ -456,6 +455,10 @@
       <Filter>AnimalBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Items\Esa.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay\Goal.h" />
+    <ClInclude Include="Items\Teki.h">
       <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>

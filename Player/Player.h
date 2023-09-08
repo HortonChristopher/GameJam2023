@@ -85,7 +85,7 @@ private: // ƒƒ“ƒo•Ï”
 	ObjModel* modelPlayer = nullptr;
 
 	float rotationSpeed = 30.0f;
-	float speed = 0.25f;
+	float speed = 1.0f;
 
 	XMFLOAT3 playerSpeed = {};
 

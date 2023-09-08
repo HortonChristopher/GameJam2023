@@ -122,7 +122,7 @@ void Tori::Update()
 
 void Tori::SetNewMovementPosition()
 {
-	target = { (float)(rand() % mapBoundariesTimesTwo - mapBoundaries), zeroFloat, (float)(rand() % mapBoundariesTimesTwo - mapBoundaries) };
+	target = { (float)(rand() % mapBoundariesTimesTwo - mapBoundaries), zeroPointFiveFloat, (float)(rand() % mapBoundariesTimesTwo - mapBoundaries) };
 
 	float magnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
