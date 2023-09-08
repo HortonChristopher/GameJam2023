@@ -176,6 +176,14 @@ private: // メンバ変数
 	std::array<ObjObject*, 3> eastGoalSouthFence = { {} };
 	std::array<ObjObject*, 7> eastGoalEastFence = { {} };
 	std::array<ObjObject*, 3> eastGoalNorthFence = { {} };
+	std::array<ObjObject*, 6> northSideWestFence = { {} };
+	std::array<ObjObject*, 6> northSideEastFence = { {} };
+	std::array<ObjObject*, 2> barnWestFence = { {} };
+	std::array<ObjObject*, 2> barnEastFence = { {} };
+
+	// Spawn barn
+	ObjObject* barn = nullptr;
+	ObjModel* modelBarn = nullptr;
 
 	ObjModel* modelGround = nullptr;
 	ObjModel* modelSkydome = nullptr;

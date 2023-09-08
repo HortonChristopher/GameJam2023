@@ -295,6 +295,8 @@ void GamePlay::Update()
 			southSideEastFence[i]->Update();
 			eastSideNorthFence[i]->Update();
 			eastSideSouthFence[i]->Update();
+			northSideWestFence[i]->Update();
+			northSideEastFence[i]->Update();
 		}
 		if (i < 3)
 		{
@@ -304,6 +306,11 @@ void GamePlay::Update()
 			southGoalWestFence[i]->Update();
 			eastGoalNorthFence[i]->Update();
 			eastGoalSouthFence[i]->Update();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Update();
+			barnEastFence[i]->Update();
 		}
 		westGoalWestFence[i]->Update();
 		southGoalSouthFence[i]->Update();
@@ -374,6 +381,8 @@ void GamePlay::Draw()
 			southSideEastFence[i]->Draw();
 			eastSideNorthFence[i]->Draw();
 			eastSideSouthFence[i]->Draw();
+			northSideEastFence[i]->Draw();
+			northSideWestFence[i]->Draw();
 		}
 		if (i < 3)
 		{
@@ -383,6 +392,11 @@ void GamePlay::Draw()
 			southGoalEastFence[i]->Draw();
 			eastGoalSouthFence[i]->Draw();
 			eastGoalNorthFence[i]->Draw();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Draw();
+			barnEastFence[i]->Draw();
 		}
 		westGoalWestFence[i]->Draw();
 		southGoalSouthFence[i]->Draw();
@@ -461,6 +475,7 @@ void GamePlay::DrawDebugText()
 void GamePlay::FenceCreation()
 {
 	modelFence = ObjModel::CreateFromOBJ("fence");
+
 	for (int i = 0; i < 7; i++)
 	{
 		if (i < 6)
@@ -506,6 +521,20 @@ void GamePlay::FenceCreation()
 			eastSideSouthFence[i]->SetPosition({ 155.0f, -1.0f, -145.0f + (20.0f * i) });
 			eastSideSouthFence[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
 			eastSideSouthFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+
+			// North side West
+			northSideWestFence[i] = ObjObject::Create();
+			northSideWestFence[i]->SetModel(modelFence);
+			northSideWestFence[i]->SetPosition({ -145.0f + (20.0f * i), -1.0f, 155.0f });
+			northSideWestFence[i]->SetRotation({ 0.0f, 0.0f, 0.0f });
+			northSideWestFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+
+			// North side East
+			northSideEastFence[i] = ObjObject::Create();
+			northSideEastFence[i]->SetModel(modelFence);
+			northSideEastFence[i]->SetPosition({ 145.0f - (20.0f * i), -1.0f, 155.0f });
+			northSideEastFence[i]->SetRotation({ 0.0f, 0.0f, 0.0f });
+			northSideEastFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
 		}
 
 		if (i < 3)
@@ -554,6 +583,23 @@ void GamePlay::FenceCreation()
 			eastGoalNorthFence[i]->SetPosition({ 166.0f + (20.0f * i), -1.0f, 70.0f });
 			eastGoalNorthFence[i]->SetRotation({ 0.0f, 0.0f, 0.0f });
 			eastGoalNorthFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+		}
+		if (i < 2)
+		{
+			// Barn
+			// West
+			barnWestFence[i] = ObjObject::Create();
+			barnWestFence[i]->SetModel(modelFence);
+			barnWestFence[i]->SetPosition({ -35.0f, -1.0f, 165.0f + (20.0f * i) });
+			barnWestFence[i]->SetRotation({ 0.0f, 270.0f, 0.0f });
+			barnWestFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+
+			// East
+			barnEastFence[i] = ObjObject::Create();
+			barnEastFence[i]->SetModel(modelFence);
+			barnEastFence[i]->SetPosition({ 35.0f, -1.0f, 165.0f + (20.0f * i) });
+			barnEastFence[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
+			barnEastFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
 		}
 
 		// West goal West
