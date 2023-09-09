@@ -129,8 +129,13 @@ void GamePlay::Initialize()
 
 	//プレイヤーFBXモデル
 	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
+	modelPlayerWalking = FbxLoader::GetInstance()->LoadModelFromFile("Walking");
+	modelPlayerRun = FbxLoader::GetInstance()->LoadModelFromFile("Running");
+	modelPlayerThrow = FbxLoader::GetInstance()->LoadModelFromFile("Throw");
+	modelPlayerCall = FbxLoader::GetInstance()->LoadModelFromFile("Call");
 
 	//プレイヤーFBXオブジェクト
+	//待機
 	objPlayerStop = new FbxObject3d;
 	objPlayerStop->Initialize();
 	objPlayerStop->SetModel(modelPlayerStop);
@@ -138,6 +143,42 @@ void GamePlay::Initialize()
 	objPlayerStop->SetPosition({ 0.0f, 0.0f, 0.0f });
 	objPlayerStop->SetRotation({ 0.0f, 0.0f, 0.0f });
 	objPlayerStop->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//歩き
+	objPlayerWalking = new FbxObject3d;
+	objPlayerWalking->Initialize();
+	objPlayerWalking->SetModel(modelPlayerWalking);
+
+	objPlayerWalking->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerWalking->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerWalking->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//走り
+	objPlayerRun = new FbxObject3d;
+	objPlayerRun->Initialize();
+	objPlayerRun->SetModel(modelPlayerRun);
+
+	objPlayerRun->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerRun->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerRun->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//エサ投げ
+	objPlayerThrow = new FbxObject3d;
+	objPlayerThrow->Initialize();
+	objPlayerThrow->SetModel(modelPlayerThrow);
+
+	objPlayerThrow->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerThrow->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerThrow->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//追い出し
+	objPlayerCall = new FbxObject3d;
+	objPlayerCall->Initialize();
+	objPlayerCall->SetModel(modelPlayerCall);
+
+	objPlayerCall->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerCall->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerCall->SetScale({ 0.5f, 0.5f, 0.5f });
 
 	// 3D OBJ
 	ground = ObjObject::Create();
@@ -232,9 +273,21 @@ void GamePlay::Update()
 	{
 		ReticlePos.y = 575.0f;
 	}
+	//移動時は走りモーションにする
+		if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
+		{
+			PlayerState = 2;
+		}
+
+		else
+		{
+			PlayerState = 0;
+		}
+
 
 	if (input->TriggerKey(DIK_E))
 	{
+		AnimationFlag_T = true;
 		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
@@ -250,6 +303,7 @@ void GamePlay::Update()
 
 	if (input->TriggerKey(DIK_Q))
 	{
+		AnimationFlag_C = true;
 		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
@@ -261,6 +315,35 @@ void GamePlay::Update()
 		);
 
 		tekiList.push_back(std::move(newTeki));
+	}
+
+	//アニメーションフラグがtrueならタイマーを加算
+	//エサ投げ
+	if (AnimationFlag_T == true)
+	{
+		PlayerState = 3;
+		AnimationTimer_T++;
+	}
+
+	if (AnimationTimer_T >= 60)
+	{
+		AnimationFlag_T = false;
+		AnimationTimer_T = 0;
+		PlayerState = 0;
+	}
+
+	//追い出し
+	if (AnimationFlag_C == true)
+	{
+		PlayerState = 4;
+		AnimationTimer_C++;
+	}
+
+	if (AnimationTimer_C >= 60)
+	{
+		AnimationFlag_C = false;
+		AnimationTimer_C = 0;
+		PlayerState = 0;
 	}
 
 	if (input->TriggerKey(DIK_SPACE))
@@ -351,9 +434,32 @@ void GamePlay::Update()
 		eastGoalEastFence[i]->Update();
 	}
 
+	//FBX各種の座標、ローテート更新
+	//待機
 	objPlayerStop->SetPosition(player->GetPosition());
 	objPlayerStop->SetRotation(player->GetRotation());
 	objPlayerStop->Update();
+
+	//歩き
+	objPlayerWalking->SetPosition(player->GetPosition());
+	objPlayerWalking->SetRotation(player->GetRotation());
+	objPlayerWalking->Update();
+
+	//走り
+	objPlayerRun->SetPosition(player->GetPosition());
+	objPlayerRun->SetRotation(player->GetRotation());
+	objPlayerRun->Update();
+
+	//エサ投げ
+	objPlayerThrow->SetPosition(player->GetPosition());
+	objPlayerThrow->SetRotation(player->GetRotation());
+	objPlayerThrow->Update();
+
+	//
+	objPlayerCall->SetPosition(player->GetPosition());
+	objPlayerCall->SetRotation(player->GetRotation());
+	objPlayerCall->Update();
+
 
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{
@@ -407,6 +513,8 @@ void GamePlay::Draw()
 	// 3Dオブクジェクトの描画
 	ground->Draw();
 	skydome->Draw();
+
+	//プレイヤーの描画
 	player->Draw();
 	
 	// Spawn Barn
@@ -445,7 +553,31 @@ void GamePlay::Draw()
 		eastGoalEastFence[i]->Draw();
 	}
 
-	objPlayerStop->Draw(cmdList);
+	//プレイヤーの描画
+	if (PlayerState == 0)
+	{
+		objPlayerStop->Draw(cmdList);
+	}
+
+	if (PlayerState == 1)
+	{
+		objPlayerWalking->Draw(cmdList);
+	}
+
+	if (PlayerState == 2)
+	{
+		objPlayerRun->Draw(cmdList);
+	}
+
+	if (PlayerState == 3)
+	{
+		objPlayerThrow->Draw(cmdList);
+	}
+
+	if (PlayerState == 4)
+	{
+		objPlayerCall->Draw(cmdList);
+	}
 
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{
@@ -514,6 +646,14 @@ void GamePlay::DrawDebugText()
 		<< ReticlePos.x << ","
 		<< ReticlePos.y << ")";
 	debugText.Print(ReticlePosition.str(), 0, 60, 1.0f);
+
+
+	//アニメーションタイマー
+	std::ostringstream AnimeTimer;
+	AnimeTimer << "AnimationTimer("
+		<< std::fixed << std::setprecision(5)
+		<< AnimationTimer_T << ")";
+	debugText.Print(AnimeTimer.str(), 0, 0, 1.0f);
 }
 
 void GamePlay::FenceCreation()
