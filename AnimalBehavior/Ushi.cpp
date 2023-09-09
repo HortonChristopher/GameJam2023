@@ -137,7 +137,7 @@ void Ushi::Update()
 			{
 				if (goalNumber == i)
 				{
-					target = goal->sheepGoalPositions[i];
+					target = goal->cowGoalPositions[i];
 
 					goalMagnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
 
@@ -158,15 +158,17 @@ void Ushi::Update()
 				position.x += velocity.x * speed;
 				position.y += velocity.y * speed;
 				position.z += velocity.z * speed;
+
+				SetRotation({ rotation.x, -degrees - yRotationOffset, rotation.z });
 			}
 			else
 			{
 				position = target;
-				rotation = { 0.0f, 270.0f, 0.0f };
+				rotation = { 0.0f, 90.0f, 0.0f };
+				SetRotation(rotation);
 			}
 		}
 
-		SetRotation(rotation);
 		SetPosition(position);
 	}
 }

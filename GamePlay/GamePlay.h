@@ -18,6 +18,9 @@
 #include "WinApp.h"
 
 #include "Tori.h"
+#include "Buta.h"
+#include "Hitsuji.h"
+#include "Ushi.h"
 #include "Esa.h"
 #include "Teki.h"
 
@@ -152,7 +155,11 @@ private: // メンバ変数
 
 	ParticleManager* circleParticle = nullptr;
 
+	// Animal and Item lists
 	std::list<std::unique_ptr<Tori>> toriList;
+	std::list<std::unique_ptr<Buta>> butaList;
+	std::list<std::unique_ptr<Hitsuji>> hitsujiList;
+	std::list<std::unique_ptr<Ushi>> ushiList;
 	std::list<std::unique_ptr<Esa>> esaList;
 	std::list<std::unique_ptr<Teki>> tekiList;
 
@@ -232,6 +239,7 @@ private: // メンバ変数
 	const int goalSheepMax = 20;
 	int goalHorse = 0;
 	const int goalHorseMax = 20;
+	float score = 0.0f;
 
 	//FBXオブジェクト
 

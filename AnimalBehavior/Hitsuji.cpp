@@ -158,15 +158,17 @@ void Hitsuji::Update()
 				position.x += velocity.x * speed;
 				position.y += velocity.y * speed;
 				position.z += velocity.z * speed;
+
+				SetRotation({ rotation.x, -degrees - yRotationOffset, rotation.z });
 			}
 			else
 			{
 				position = target;
-				rotation = { 0.0f, 270.0f, 0.0f };
+				rotation = { 0.0f, 180.0f, 0.0f };
+				SetRotation(rotation);
 			}
 		}
 
-		SetRotation(rotation);
 		SetPosition(position);
 	}
 }
