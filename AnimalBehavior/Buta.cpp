@@ -54,20 +54,24 @@ void Buta::Update()
 			case Teki_Moving:
 				Move(true); // Moving AWAY from teki in direction Player is facing
 
-				if (timer > 240.0f)
+				if (timer > 180.0f)
 				{
-					timer = 0.0f;
+					timer = timerReset;
 					tekiReaction = Teki_Standing;
+					break;
 				}
 
-				timer += 1.0f;
+				timer += timerOneFrame;
 				break;
 			case Teki_Standing:
 				if (timer >= standingTimer)
 				{
 					tekiSet = false;
 					timer = timerReset;
+					moving = false;
+					randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 					tekiReaction = Teki_None;
+					break;
 				}
 
 				timer += timerOneFrame;
@@ -86,13 +90,25 @@ void Buta::Update()
 				break;
 			case Esa_Moving:
 				Move(true); // Moving towards target
+
+				if (timer > 180.0f)
+				{
+					timer = timerReset;
+					esaReaction = Esa_Standing;
+					break;
+				}
+
+				timer += timerOneFrame;
 				break;
 			case Esa_Standing:
 				if (timer >= standingTimer)
 				{
 					esaSet = false;
 					timer = timerReset;
+					moving = false;
+					randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 					esaReaction = Esa_None;
+					break;
 				}
 
 				timer += timerOneFrame;
@@ -240,8 +256,11 @@ void Buta::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XM
 {
 	if (!goalFlag)
 	{
-		if (tekiPosition.x != defaultUpdateEntitiesPosition || tekiPosition.y != defaultUpdateEntitiesPosition || tekiPosition.z != defaultUpdateEntitiesPosition) {
-			TekiInRange(tekiPosition, playerPosition);
+		if (!tekiSet)
+		{
+			if (tekiPosition.x != defaultUpdateEntitiesPosition || tekiPosition.y != defaultUpdateEntitiesPosition || tekiPosition.z != defaultUpdateEntitiesPosition) {
+				TekiInRange(tekiPosition, playerPosition);
+			}
 		}
 
 		if (tekiReaction == Teki_None)

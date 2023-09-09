@@ -318,40 +318,43 @@ void GamePlay::Update()
 	{
 		if (!buta->goalFlag)
 		{
-			XMFLOAT3 butaPosition = buta->GetPosition(); // Get the position of the current Tori
-
-			XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
-			float closestTekiDistance = 1e30;
-
-			// Find the closest Teki
-			if (!tekiList.empty())
+			if (!buta->initial)
 			{
-				for (std::unique_ptr<Teki>& teki : tekiList) {
-					float distance = buta->SquaredDistance(butaPosition, teki->GetPosition());
-					if (distance < closestTekiDistance) {
-						closestTekiDistance = distance;
-						closestTekiPosition = teki->GetPosition();
+				XMFLOAT3 butaPosition = buta->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = buta->SquaredDistance(butaPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
 					}
 				}
-			}
 
-			XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
-			float closestEsaDistance = 1e30;
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
 
-			// Find the closest Esa
-			if (!esaList.empty())
-			{
-				for (std::unique_ptr<Esa>& esa : esaList) {
-					float distance = buta->SquaredDistance(butaPosition, esa->GetPosition());
-					if (distance < closestEsaDistance) {
-						closestEsaDistance = distance;
-						closestEsaPosition = esa->GetPosition();
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = buta->SquaredDistance(butaPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
 					}
 				}
-			}
 
-			// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-			buta->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				buta->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+			}
 		}
 		else
 		{
@@ -379,40 +382,43 @@ void GamePlay::Update()
 	{
 		if (!hitsuji->goalFlag)
 		{
-			XMFLOAT3 hitsujiPosition = hitsuji->GetPosition(); // Get the position of the current Tori
-
-			XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
-			float closestTekiDistance = 1e30;
-
-			// Find the closest Teki
-			if (!tekiList.empty())
+			if (!hitsuji->initial)
 			{
-				for (std::unique_ptr<Teki>& teki : tekiList) {
-					float distance = hitsuji->SquaredDistance(hitsujiPosition, teki->GetPosition());
-					if (distance < closestTekiDistance) {
-						closestTekiDistance = distance;
-						closestTekiPosition = teki->GetPosition();
+				XMFLOAT3 hitsujiPosition = hitsuji->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
 					}
 				}
-			}
 
-			XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
-			float closestEsaDistance = 1e30;
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
 
-			// Find the closest Esa
-			if (!esaList.empty())
-			{
-				for (std::unique_ptr<Esa>& esa : esaList) {
-					float distance = hitsuji->SquaredDistance(hitsujiPosition, esa->GetPosition());
-					if (distance < closestEsaDistance) {
-						closestEsaDistance = distance;
-						closestEsaPosition = esa->GetPosition();
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
 					}
 				}
-			}
 
-			// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-			hitsuji->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				hitsuji->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+			}
 		}
 		else
 		{
@@ -440,40 +446,43 @@ void GamePlay::Update()
 	{
 		if (!ushi->goalFlag)
 		{
-			XMFLOAT3 ushiPosition = ushi->GetPosition(); // Get the position of the current Tori
-
-			XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
-			float closestTekiDistance = 1e30;
-
-			// Find the closest Teki
-			if (!tekiList.empty())
+			if (!ushi->initial)
 			{
-				for (std::unique_ptr<Teki>& teki : tekiList) {
-					float distance = ushi->SquaredDistance(ushiPosition, teki->GetPosition());
-					if (distance < closestTekiDistance) {
-						closestTekiDistance = distance;
-						closestTekiPosition = teki->GetPosition();
+				XMFLOAT3 ushiPosition = ushi->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = ushi->SquaredDistance(ushiPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
 					}
 				}
-			}
 
-			XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
-			float closestEsaDistance = 1e30;
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
 
-			// Find the closest Esa
-			if (!esaList.empty())
-			{
-				for (std::unique_ptr<Esa>& esa : esaList) {
-					float distance = ushi->SquaredDistance(ushiPosition, esa->GetPosition());
-					if (distance < closestEsaDistance) {
-						closestEsaDistance = distance;
-						closestEsaPosition = esa->GetPosition();
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = ushi->SquaredDistance(ushiPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
 					}
 				}
-			}
 
-			// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-			ushi->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				ushi->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+			}
 		}
 		else
 		{

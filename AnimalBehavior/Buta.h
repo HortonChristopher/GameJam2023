@@ -77,13 +77,12 @@ private: // メンバ変数
 
 	float randomCooldown = 0.0f;
 
-	bool initial = true; // Moving out of barn into play area
 	bool moving = false;
 
 	const float defaultUpdateEntitiesPosition = 2500.0f;
 
-	const int mapBoundaries = 150;
-	const int mapBoundariesTimesTwo = 300;
+	const int mapBoundaries = 148;
+	const int mapBoundariesTimesTwo = 297;
 
 	const float timerOneFrame = 1.0f;
 
@@ -95,7 +94,7 @@ private: // メンバ変数
 	const int randomCooldownTimesTwo = 60;
 
 	const float toriRadius = 5.0f;
-	const float tekiDistance = 100.0f;
+	const float tekiDistance = 60.0f;
 	const float esaMaxDistance = 60.0f;
 	const float esaMinDistance = 5.0f;
 
@@ -111,6 +110,7 @@ private: // メンバ変数
 	float yRotationOffset = 90.0f;
 public:
 	// デスフラグ
+	bool initial = true; // Moving out of barn into play area
 	bool deathFlag = false;
 	bool goalFlag = false;
 	bool goalSet = false;
