@@ -170,6 +170,8 @@ void GamePlay::Initialize()
 	player->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	modelPig = ObjModel::CreateFromOBJ("buta");
+	modelSheep = ObjModel::CreateFromOBJ("hitsuzi");
+	modelHorse = ObjModel::CreateFromOBJ("ushi");
 
 	// パーティクル
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
@@ -181,10 +183,14 @@ void GamePlay::Initialize()
 
 	modelBullet = ObjModel::CreateFromOBJ("bullet2");
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f });
+		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f}, {1.0f, 1.0f, 1.0f}, false);
 		toriList.push_back(std::move(newTori));
+		std::unique_ptr<Tori> newHitsuji = Tori::Create(modelSheep, { -130.0f + (260.0f * i), player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		toriList.push_back(std::move(newHitsuji));
+		std::unique_ptr<Tori> newUshi = Tori::Create(modelHorse, { -130.0f + (260.0f * i), player->GetPosition().y, -130.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		toriList.push_back(std::move(newUshi));
 	}
 
 	ShowCursor(false);
@@ -231,6 +237,45 @@ void GamePlay::Update()
 	if (ReticlePos.y >= 575.0f)
 	{
 		ReticlePos.y = 575.0f;
+	}
+
+	if (pigRespawn >= pigRespawnMax && pigNumber < pigNumberMax)
+	{
+		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		toriList.push_back(std::move(newTori));
+
+		pigRespawn = 0.0f;
+		pigNumber++;
+	}
+	else
+	{
+		pigRespawn += 1.0f;
+	}
+
+	if (sheepRespawn >= sheepRespawnMax && sheepNumber < sheepNumberMax)
+	{
+		std::unique_ptr<Tori> newHitsuji = Tori::Create(modelSheep, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		toriList.push_back(std::move(newHitsuji));
+
+		sheepRespawn = 0.0f;
+		sheepNumber++;
+	}
+	else
+	{
+		sheepRespawn += 1.0f;
+	}
+
+	if (horseRespawn >= horseRespawnMax && horseNumber < horseNumberMax)
+	{
+		std::unique_ptr<Tori> newHorse = Tori::Create(modelHorse, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		toriList.push_back(std::move(newHorse));
+
+		horseRespawn = 0.0f;
+		horseNumber++;
+	}
+	else
+	{
+		horseRespawn += 1.0f;
 	}
 
 	if (input->TriggerKey(DIK_E))
@@ -351,7 +396,7 @@ void GamePlay::Update()
 		eastGoalEastFence[i]->Update();
 	}
 
-	objPlayerStop->SetPosition(player->GetPosition());
+	objPlayerStop->SetPosition({player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z});
 	objPlayerStop->SetRotation(player->GetRotation());
 	objPlayerStop->Update();
 
@@ -407,7 +452,7 @@ void GamePlay::Draw()
 	// 3Dオブクジェクトの描画
 	ground->Draw();
 	skydome->Draw();
-	player->Draw();
+	//player->Draw();
 	
 	// Spawn Barn
 	barn->Draw();

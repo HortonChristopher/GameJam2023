@@ -1,6 +1,6 @@
 #include "Tori.h"
 
-std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale)
+std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
 {
 	// 3Dオブジェクトのインスタンスを生成
 	Tori* instance = new Tori();
@@ -9,7 +9,7 @@ std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, con
 	}
 
 	// 初期化
-	if (!instance->Initialize(position, scale)) {
+	if (!instance->Initialize(position, scale, initialB)) {
 		delete instance;
 		assert(0);
 	}
@@ -22,7 +22,7 @@ std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, con
 	return std::unique_ptr<Tori>(instance);
 }
 
-bool Tori::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
+bool Tori::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
 {
 	if (!ObjObject::Initialize())
 	{
@@ -30,6 +30,7 @@ bool Tori::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
 	}
 	this->position = position;
 	this->scale = scale;
+	this->initial = initialB;
 
 	return true;
 }
@@ -115,6 +116,11 @@ void Tori::Update()
 
 			timer = timerReset;
 
+			if (initial)
+			{
+				initial = false;
+			}
+
 			randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 		}
 	}
@@ -125,7 +131,6 @@ void Tori::SetNewMovementPosition()
 	if (initial)
 	{
 		target = { 0.0f, 0.0f, 155.0f };
-		initial = false;
 	}
 	else
 	{
@@ -165,6 +170,11 @@ void Tori::Move(bool forwardBackwards)
 		position.x -= velocity.x * speed;
 		position.y -= velocity.y * speed;
 		position.z -= velocity.z * speed;
+	}
+
+	if (!initial)
+	{
+		checkBoundaries();
 	}
 
 	SetRotation({ rotation.x, -degrees - yRotationOffset, rotation.z });
@@ -271,4 +281,24 @@ float Tori::SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2
 	float dy = position2.y - position1.y;
 	float dz = position2.z - position1.z;
 	return dx * dx + dy * dy + dz * dz;
+}
+
+void Tori::checkBoundaries()
+{
+	if (position.x >= 149.0f)
+	{
+		position.x = 149.0f;
+	}
+	else if (position.x <= -149.0f)
+	{
+		position.x = -149.0f;
+	}
+	if (position.z >= 149.0f)
+	{
+		position.z = 149.0f;
+	}
+	else if (position.z <= -149.0f)
+	{
+		position.z = -149.0f;
+	}
 }

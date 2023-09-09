@@ -192,6 +192,8 @@ private: // メンバ変数
 	ObjModel* modelBullet = nullptr;
 
 	ObjModel* modelPig = nullptr;
+	ObjModel* modelSheep = nullptr;
+	ObjModel* modelHorse = nullptr;
 
 	Player* player = nullptr;
 
@@ -208,6 +210,20 @@ private: // メンバ変数
 	FbxObject3d* objPlayerRun = nullptr;
 	FbxObject3d* objPlayerThrow = nullptr;
 	FbxObject3d* PlayerCall = nullptr;
+
+	// Temporary
+	int pigNumber = 2;
+	const int pigNumberMax = 10;
+	int sheepNumber = 2;
+	const int sheepNumberMax = 10;
+	int horseNumber = 2;
+	const int horseNumberMax = 10;
+	float pigRespawn = 0.0f;
+	const float pigRespawnMax = 240.0f;
+	float sheepRespawn = 0.0f;
+	const float sheepRespawnMax = 360.0f;
+	float horseRespawn = 0.0f;
+	const float horseRespawnMax = 480.0f;
 
 	//FBXオブジェクト
 
