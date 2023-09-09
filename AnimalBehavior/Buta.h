@@ -2,7 +2,7 @@
 #include "ObjObject.h"
 #include "Goal.h"
 
-class Tori :
+class Buta :
 	public ObjObject
 {
 protected:
@@ -33,7 +33,7 @@ private:
 
 public: // 静的メンバ関数
 	// 3Dオブジェクト生成
-	static std::unique_ptr<Tori>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB);
+	static std::unique_ptr<Buta>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB);
 
 public: // メンバ関数
 	// 初期化
@@ -58,7 +58,7 @@ public: // メンバ関数
 	void RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin);
 
 	float SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2);
-	
+
 	void checkBoundaries();
 
 private: // メンバ変数

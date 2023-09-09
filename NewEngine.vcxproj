@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimalBehavior\Buta.cpp" />
     <ClCompile Include="AnimalBehavior\Tori.cpp" />
     <ClCompile Include="BossMainCore.cpp" />
     <ClCompile Include="BossShield.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="DebugText\DebugText.cpp" />
     <ClCompile Include="DeltaGageUI.cpp" />
     <ClCompile Include="GageUI.cpp" />
+    <ClCompile Include="GamePlay\Goal.cpp" />
     <ClCompile Include="Items\Esa.cpp" />
     <ClCompile Include="Items\Teki.cpp" />
     <ClCompile Include="Math\Easing.cpp" />
@@ -301,6 +303,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimalBehavior\Buta.h" />
     <ClInclude Include="AnimalBehavior\Tori.h" />
     <ClInclude Include="BossMainCore.h" />
     <ClInclude Include="BossShield.h" />

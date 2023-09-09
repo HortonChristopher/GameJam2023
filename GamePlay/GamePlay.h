@@ -139,6 +139,8 @@ public: // メンバ関数
 	void DrawDebugText();
 
 	void FenceCreation();
+	void UpdateFences();
+	void DrawFences();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -224,6 +226,12 @@ private: // メンバ変数
 	const float sheepRespawnMax = 360.0f;
 	float horseRespawn = 0.0f;
 	const float horseRespawnMax = 480.0f;
+	int goalPigs = 0;
+	const int goalPigsMax = 20;
+	int goalSheep = 0;
+	const int goalSheepMax = 20;
+	int goalHorse = 0;
+	const int goalHorseMax = 20;
 
 	//FBXオブジェクト
 

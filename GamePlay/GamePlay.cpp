@@ -316,41 +316,67 @@ void GamePlay::Update()
 
 	for (std::unique_ptr<Tori>& tori : toriList)
 	{
-		XMFLOAT3 toriPosition = tori->GetPosition(); // Get the position of the current Tori
-
-		XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
-		float closestTekiDistance = 1e30;
-
-		// Find the closest Teki
-		if (!tekiList.empty())
+		if (!tori->goalFlag)
 		{
-			for (std::unique_ptr<Teki>& teki : tekiList) {
-				float distance = tori->SquaredDistance(toriPosition, teki->GetPosition());
-				if (distance < closestTekiDistance) {
-					closestTekiDistance = distance;
-					closestTekiPosition = teki->GetPosition();
+			XMFLOAT3 toriPosition = tori->GetPosition(); // Get the position of the current Tori
+
+			XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+			float closestTekiDistance = 1e30;
+
+			// Find the closest Teki
+			if (!tekiList.empty())
+			{
+				for (std::unique_ptr<Teki>& teki : tekiList) {
+					float distance = tori->SquaredDistance(toriPosition, teki->GetPosition());
+					if (distance < closestTekiDistance) {
+						closestTekiDistance = distance;
+						closestTekiPosition = teki->GetPosition();
+					}
+				}
+			}
+
+			XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+			float closestEsaDistance = 1e30;
+
+			// Find the closest Esa
+			if (!esaList.empty())
+			{
+				for (std::unique_ptr<Esa>& esa : esaList) {
+					float distance = tori->SquaredDistance(toriPosition, esa->GetPosition());
+					if (distance < closestEsaDistance) {
+						closestEsaDistance = distance;
+						closestEsaPosition = esa->GetPosition();
+					}
+				}
+			}
+
+			// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+			tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+		}
+		else
+		{
+			if (!tori->goalSet)
+			{
+				if (goalPigs < goalPigsMax)
+				{
+					tori->goalNumber = goalPigs;
+					goalPigs++;
+					tori->goalSet = true;
+				}
+				else
+				{
+					tori->goalSet = true;
+					tori->deathFlag = true;
 				}
 			}
 		}
-
-		XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
-		float closestEsaDistance = 1e30;
-
-		// Find the closest Esa
-		if (!esaList.empty())
-		{
-			for (std::unique_ptr<Esa>& esa : esaList) {
-				float distance = tori->SquaredDistance(toriPosition, esa->GetPosition());
-				if (distance < closestEsaDistance) {
-					closestEsaDistance = distance;
-					closestEsaPosition = esa->GetPosition();
-				}
-			}
-		}
-
-		// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-		tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
 	}
+
+	toriList.remove_if([](std::unique_ptr<Tori>& tori)
+		{
+			return tori->GetDeathFlag();
+		}
+	);
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
@@ -364,37 +390,7 @@ void GamePlay::Update()
 	barn->Update();
 
 	// Fences
-	for (int i = 0; i < 7; i++)
-	{
-		if (i < 6)
-		{
-			westSideNorthFence[i]->Update();
-			westSideSouthFence[i]->Update();
-			southSideWestFence[i]->Update();
-			southSideEastFence[i]->Update();
-			eastSideNorthFence[i]->Update();
-			eastSideSouthFence[i]->Update();
-			northSideWestFence[i]->Update();
-			northSideEastFence[i]->Update();
-		}
-		if (i < 3)
-		{
-			westGoalNorthFence[i]->Update();
-			westGoalSouthFence[i]->Update();
-			southGoalEastFence[i]->Update();
-			southGoalWestFence[i]->Update();
-			eastGoalNorthFence[i]->Update();
-			eastGoalSouthFence[i]->Update();
-		}
-		if (i < 2)
-		{
-			barnWestFence[i]->Update();
-			barnEastFence[i]->Update();
-		}
-		westGoalWestFence[i]->Update();
-		southGoalSouthFence[i]->Update();
-		eastGoalEastFence[i]->Update();
-	}
+	UpdateFences();
 
 	objPlayerStop->SetPosition({player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z});
 	objPlayerStop->SetRotation(player->GetRotation());
@@ -458,37 +454,7 @@ void GamePlay::Draw()
 	barn->Draw();
 
 	// Fences
-	for (int i = 0; i < 7; i++)
-	{
-		if (i < 6)
-		{
-			westSideNorthFence[i]->Draw();
-			westSideSouthFence[i]->Draw();
-			southSideWestFence[i]->Draw();
-			southSideEastFence[i]->Draw();
-			eastSideNorthFence[i]->Draw();
-			eastSideSouthFence[i]->Draw();
-			northSideEastFence[i]->Draw();
-			northSideWestFence[i]->Draw();
-		}
-		if (i < 3)
-		{
-			westGoalNorthFence[i]->Draw();
-			westGoalSouthFence[i]->Draw();
-			southGoalWestFence[i]->Draw();
-			southGoalEastFence[i]->Draw();
-			eastGoalSouthFence[i]->Draw();
-			eastGoalNorthFence[i]->Draw();
-		}
-		if (i < 2)
-		{
-			barnWestFence[i]->Draw();
-			barnEastFence[i]->Draw();
-		}
-		westGoalWestFence[i]->Draw();
-		southGoalSouthFence[i]->Draw();
-		eastGoalEastFence[i]->Draw();
-	}
+	DrawFences();
 
 	objPlayerStop->Draw(cmdList);
 
@@ -711,5 +677,75 @@ void GamePlay::FenceCreation()
 		eastGoalEastFence[i]->SetPosition({ 216.0f, -1.0f, -60.0f + (20.0f * i) });
 		eastGoalEastFence[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
 		eastGoalEastFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+	}
+}
+
+void GamePlay::UpdateFences()
+{
+	for (int i = 0; i < 7; i++)
+	{
+		if (i < 6)
+		{
+			westSideNorthFence[i]->Update();
+			westSideSouthFence[i]->Update();
+			southSideWestFence[i]->Update();
+			southSideEastFence[i]->Update();
+			eastSideNorthFence[i]->Update();
+			eastSideSouthFence[i]->Update();
+			northSideWestFence[i]->Update();
+			northSideEastFence[i]->Update();
+		}
+		if (i < 3)
+		{
+			westGoalNorthFence[i]->Update();
+			westGoalSouthFence[i]->Update();
+			southGoalEastFence[i]->Update();
+			southGoalWestFence[i]->Update();
+			eastGoalNorthFence[i]->Update();
+			eastGoalSouthFence[i]->Update();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Update();
+			barnEastFence[i]->Update();
+		}
+		westGoalWestFence[i]->Update();
+		southGoalSouthFence[i]->Update();
+		eastGoalEastFence[i]->Update();
+	}
+}
+
+void GamePlay::DrawFences()
+{
+	for (int i = 0; i < 7; i++)
+	{
+		if (i < 6)
+		{
+			westSideNorthFence[i]->Draw();
+			westSideSouthFence[i]->Draw();
+			southSideWestFence[i]->Draw();
+			southSideEastFence[i]->Draw();
+			eastSideNorthFence[i]->Draw();
+			eastSideSouthFence[i]->Draw();
+			northSideEastFence[i]->Draw();
+			northSideWestFence[i]->Draw();
+		}
+		if (i < 3)
+		{
+			westGoalNorthFence[i]->Draw();
+			westGoalSouthFence[i]->Draw();
+			southGoalWestFence[i]->Draw();
+			southGoalEastFence[i]->Draw();
+			eastGoalSouthFence[i]->Draw();
+			eastGoalNorthFence[i]->Draw();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Draw();
+			barnEastFence[i]->Draw();
+		}
+		westGoalWestFence[i]->Draw();
+		southGoalSouthFence[i]->Draw();
+		eastGoalEastFence[i]->Draw();
 	}
 }
