@@ -158,7 +158,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimalBehavior\Buta.cpp" />
+    <ClCompile Include="AnimalBehavior\Hitsuji.cpp" />
     <ClCompile Include="AnimalBehavior\Tori.cpp" />
+    <ClCompile Include="AnimalBehavior\Ushi.cpp" />
     <ClCompile Include="BossMainCore.cpp" />
     <ClCompile Include="BossShield.cpp" />
     <ClCompile Include="Boss\BossTurret.cpp" />
@@ -304,7 +306,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimalBehavior\Buta.h" />
+    <ClInclude Include="AnimalBehavior\Hitsuji.h" />
     <ClInclude Include="AnimalBehavior\Tori.h" />
+    <ClInclude Include="AnimalBehavior\Ushi.h" />
     <ClInclude Include="BossMainCore.h" />
     <ClInclude Include="BossShield.h" />
     <ClInclude Include="Boss\BossTurret.h" />

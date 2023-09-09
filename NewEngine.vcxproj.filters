@@ -268,6 +268,12 @@
     <ClCompile Include="AnimalBehavior\Buta.cpp">
       <Filter>AnimalBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="AnimalBehavior\Hitsuji.cpp">
+      <Filter>AnimalBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalBehavior\Ushi.cpp">
+      <Filter>AnimalBehavior</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FBX.hlsli">
@@ -473,6 +479,12 @@
       <Filter>Goal</Filter>
     </ClInclude>
     <ClInclude Include="AnimalBehavior\Buta.h">
+      <Filter>AnimalBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalBehavior\Hitsuji.h">
+      <Filter>AnimalBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalBehavior\Ushi.h">
       <Filter>AnimalBehavior</Filter>
     </ClInclude>
   </ItemGroup>
