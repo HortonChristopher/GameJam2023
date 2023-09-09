@@ -2,7 +2,7 @@
 #include "ObjObject.h"
 #include "Goal.h"
 
-class Tori :
+class Ushi :
 	public ObjObject
 {
 protected:
@@ -33,7 +33,7 @@ private:
 
 public: // 静的メンバ関数
 	// 3Dオブジェクト生成
-	static std::unique_ptr<Tori>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB);
+	static std::unique_ptr<Ushi>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB);
 
 public: // メンバ関数
 	// 初期化
@@ -58,7 +58,7 @@ public: // メンバ関数
 	void RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin);
 
 	float SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2);
-	
+
 	void checkBoundaries();
 
 private: // メンバ変数
@@ -77,17 +77,16 @@ private: // メンバ変数
 
 	float randomCooldown = 0.0f;
 
-	bool initial = true; // Moving out of barn into play area
 	bool moving = false;
 
 	const float defaultUpdateEntitiesPosition = 2500.0f;
 
-	const int mapBoundaries = 150;
-	const int mapBoundariesTimesTwo = 300;
+	const int mapBoundaries = 148;
+	const int mapBoundariesTimesTwo = 297;
 
 	const float timerOneFrame = 1.0f;
 
-	const float standingTimer = 300.0f;
+	const float standingTimer = 120.0f;
 	const float wanderMaxTimer = 600.0f;
 
 	const float timerReset = 0.0f;
@@ -95,7 +94,7 @@ private: // メンバ変数
 	const int randomCooldownTimesTwo = 60;
 
 	const float toriRadius = 5.0f;
-	const float tekiDistance = 100.0f;
+	const float tekiDistance = 60.0f;
 	const float esaMaxDistance = 60.0f;
 	const float esaMinDistance = 5.0f;
 
@@ -111,6 +110,7 @@ private: // メンバ変数
 	float yRotationOffset = 90.0f;
 public:
 	// デスフラグ
+	bool initial = true; // Moving out of barn into play area
 	bool deathFlag = false;
 	bool goalFlag = false;
 	bool goalSet = false;

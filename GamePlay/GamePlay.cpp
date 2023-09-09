@@ -211,6 +211,8 @@ void GamePlay::Initialize()
 	player->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	modelPig = ObjModel::CreateFromOBJ("buta");
+	modelSheep = ObjModel::CreateFromOBJ("hitsuzi");
+	modelHorse = ObjModel::CreateFromOBJ("ushi");
 
 	// パーティクル
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
@@ -222,10 +224,14 @@ void GamePlay::Initialize()
 
 	modelBullet = ObjModel::CreateFromOBJ("bullet2");
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 2; i++)
 	{
-		std::unique_ptr<Tori> newTori = Tori::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f });
-		toriList.push_back(std::move(newTori));
+		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f}, {1.0f, 1.0f, 1.0f}, false);
+		butaList.push_back(std::move(newButa));
+		std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { -130.0f + (260.0f * i), player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		hitsujiList.push_back(std::move(newHitsuji));
+		std::unique_ptr<Ushi> newUshi = Ushi::Create(modelHorse, { -130.0f + (260.0f * i), player->GetPosition().y, -130.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		ushiList.push_back(std::move(newUshi));
 	}
 
 	ShowCursor(false);
@@ -284,6 +290,45 @@ void GamePlay::Update()
 			PlayerState = 0;
 		}
 
+
+	if (pigRespawn >= pigRespawnMax && pigNumber < pigNumberMax)
+	{
+		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		butaList.push_back(std::move(newButa));
+
+		pigRespawn = 0.0f;
+		pigNumber++;
+	}
+	else
+	{
+		pigRespawn += 1.0f;
+	}
+
+	if (sheepRespawn >= sheepRespawnMax && sheepNumber < sheepNumberMax)
+	{
+		std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		hitsujiList.push_back(std::move(newHitsuji));
+
+		sheepRespawn = 0.0f;
+		sheepNumber++;
+	}
+	else
+	{
+		sheepRespawn += 1.0f;
+	}
+
+	if (horseRespawn >= horseRespawnMax && horseNumber < horseNumberMax)
+	{
+		std::unique_ptr<Ushi> newHorse = Ushi::Create(modelHorse, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+		ushiList.push_back(std::move(newHorse));
+
+		horseRespawn = 0.0f;
+		horseNumber++;
+	}
+	else
+	{
+		horseRespawn += 1.0f;
+	}
 
 	if (input->TriggerKey(DIK_E))
 	{
@@ -352,43 +397,215 @@ void GamePlay::Update()
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
-	for (std::unique_ptr<Tori>& tori : toriList)
+	for (std::unique_ptr<Buta>& buta : butaList)
 	{
-		XMFLOAT3 toriPosition = tori->GetPosition(); // Get the position of the current Tori
-
-		XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
-		float closestTekiDistance = 1e30;
-
-		// Find the closest Teki
-		if (!tekiList.empty())
+		if (!buta->goalFlag)
 		{
-			for (std::unique_ptr<Teki>& teki : tekiList) {
-				float distance = tori->SquaredDistance(toriPosition, teki->GetPosition());
-				if (distance < closestTekiDistance) {
-					closestTekiDistance = distance;
-					closestTekiPosition = teki->GetPosition();
+			if (!buta->initial)
+			{
+				XMFLOAT3 butaPosition = buta->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = buta->SquaredDistance(butaPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
+					}
 				}
+
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
+
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = buta->SquaredDistance(butaPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
+					}
+				}
+
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				buta->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
 			}
 		}
-
-		XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
-		float closestEsaDistance = 1e30;
-
-		// Find the closest Esa
-		if (!esaList.empty())
+		else
 		{
-			for (std::unique_ptr<Esa>& esa : esaList) {
-				float distance = tori->SquaredDistance(toriPosition, esa->GetPosition());
-				if (distance < closestEsaDistance) {
-					closestEsaDistance = distance;
-					closestEsaPosition = esa->GetPosition();
+			if (!buta->goalSet)
+			{
+				if (goalPigs < goalPigsMax)
+				{
+					buta->goalNumber = goalPigs;
+					goalPigs++;
+					buta->goalSet = true;
 				}
+				else
+				{
+					buta->goalSet = true;
+					buta->deathFlag = true;
+				}
+
+				score += 10.0f;
+				pigNumber--;
 			}
 		}
-
-		// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
-		tori->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
 	}
+
+	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
+	{
+		if (!hitsuji->goalFlag)
+		{
+			if (!hitsuji->initial)
+			{
+				XMFLOAT3 hitsujiPosition = hitsuji->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
+					}
+				}
+
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
+
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
+					}
+				}
+
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				hitsuji->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+			}
+		}
+		else
+		{
+			if (!hitsuji->goalSet)
+			{
+				if (goalSheep < goalSheepMax)
+				{
+					hitsuji->goalNumber = goalSheep;
+					goalSheep++;
+					hitsuji->goalSet = true;
+				}
+				else
+				{
+					hitsuji->goalSet = true;
+					hitsuji->deathFlag = true;
+				}
+
+				score += 10.0f;
+				sheepNumber--;
+			}
+		}
+	}
+
+	for (std::unique_ptr<Ushi>& ushi : ushiList)
+	{
+		if (!ushi->goalFlag)
+		{
+			if (!ushi->initial)
+			{
+				XMFLOAT3 ushiPosition = ushi->GetPosition(); // Get the position of the current Tori
+
+				XMFLOAT3 closestTekiPosition = { 2500.0f, 2500.0f, 2500.0f };
+				float closestTekiDistance = 1e30;
+
+				// Find the closest Teki
+				if (!tekiList.empty())
+				{
+					for (std::unique_ptr<Teki>& teki : tekiList) {
+						float distance = ushi->SquaredDistance(ushiPosition, teki->GetPosition());
+						if (distance < closestTekiDistance) {
+							closestTekiDistance = distance;
+							closestTekiPosition = teki->GetPosition();
+						}
+					}
+				}
+
+				XMFLOAT3 closestEsaPosition = { 2500, 2500, 2500 };
+				float closestEsaDistance = 1e30;
+
+				// Find the closest Esa
+				if (!esaList.empty())
+				{
+					for (std::unique_ptr<Esa>& esa : esaList) {
+						float distance = ushi->SquaredDistance(ushiPosition, esa->GetPosition());
+						if (distance < closestEsaDistance) {
+							closestEsaDistance = distance;
+							closestEsaPosition = esa->GetPosition();
+						}
+					}
+				}
+
+				// Now closestTekiPosition and closestEsaPosition hold the positions of the closest Teki and Esa respectively
+				ushi->UpdateEntitiesInRange(closestTekiPosition, closestEsaPosition, player->GetPosition());
+			}
+		}
+		else
+		{
+			if (!ushi->goalSet)
+			{
+				if (goalHorse < goalHorseMax)
+				{
+					ushi->goalNumber = goalHorse;
+					goalHorse++;
+					ushi->goalSet = true;
+				}
+				else
+				{
+					ushi->goalSet = true;
+					ushi->deathFlag = true;
+				}
+			}
+
+			score += 10.0f;
+			horseNumber--;
+		}
+	}
+
+	butaList.remove_if([](std::unique_ptr<Buta>& buta)
+		{
+			return buta->GetDeathFlag();
+		}
+	);
+
+	hitsujiList.remove_if([](std::unique_ptr<Hitsuji>& hitsuji)
+		{
+			return hitsuji->GetDeathFlag();
+		}
+	);
+
+	ushiList.remove_if([](std::unique_ptr<Ushi>& ushi)
+		{
+			return ushi->GetDeathFlag();
+		}
+	);
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
@@ -402,68 +619,21 @@ void GamePlay::Update()
 	barn->Update();
 
 	// Fences
-	for (int i = 0; i < 7; i++)
+	UpdateFences();
+
+	for (std::unique_ptr<Buta>& buta : butaList)
 	{
-		if (i < 6)
-		{
-			westSideNorthFence[i]->Update();
-			westSideSouthFence[i]->Update();
-			southSideWestFence[i]->Update();
-			southSideEastFence[i]->Update();
-			eastSideNorthFence[i]->Update();
-			eastSideSouthFence[i]->Update();
-			northSideWestFence[i]->Update();
-			northSideEastFence[i]->Update();
-		}
-		if (i < 3)
-		{
-			westGoalNorthFence[i]->Update();
-			westGoalSouthFence[i]->Update();
-			southGoalEastFence[i]->Update();
-			southGoalWestFence[i]->Update();
-			eastGoalNorthFence[i]->Update();
-			eastGoalSouthFence[i]->Update();
-		}
-		if (i < 2)
-		{
-			barnWestFence[i]->Update();
-			barnEastFence[i]->Update();
-		}
-		westGoalWestFence[i]->Update();
-		southGoalSouthFence[i]->Update();
-		eastGoalEastFence[i]->Update();
+		buta->Update();
 	}
 
-	//FBX各種の座標、ローテート更新
-	//待機
-	objPlayerStop->SetPosition(player->GetPosition());
-	objPlayerStop->SetRotation(player->GetRotation());
-	objPlayerStop->Update();
-
-	//歩き
-	objPlayerWalking->SetPosition(player->GetPosition());
-	objPlayerWalking->SetRotation(player->GetRotation());
-	objPlayerWalking->Update();
-
-	//走り
-	objPlayerRun->SetPosition(player->GetPosition());
-	objPlayerRun->SetRotation(player->GetRotation());
-	objPlayerRun->Update();
-
-	//エサ投げ
-	objPlayerThrow->SetPosition(player->GetPosition());
-	objPlayerThrow->SetRotation(player->GetRotation());
-	objPlayerThrow->Update();
-
-	//
-	objPlayerCall->SetPosition(player->GetPosition());
-	objPlayerCall->SetRotation(player->GetRotation());
-	objPlayerCall->Update();
-
-
-	for (std::unique_ptr<Tori>& tori : toriList)
+	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
 	{
-		tori->Update();
+		hitsuji->Update();
+	}
+
+	for (std::unique_ptr<Ushi>& ushi : ushiList)
+	{
+		ushi->Update();
 	}
 
 	for (std::unique_ptr<Esa>& esa : esaList)
@@ -487,6 +657,47 @@ void GamePlay::Update()
 			return teki->GetDeathFlag();
 		}
 	);
+
+	//FBX各種の座標、ローテート更新
+	//待機
+	objPlayerStop->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+	objPlayerStop->SetRotation(player->GetRotation());
+	objPlayerStop->Update();
+
+	//歩き
+	objPlayerWalking->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+	objPlayerWalking->SetRotation(player->GetRotation());
+	objPlayerWalking->Update();
+
+	//走り
+	objPlayerRun->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+	objPlayerRun->SetRotation(player->GetRotation());
+	objPlayerRun->Update();
+
+	//エサ投げ
+	objPlayerThrow->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+	objPlayerThrow->SetRotation(player->GetRotation());
+	objPlayerThrow->Update();
+
+	//
+	objPlayerCall->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+	objPlayerCall->SetRotation(player->GetRotation());
+	objPlayerCall->Update();
+
+	frameTimer -= 1.0f;
+	timer = (frameTimer / 60.0f);
+
+	//Debug Start
+	/*char msgbuf[256];
+	char msgbuf2[256];
+	char msgbuf3[256];
+	sprintf_s(msgbuf, 256, "FT: %f\n", frameTimer);
+	sprintf_s(msgbuf2, 256, "T: %d\n", timer);
+	sprintf_s(msgbuf3, 256, "S: %f\n", score);
+	OutputDebugStringA(msgbuf);
+	OutputDebugStringA(msgbuf2);
+	OutputDebugStringA(msgbuf3)*/
+	//Debug End
 }
 
 void GamePlay::Draw()
@@ -513,45 +724,13 @@ void GamePlay::Draw()
 	// 3Dオブクジェクトの描画
 	ground->Draw();
 	skydome->Draw();
-
-	//プレイヤーの描画
-	player->Draw();
+	//player->Draw();
 	
 	// Spawn Barn
 	barn->Draw();
 
 	// Fences
-	for (int i = 0; i < 7; i++)
-	{
-		if (i < 6)
-		{
-			westSideNorthFence[i]->Draw();
-			westSideSouthFence[i]->Draw();
-			southSideWestFence[i]->Draw();
-			southSideEastFence[i]->Draw();
-			eastSideNorthFence[i]->Draw();
-			eastSideSouthFence[i]->Draw();
-			northSideEastFence[i]->Draw();
-			northSideWestFence[i]->Draw();
-		}
-		if (i < 3)
-		{
-			westGoalNorthFence[i]->Draw();
-			westGoalSouthFence[i]->Draw();
-			southGoalWestFence[i]->Draw();
-			southGoalEastFence[i]->Draw();
-			eastGoalSouthFence[i]->Draw();
-			eastGoalNorthFence[i]->Draw();
-		}
-		if (i < 2)
-		{
-			barnWestFence[i]->Draw();
-			barnEastFence[i]->Draw();
-		}
-		westGoalWestFence[i]->Draw();
-		southGoalSouthFence[i]->Draw();
-		eastGoalEastFence[i]->Draw();
-	}
+	DrawFences();
 
 	//プレイヤーの描画
 	if (PlayerState == 0)
@@ -579,9 +758,19 @@ void GamePlay::Draw()
 		objPlayerCall->Draw(cmdList);
 	}
 
-	for (std::unique_ptr<Tori>& tori : toriList)
+	for (std::unique_ptr<Buta>& buta : butaList)
 	{
-		tori->Draw();
+		buta->Draw();
+	}
+
+	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
+	{
+		hitsuji->Draw();
+	}
+
+	for (std::unique_ptr<Ushi>& ushi : ushiList)
+	{
+		ushi->Draw();
 	}
 
 	for (std::unique_ptr<Esa>& esa : esaList)
@@ -806,5 +995,75 @@ void GamePlay::FenceCreation()
 		eastGoalEastFence[i]->SetPosition({ 216.0f, -1.0f, -60.0f + (20.0f * i) });
 		eastGoalEastFence[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
 		eastGoalEastFence[i]->SetScale({ 1.0f, 1.0f, 1.0f });
+	}
+}
+
+void GamePlay::UpdateFences()
+{
+	for (int i = 0; i < 7; i++)
+	{
+		if (i < 6)
+		{
+			westSideNorthFence[i]->Update();
+			westSideSouthFence[i]->Update();
+			southSideWestFence[i]->Update();
+			southSideEastFence[i]->Update();
+			eastSideNorthFence[i]->Update();
+			eastSideSouthFence[i]->Update();
+			northSideWestFence[i]->Update();
+			northSideEastFence[i]->Update();
+		}
+		if (i < 3)
+		{
+			westGoalNorthFence[i]->Update();
+			westGoalSouthFence[i]->Update();
+			southGoalEastFence[i]->Update();
+			southGoalWestFence[i]->Update();
+			eastGoalNorthFence[i]->Update();
+			eastGoalSouthFence[i]->Update();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Update();
+			barnEastFence[i]->Update();
+		}
+		westGoalWestFence[i]->Update();
+		southGoalSouthFence[i]->Update();
+		eastGoalEastFence[i]->Update();
+	}
+}
+
+void GamePlay::DrawFences()
+{
+	for (int i = 0; i < 7; i++)
+	{
+		if (i < 6)
+		{
+			westSideNorthFence[i]->Draw();
+			westSideSouthFence[i]->Draw();
+			southSideWestFence[i]->Draw();
+			southSideEastFence[i]->Draw();
+			eastSideNorthFence[i]->Draw();
+			eastSideSouthFence[i]->Draw();
+			northSideEastFence[i]->Draw();
+			northSideWestFence[i]->Draw();
+		}
+		if (i < 3)
+		{
+			westGoalNorthFence[i]->Draw();
+			westGoalSouthFence[i]->Draw();
+			southGoalWestFence[i]->Draw();
+			southGoalEastFence[i]->Draw();
+			eastGoalSouthFence[i]->Draw();
+			eastGoalNorthFence[i]->Draw();
+		}
+		if (i < 2)
+		{
+			barnWestFence[i]->Draw();
+			barnEastFence[i]->Draw();
+		}
+		westGoalWestFence[i]->Draw();
+		southGoalSouthFence[i]->Draw();
+		eastGoalEastFence[i]->Draw();
 	}
 }

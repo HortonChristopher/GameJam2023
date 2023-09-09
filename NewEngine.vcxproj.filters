@@ -113,6 +113,9 @@
     <Filter Include="Items">
       <UniqueIdentifier>{3181fc52-8b20-48bb-a95e-6adca7e2a9b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Goal">
+      <UniqueIdentifier>{b9820790-3b48-47e1-9e71-df15e5cdd024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -258,6 +261,18 @@
     </ClCompile>
     <ClCompile Include="Items\Teki.cpp">
       <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePlay\Goal.cpp">
+      <Filter>Goal</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalBehavior\Buta.cpp">
+      <Filter>AnimalBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalBehavior\Hitsuji.cpp">
+      <Filter>AnimalBehavior</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimalBehavior\Ushi.cpp">
+      <Filter>AnimalBehavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -457,9 +472,20 @@
     <ClInclude Include="Items\Esa.h">
       <Filter>Items</Filter>
     </ClInclude>
-    <ClInclude Include="GamePlay\Goal.h" />
     <ClInclude Include="Items\Teki.h">
       <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay\Goal.h">
+      <Filter>Goal</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalBehavior\Buta.h">
+      <Filter>AnimalBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalBehavior\Hitsuji.h">
+      <Filter>AnimalBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimalBehavior\Ushi.h">
+      <Filter>AnimalBehavior</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

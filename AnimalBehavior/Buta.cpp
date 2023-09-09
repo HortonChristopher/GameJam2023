@@ -1,9 +1,9 @@
-#include "Tori.h"
+#include "Buta.h"
 
-std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
+std::unique_ptr<Buta> Buta::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Tori* instance = new Tori();
+	Buta* instance = new Buta();
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -19,10 +19,10 @@ std::unique_ptr<Tori> Tori::Create(ObjModel* model, const XMFLOAT3 position, con
 		instance->SetModel(model);
 	}
 
-	return std::unique_ptr<Tori>(instance);
+	return std::unique_ptr<Buta>(instance);
 }
 
-bool Tori::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
+bool Buta::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initialB)
 {
 	if (!ObjObject::Initialize())
 	{
@@ -37,7 +37,7 @@ bool Tori::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initia
 	return true;
 }
 
-void Tori::Update()
+void Buta::Update()
 {
 	ObjObject::Update();
 
@@ -53,13 +53,25 @@ void Tori::Update()
 				break;
 			case Teki_Moving:
 				Move(true); // Moving AWAY from teki in direction Player is facing
+
+				if (timer > 180.0f)
+				{
+					timer = timerReset;
+					tekiReaction = Teki_Standing;
+					break;
+				}
+
+				timer += timerOneFrame;
 				break;
 			case Teki_Standing:
 				if (timer >= standingTimer)
 				{
 					tekiSet = false;
 					timer = timerReset;
+					moving = false;
+					randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 					tekiReaction = Teki_None;
+					break;
 				}
 
 				timer += timerOneFrame;
@@ -78,13 +90,25 @@ void Tori::Update()
 				break;
 			case Esa_Moving:
 				Move(true); // Moving towards target
+
+				if (timer > 180.0f)
+				{
+					timer = timerReset;
+					esaReaction = Esa_Standing;
+					break;
+				}
+
+				timer += timerOneFrame;
 				break;
 			case Esa_Standing:
 				if (timer >= standingTimer)
 				{
 					esaSet = false;
 					timer = timerReset;
+					moving = false;
+					randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 					esaReaction = Esa_None;
+					break;
 				}
 
 				timer += timerOneFrame;
@@ -140,7 +164,7 @@ void Tori::Update()
 					target = goal->pigGoalPositions[i];
 
 					goalMagnitude = (float)sqrt((target.x - position.x) * (target.x - position.x) + (target.y - position.y) * (target.y - position.y) + (target.z - position.z) * (target.z - position.z));
-				
+
 					velocity.x = (target.x - position.x) / goalMagnitude;
 					velocity.y = (target.y - position.y) / goalMagnitude;
 					velocity.z = (target.z - position.z) / goalMagnitude;
@@ -158,20 +182,22 @@ void Tori::Update()
 				position.x += velocity.x * speed;
 				position.y += velocity.y * speed;
 				position.z += velocity.z * speed;
+
+				SetRotation({ rotation.x, -degrees - yRotationOffset, rotation.z });
 			}
 			else
 			{
 				position = target;
 				rotation = { 0.0f, 270.0f, 0.0f };
+				SetRotation(rotation);
 			}
 		}
-		
-		SetRotation(rotation);
+
 		SetPosition(position);
 	}
 }
 
-void Tori::SetNewMovementPosition()
+void Buta::SetNewMovementPosition()
 {
 	if (initial)
 	{
@@ -191,7 +217,7 @@ void Tori::SetNewMovementPosition()
 	velocity.z = (target.z - position.z) / magnitude;
 }
 
-void Tori::Move(bool forwardBackwards)
+void Buta::Move(bool forwardBackwards)
 {
 	if (forwardBackwards)
 	{
@@ -226,12 +252,15 @@ void Tori::Move(bool forwardBackwards)
 	SetPosition(position);
 }
 
-void Tori::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XMFLOAT3 playerPosition)
+void Buta::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XMFLOAT3 playerPosition)
 {
 	if (!goalFlag)
 	{
-		if (tekiPosition.x != defaultUpdateEntitiesPosition || tekiPosition.y != defaultUpdateEntitiesPosition || tekiPosition.z != defaultUpdateEntitiesPosition) {
-			TekiInRange(tekiPosition, playerPosition);
+		if (!tekiSet)
+		{
+			if (tekiPosition.x != defaultUpdateEntitiesPosition || tekiPosition.y != defaultUpdateEntitiesPosition || tekiPosition.z != defaultUpdateEntitiesPosition) {
+				TekiInRange(tekiPosition, playerPosition);
+			}
 		}
 
 		if (tekiReaction == Teki_None)
@@ -243,7 +272,7 @@ void Tori::UpdateEntitiesInRange(XMFLOAT3 tekiPosition, XMFLOAT3 esaPosition, XM
 	}
 }
 
-bool Tori::ItemIntersection(float radius1, const XMFLOAT3& center2, float radius2)
+bool Buta::ItemIntersection(float radius1, const XMFLOAT3& center2, float radius2)
 {
 	// Calculate the squared distance between the centers of the spheres along the X and Z axes
 	float dx = center2.x - position.x;
@@ -258,7 +287,7 @@ bool Tori::ItemIntersection(float radius1, const XMFLOAT3& center2, float radius
 	return squaredDistance <= squaredSumRadii;
 }
 
-void Tori::EsaInRange(XMFLOAT3 esaPosition)
+void Buta::EsaInRange(XMFLOAT3 esaPosition)
 {
 	if (ItemIntersection(toriRadius, esaPosition, esaMaxDistance) && !ItemIntersection(toriRadius, esaPosition, esaMinDistance))
 	{
@@ -289,7 +318,7 @@ void Tori::EsaInRange(XMFLOAT3 esaPosition)
 	}
 }
 
-void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
+void Buta::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 {
 	if (ItemIntersection(toriRadius, tekiPosition, tekiDistance)) // To do: Move this center to in front of the item. TL;DR just place the center half the radius in the forward direction the player is facing at the time of placement.
 	{
@@ -316,7 +345,7 @@ void Tori::TekiInRange(XMFLOAT3 tekiPosition, XMFLOAT3 playerPosition)
 	}
 }
 
-void Tori::RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin)
+void Buta::RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin)
 {
 	x = (target.x - origin.x);
 	z = (target.z - origin.z);
@@ -324,14 +353,15 @@ void Tori::RotationVectorSet(XMFLOAT3 target, XMFLOAT3 origin)
 	degrees = DirectX::XMConvertToDegrees(radians);
 }
 
-float Tori::SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2) {
+float Buta::SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2)
+{
 	float dx = position2.x - position1.x;
 	float dy = position2.y - position1.y;
 	float dz = position2.z - position1.z;
 	return dx * dx + dy * dy + dz * dz;
 }
 
-void Tori::checkBoundaries()
+void Buta::checkBoundaries()
 {
 	if (position.x >= 149.0f)
 	{

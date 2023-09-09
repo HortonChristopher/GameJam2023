@@ -18,6 +18,9 @@
 #include "WinApp.h"
 
 #include "Tori.h"
+#include "Buta.h"
+#include "Hitsuji.h"
+#include "Ushi.h"
 #include "Esa.h"
 #include "Teki.h"
 
@@ -139,6 +142,8 @@ public: // メンバ関数
 	void DrawDebugText();
 
 	void FenceCreation();
+	void UpdateFences();
+	void DrawFences();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -150,7 +155,11 @@ private: // メンバ変数
 
 	ParticleManager* circleParticle = nullptr;
 
+	// Animal and Item lists
 	std::list<std::unique_ptr<Tori>> toriList;
+	std::list<std::unique_ptr<Buta>> butaList;
+	std::list<std::unique_ptr<Hitsuji>> hitsujiList;
+	std::list<std::unique_ptr<Ushi>> ushiList;
 	std::list<std::unique_ptr<Esa>> esaList;
 	std::list<std::unique_ptr<Teki>> tekiList;
 
@@ -192,6 +201,8 @@ private: // メンバ変数
 	ObjModel* modelBullet = nullptr;
 
 	ObjModel* modelPig = nullptr;
+	ObjModel* modelSheep = nullptr;
+	ObjModel* modelHorse = nullptr;
 
 	Player* player = nullptr;
 
@@ -208,6 +219,34 @@ private: // メンバ変数
 	FbxObject3d* objPlayerRun = nullptr;
 	FbxObject3d* objPlayerThrow = nullptr;
 	FbxObject3d* objPlayerCall = nullptr;
+
+	// Temporary
+	int pigNumber = 2;
+	const int pigNumberMax = 10;
+	int sheepNumber = 2;
+	const int sheepNumberMax = 10;
+	int horseNumber = 2;
+	const int horseNumberMax = 10;
+	float pigRespawn = 0.0f;
+	const float pigRespawnMax = 240.0f;
+	float sheepRespawn = 0.0f;
+	const float sheepRespawnMax = 360.0f;
+	float horseRespawn = 0.0f;
+	const float horseRespawnMax = 300.0f;
+	int goalPigs = 0;
+	const int goalPigsMax = 20;
+	int goalSheep = 0;
+	const int goalSheepMax = 20;
+	int goalHorse = 0;
+	const int goalHorseMax = 20;
+	float score = 0.0f;
+
+	// タイマーを変更したい場合は、この数字を変更してください。
+	// 希望の秒数に60をかける。
+	float frameTimer = 3600.0f;
+	// これは変更しないでください。
+	// タイマーUIに使用する。
+	int timer = 60;
 
 	//FBXオブジェクト
 
