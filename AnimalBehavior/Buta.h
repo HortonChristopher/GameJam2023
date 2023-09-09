@@ -87,7 +87,7 @@ private: // ƒƒ“ƒo•Ï”
 
 	const float timerOneFrame = 1.0f;
 
-	const float standingTimer = 300.0f;
+	const float standingTimer = 120.0f;
 	const float wanderMaxTimer = 600.0f;
 
 	const float timerReset = 0.0f;

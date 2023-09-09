@@ -53,6 +53,14 @@ void Buta::Update()
 				break;
 			case Teki_Moving:
 				Move(true); // Moving AWAY from teki in direction Player is facing
+
+				if (timer > 240.0f)
+				{
+					timer = 0.0f;
+					tekiReaction = Teki_Standing;
+				}
+
+				timer += 1.0f;
 				break;
 			case Teki_Standing:
 				if (timer >= standingTimer)

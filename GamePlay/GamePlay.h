@@ -232,7 +232,7 @@ private: // メンバ変数
 	float sheepRespawn = 0.0f;
 	const float sheepRespawnMax = 360.0f;
 	float horseRespawn = 0.0f;
-	const float horseRespawnMax = 480.0f;
+	const float horseRespawnMax = 300.0f;
 	int goalPigs = 0;
 	const int goalPigsMax = 20;
 	int goalSheep = 0;
@@ -240,6 +240,13 @@ private: // メンバ変数
 	int goalHorse = 0;
 	const int goalHorseMax = 20;
 	float score = 0.0f;
+
+	// タイマーを変更したい場合は、この数字を変更してください。
+	// 希望の秒数に60をかける。
+	float frameTimer = 3600.0f;
+	// これは変更しないでください。
+	// タイマーUIに使用する。
+	int timer = 60;
 
 	//FBXオブジェクト
 

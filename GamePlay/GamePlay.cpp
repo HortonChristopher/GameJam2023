@@ -370,6 +370,7 @@ void GamePlay::Update()
 				}
 
 				score += 10.0f;
+				pigNumber--;
 			}
 		}
 	}
@@ -430,6 +431,7 @@ void GamePlay::Update()
 				}
 
 				score += 10.0f;
+				sheepNumber--;
 			}
 		}
 	}
@@ -491,6 +493,7 @@ void GamePlay::Update()
 			}
 
 			score += 10.0f;
+			horseNumber--;
 		}
 	}
 
@@ -566,6 +569,21 @@ void GamePlay::Update()
 			return teki->GetDeathFlag();
 		}
 	);
+
+	frameTimer -= 1.0f;
+	timer = (frameTimer / 60.0f);
+
+	//Debug Start
+	/*char msgbuf[256];
+	char msgbuf2[256];
+	char msgbuf3[256];
+	sprintf_s(msgbuf, 256, "FT: %f\n", frameTimer);
+	sprintf_s(msgbuf2, 256, "T: %d\n", timer);
+	sprintf_s(msgbuf3, 256, "S: %f\n", score);
+	OutputDebugStringA(msgbuf);
+	OutputDebugStringA(msgbuf2);
+	OutputDebugStringA(msgbuf3)*/
+	//Debug End
 }
 
 void GamePlay::Draw()
