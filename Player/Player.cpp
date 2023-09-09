@@ -50,6 +50,37 @@ bool Player::Initialize()
 
 void Player::Update()
 {
+	/*switch (phase_)
+	{
+	case State::Stop:
+		default:
+		StateNum = State::Stop;
+
+		break;
+
+	case State::Walk:
+		StateNum = State::Walk;
+
+		break;
+
+	case State::Run:
+		StateNum = State::Run;
+
+		break;
+
+	case State::Throw:
+		StateNum = State::Throw;
+
+		break;
+
+	case State::Call:
+		StateNum = State::Call;
+
+		break;
+
+	}*/
+
+
 	ObjObject::Update();
 
 	//ブースト
@@ -109,8 +140,10 @@ void Player::Move()
 
 	Input* input = Input::GetInstance();
 
+
 	if (input->PushKey(DIK_A) || input->PushKey(DIK_D) || input->PushKey(DIK_S) || input->PushKey(DIK_W))
 	{
+	/*	phase_ = State::Run;*/
 		moveDirection = {};
 
 		if (input->PushKey(DIK_A))
@@ -176,6 +209,11 @@ void Player::Move()
 		SetPosition(position);
 		SetRotation(rotation);
 	}
+
+	/*else
+	{
+		phase_ = State::Stop;
+	}*/
 }
 
 // 前方向時の自機の傾き

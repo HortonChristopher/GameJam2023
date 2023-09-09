@@ -21,6 +21,16 @@ private:
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public: // 静的メンバ関数
+
+	enum State
+	{
+		Stop,	//接近
+		Walk,	//歩き
+		Run,	//走り
+		Throw,	//投げる
+		Call	//呼ぶ
+	};
+
 	// 3Dオブジェクト生成
 	static Player* Create(ObjModel* model = nullptr);
 
@@ -77,6 +87,8 @@ public: // メンバ関数
 	const float& GetShootSpeedMin() { return shootSpeedMin; }
 
 	const float& GetTotalSpeedMax() { return baseSpeed + boostSpeedMax; }
+
+	/*const int& GetStateInfo() { return StateNum; }*/
 
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
@@ -140,6 +152,11 @@ private: // メンバ変数
 	float normalShootSpeedMax = 1.0f;
 	float chargeShootSpeedMax = 2.0f;
 	float shootSpeedMin = 0.0f;
+
+	////プレイヤーの状態
+	//State phase_ = State::Stop;
+
+	//int StateNum = 0;
 
 public:
 	Vector3 direction = { 0, 0, 1 };

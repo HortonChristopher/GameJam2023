@@ -207,7 +207,7 @@ private: // メンバ変数
 	FbxObject3d* objPlayerWalking = nullptr;
 	FbxObject3d* objPlayerRun = nullptr;
 	FbxObject3d* objPlayerThrow = nullptr;
-	FbxObject3d* PlayerCall = nullptr;
+	FbxObject3d* objPlayerCall = nullptr;
 
 	//FBXオブジェクト
 
@@ -216,4 +216,15 @@ private: // メンバ変数
 
 	//マウス座標
 	POINT mousePosition;
+
+	//プレイヤーの状態の変数
+	int PlayerState = 0;
+
+	//FBXのアニメーションタイマー
+	int AnimationTimer_T = 0;
+	int AnimationTimer_C = 0;
+
+	//アニメーションタイマー切り替え用フラグ
+	bool AnimationFlag_T = false;
+	bool AnimationFlag_C = false;
 };
