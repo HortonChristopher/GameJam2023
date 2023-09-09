@@ -187,6 +187,23 @@ void Player::Move()
 			position.x += moveDirection.x * speed;
 			position.y += moveDirection.y * speed;
 			position.z += moveDirection.z * speed;
+
+			if (position.x > mapBoundaries)
+			{
+				position.x = mapBoundaries;
+			}
+			else if (position.x < -mapBoundaries)
+			{
+				position.x = -mapBoundaries;
+			}
+			if (position.z > mapBoundaries)
+			{
+				position.z = mapBoundaries;
+			}
+			else if (position.z < -mapBoundaries)
+			{
+				position.z = -mapBoundaries;
+			}
 		}
 
 		if (rotSpeed > abs(rotY))

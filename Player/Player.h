@@ -153,6 +153,8 @@ private: // メンバ変数
 	float chargeShootSpeedMax = 2.0f;
 	float shootSpeedMin = 0.0f;
 
+	const float mapBoundaries = 149.0f;
+
 	////プレイヤーの状態
 	//State phase_ = State::Stop;
 
