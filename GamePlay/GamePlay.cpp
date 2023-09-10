@@ -642,10 +642,10 @@ void GamePlay::Update()
 					ushi->goalSet = true;
 					ushi->deathFlag = true;
 				}
-			}
 
-			score += 10.0f;
-			horseNumber--;
+				score += 10.0f;
+				horseNumber--;
+			}
 		}
 	}
 
