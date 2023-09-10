@@ -91,6 +91,7 @@ private: // 静的メンバ変数
 	static enum TextureNumber
 	{
 		debug_txt,
+		score_txt,
 		game_bg,
 		reticle,
 		black,
@@ -105,7 +106,13 @@ private: // 静的メンバ変数
 		// ボス
 		game_boss_frame_1,
 		game_boss_frame_2,
-		game_boss_gauge
+		game_boss_gauge,
+
+		cow_icon,
+		sheep_icon,
+		pig_icon,
+
+		game_gtxt_1
 	};
 
 	// プレイヤーの球
@@ -150,6 +157,7 @@ private: // メンバ変数
 	Input* input = Input::GetInstance();
 	Sound* sound = Sound::GetInstance();
 	DebugText debugText;
+	ScoreText scoreText;
 	
 	Camera* camera = nullptr;
 
@@ -166,6 +174,12 @@ private: // メンバ変数
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;
 	Sprite* StoragePos = nullptr;
+
+	Sprite* cowIcon = nullptr;
+	Sprite* sheepIcon = nullptr;
+	Sprite* pigIcon = nullptr;
+
+	Sprite* score_gtxt_1 = nullptr;
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;
@@ -189,6 +203,9 @@ private: // メンバ変数
 	std::array<ObjObject*, 6> northSideEastFence = { {} };
 	std::array<ObjObject*, 2> barnWestFence = { {} };
 	std::array<ObjObject*, 2> barnEastFence = { {} };
+
+	// タイマーUI
+	MeterUI* meterTimer = nullptr;
 
 	// Spawn barn
 	ObjObject* barn = nullptr;
@@ -246,7 +263,7 @@ private: // メンバ変数
 	float frameTimer = 3600.0f;
 	// これは変更しないでください。
 	// タイマーUIに使用する。
-	int timer = 60;
+	float timer = 60;
 
 	//FBXオブジェクト
 
