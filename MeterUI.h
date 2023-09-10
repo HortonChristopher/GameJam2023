@@ -19,6 +19,7 @@ private: // Ã“Iƒƒ“ƒo•Ï”
 	static enum TextureNumber
 	{
 		debug_txt,
+		score_txt,
 		game_bg,
 		reticle,
 		black,
@@ -51,7 +52,7 @@ private:
 	Sprite* meterNeedle = nullptr;
 
 	float nowRotation = 0.0f;
-	float maxRotation = 180.0f;
+	float maxRotation = 360.0f;
 	float EasRotation = {};
 
 	float ratio = {};
