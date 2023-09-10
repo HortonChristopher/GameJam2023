@@ -163,6 +163,27 @@ void GamePlay::Initialize()
 	// タイマーUI
 	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 
+	pigGate = ObjObject::Create();
+	pigGateModel = ObjModel::CreateFromOBJ("butagate");
+	pigGate->SetModel(pigGateModel);
+	pigGate->SetPosition({ -155.0f, 0.0f, 0.0f });
+	pigGate->SetRotation({ 0.0f, 270.0f, 0.0f });
+	pigGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
+	sheepGate = ObjObject::Create();
+	sheepGateModel = ObjModel::CreateFromOBJ("hutsuzigate");
+	sheepGate->SetModel(sheepGateModel);
+	sheepGate->SetPosition({ 0.0f, 0.0f, -155.0f });
+	sheepGate->SetRotation({ 0.0f, 180.0f, 0.0f });
+	sheepGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
+	cowGate = ObjObject::Create();
+	cowGateModel = ObjModel::CreateFromOBJ("ushigate");
+	cowGate->SetModel(cowGateModel);
+	cowGate->SetPosition({ 155.0f, 0.0f, 0.0f });
+	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
+	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
 	// プレイヤー
 	player = Player::Create();
 
@@ -662,6 +683,10 @@ void GamePlay::Update()
 	// Fences
 	UpdateFences();
 
+	pigGate->Update();
+	sheepGate->Update();
+	cowGate->Update();
+
 	for (std::unique_ptr<Buta>& buta : butaList)
 	{
 		buta->Update();
@@ -742,7 +767,7 @@ void GamePlay::Update()
 	OutputDebugStringA(msgbuf3)*/
 	//Debug End
 
-	DrawDebugText();
+	//DrawDebugText();
 
 	// スコアの描画
 	std::ostringstream Score;
@@ -798,6 +823,10 @@ void GamePlay::Draw()
 
 	// Fences
 	DrawFences();
+
+	pigGate->Draw();
+	sheepGate->Draw();
+	cowGate->Draw();
 
 	//プレイヤーの描画
 	if (PlayerState == 0)

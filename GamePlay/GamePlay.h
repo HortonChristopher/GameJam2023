@@ -221,6 +221,14 @@ private: // メンバ変数
 	ObjModel* modelSheep = nullptr;
 	ObjModel* modelHorse = nullptr;
 
+	// Gates
+	ObjObject* pigGate = nullptr;
+	ObjModel* pigGateModel = nullptr;
+	ObjObject* sheepGate = nullptr;
+	ObjModel* sheepGateModel = nullptr;
+	ObjObject* cowGate = nullptr;
+	ObjModel* cowGateModel = nullptr;
+
 	Player* player = nullptr;
 
 	//FBXモデル

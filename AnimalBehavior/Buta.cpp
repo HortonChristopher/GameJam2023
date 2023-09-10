@@ -363,11 +363,11 @@ float Buta::SquaredDistance(const XMFLOAT3& position1, const XMFLOAT3& position2
 
 void Buta::checkBoundaries()
 {
-	if (position.x >= 149.0f)
+	if (position.x >= 150.0f)
 	{
-		position.x = 149.0f;
+		position.x = 150.0f;
 	}
-	else if (position.x <= -149.0f)
+	else if (position.x <= -150.0f)
 	{
 		if (position.z < 30.0f && position.z > -30.0f)
 		{
@@ -375,15 +375,15 @@ void Buta::checkBoundaries()
 		}
 		else
 		{
-			position.x = -149.0f;
+			position.x = -150.0f;
 		}
 	}
-	if (position.z >= 149.0f)
+	if (position.z >= 150.0f)
 	{
-		position.z = 149.0f;
+		position.z = 150.0f;
 	}
-	else if (position.z <= -149.0f)
+	else if (position.z <= -150.0f)
 	{
-		position.z = -149.0f;
+		position.z = -150.0f;
 	}
 }

@@ -81,8 +81,8 @@ private: // ƒƒ“ƒo•Ï”
 
 	const float defaultUpdateEntitiesPosition = 2500.0f;
 
-	const int mapBoundaries = 148;
-	const int mapBoundariesTimesTwo = 297;
+	const int mapBoundaries = 135;
+	const int mapBoundariesTimesTwo = 276;
 
 	const float timerOneFrame = 1.0f;
 

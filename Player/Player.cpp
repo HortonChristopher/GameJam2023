@@ -93,7 +93,7 @@ void Player::Update()
 	// ƒ[ƒŠƒ“ƒO
 	//Rolling();
 
-	DebugTextUpdate();
+	//DebugTextUpdate();
 }
 
 void Player::Draw()
