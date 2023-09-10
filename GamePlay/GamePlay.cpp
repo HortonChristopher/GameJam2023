@@ -112,10 +112,39 @@ void GamePlay::Initialize()
 		return;
 	}
 
+	if (!Sprite::LoadTexture(TextureNumber::cow_icon, L"Resources/Sprite/GameUI/CowIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::sheep_icon, L"Resources/Sprite/GameUI/SheepIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pig_icon, L"Resources/Sprite/GameUI/PigIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::game_gtxt_1, L"Resources/Sprite/GameUI/game_gtxt_1.png")) {
+		assert(0);
+		return;
+	}
+
+	
+
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 	// デバッグテキスト初期化
 	debugText.Initialize(0);
+	// スコアテキスト用テクスチャ読み込み
+	if (!Sprite::LoadTexture(score_txt, L"Resources/Sprite/Common/common_dtxt_2.png")) {
+		assert(0);
+		return;
+	}
+	// スコアテキスト初期化
+	scoreText.Initialize(score_txt);
 
 	// スプライト
 	gameBG = Sprite::Create(TextureNumber::game_bg, { 0.0f,0.0f });
@@ -123,6 +152,16 @@ void GamePlay::Initialize()
 	Reticle = Sprite::Create(TextureNumber::reticle, ReticlePos);
 
 	StoragePos = Sprite::Create(TextureNumber::reticle, { (float)mousePosition.x, (float)mousePosition.y });
+
+	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 5.0f,5.0f });
+	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 105.0f,5.0f });
+	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 205.0f,5.0f });
+
+	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 75.0f,60.0f });
+	score_gtxt_1->SetSize({133.0f, 28.0f});
+
+	// タイマーUI
+	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	// プレイヤー
 	player = Player::Create();
@@ -607,6 +646,8 @@ void GamePlay::Update()
 		}
 	);
 
+	
+
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
 	skydome->SetPosition(player->GetPosition());
@@ -687,6 +728,8 @@ void GamePlay::Update()
 	frameTimer -= 1.0f;
 	timer = (frameTimer / 60.0f);
 
+	meterTimer->Update(timer, 60.0f, { 1240, 45 });
+
 	//Debug Start
 	/*char msgbuf[256];
 	char msgbuf2[256];
@@ -698,6 +741,30 @@ void GamePlay::Update()
 	OutputDebugStringA(msgbuf2);
 	OutputDebugStringA(msgbuf3)*/
 	//Debug End
+
+	DrawDebugText();
+
+	// スコアの描画
+	std::ostringstream Score;
+	Score << std::fixed << std::setprecision(0)  << score;
+	scoreText.Print(Score.str(), { 250, 90 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+
+	std::ostringstream CowGoalCount;
+	CowGoalCount <<  std::fixed << std::setprecision(0)  << goalHorse;
+	scoreText.Print(CowGoalCount.str(), { 80, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+
+	std::ostringstream SheepGoalCount;
+	SheepGoalCount << std::fixed << std::setprecision(0) << goalSheep;
+	scoreText.Print(SheepGoalCount.str(), { 180, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+
+	std::ostringstream PigGoalCount;
+	PigGoalCount << std::fixed << std::setprecision(0) << goalPigs;
+	scoreText.Print(PigGoalCount.str(), { 280, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+
+	// ゲームタイマー
+	std::ostringstream GameTimer;
+	GameTimer << std::fixed << std::setprecision(0)<< timer ;
+	scoreText.Print(GameTimer.str(), { 1230, 67 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
 }
 
 void GamePlay::Draw()
@@ -795,7 +862,18 @@ void GamePlay::Draw()
 	Sprite::PreDraw(cmdList);
 	
 	// 前景スプライト描画
+	cowIcon->Draw();
+	sheepIcon->Draw();
+	pigIcon->Draw();
+
+	meterTimer->Draw();
+
+	score_gtxt_1->Draw();
+
 	player->DebugTextDraw();
+
+	debugText.DrawAll(cmdList);
+	scoreText.DrawAll(cmdList);
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -820,29 +898,42 @@ void GamePlay::GetMouse()
 // デバックテキスト
 void GamePlay::DrawDebugText()
 {
-	//マウスの座標
-	std::ostringstream MousePosition;
-	MousePosition << "MousePosition("
-		<< std::fixed << std::setprecision(5)
-		<< mousePosition.x << ","
-		<< mousePosition.y << ")";
-	debugText.Print(MousePosition.str(), 0, 0, 1.0f);
-
-	//レティクルの座標
-	std::ostringstream ReticlePosition;
-	ReticlePosition << "ReticlePosition("
-		<< std::fixed << std::setprecision(5)
-		<< ReticlePos.x << ","
-		<< ReticlePos.y << ")";
-	debugText.Print(ReticlePosition.str(), 0, 60, 1.0f);
-
-
 	//アニメーションタイマー
 	std::ostringstream AnimeTimer;
 	AnimeTimer << "AnimationTimer("
 		<< std::fixed << std::setprecision(5)
 		<< AnimationTimer_T << ")";
-	debugText.Print(AnimeTimer.str(), 0, 0, 1.0f);
+	debugText.Print(AnimeTimer.str(), 0, 500, 1.0f);
+
+	
+
+	// 牛のゴール
+	std::ostringstream UshiGoalCount;
+	UshiGoalCount << "UshiGoalCount("
+		<< std::fixed << std::setprecision(5)
+		<< goalHorse << ")";
+	debugText.Print(UshiGoalCount.str(), 0, 540, 1.0f);
+
+	// 羊のゴール
+	std::ostringstream HitsuziGoalCount;
+	HitsuziGoalCount << "HitsuziGoalCount("
+		<< std::fixed << std::setprecision(5)
+		<< goalSheep << ")";
+	debugText.Print(HitsuziGoalCount.str(), 200, 540, 1.0f);
+
+	// 豚のゴール
+	std::ostringstream ButaGoalCount;
+	ButaGoalCount << "ButaGoalCount("
+		<< std::fixed << std::setprecision(5)
+		<< goalPigs << ")";
+	debugText.Print(ButaGoalCount.str(), 400, 540, 1.0f);
+
+	// スコア
+	std::ostringstream GameScore;
+	GameScore << "GameScore("
+		<< std::fixed << std::setprecision(5)
+		<< score << ")";
+	debugText.Print(GameScore.str(), 0, 560, 1.0f);
 }
 
 void GamePlay::FenceCreation()

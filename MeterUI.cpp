@@ -26,6 +26,7 @@ bool MeterUI::Initialize(XMFLOAT2 position, float rotation, XMFLOAT4 color)
 	meterNeedle->SetRotation(rotation);
 	meterNeedle->SetColor(color);
 	meterNeedle->SetAnchorPoint({ 0.9f, 0.5 });
+	meterNeedle->SetSize({50.0f, 16.0f});
 
 	meterBase->SetAnchorPoint({ 0.5f, 0.5f });
 	meterBase->SetSize({210.0f, 120.0f});
@@ -47,6 +48,6 @@ void MeterUI::Update(float nowVal, float maxVal, XMFLOAT2 position)
 void MeterUI::Draw()
 {
 	
-	meterBase->Draw();
+	//meterBase->Draw();
 	meterNeedle->Draw();
 }

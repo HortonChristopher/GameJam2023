@@ -110,7 +110,7 @@ void Player::DebugTextUpdate()
 		<< position.x << "," // x
 		<< position.y << "," // y
 		<< position.z << ") Local"; // z
-	debugText.Print(PlayerPosition.str(), 10, 90, 1.0f);
+	debugText.Print(PlayerPosition.str(), 0, 590, 1.0f);
 
 	// プレイヤーの角度を表示
 	std::ostringstream PlayerRotation;
@@ -119,7 +119,7 @@ void Player::DebugTextUpdate()
 		<< rotation.x << "," // x
 		<< rotation.y << "," // y
 		<< rotation.z << ")"; // z
-	debugText.Print(PlayerRotation.str(), 10, 110, 1.0f);
+	debugText.Print(PlayerRotation.str(), 0, 610, 1.0f);
 }
 
 void Player::DebugTextDraw()
