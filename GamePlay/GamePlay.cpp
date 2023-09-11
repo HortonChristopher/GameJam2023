@@ -279,6 +279,7 @@ void GamePlay::Initialize()
 	camera->SetTarget(player->GetPosition());
 	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
+	camera->SetDistance(96.0f);
 
 	modelBullet = ObjModel::CreateFromOBJ("bullet2");
 

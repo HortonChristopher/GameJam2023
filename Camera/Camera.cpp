@@ -44,17 +44,17 @@ void Camera::Update()
 
 		if (theta < 0)
 		{
-			distance = 48 * (1 + theta * 1.1f);
+			distance = 96 * (1 + theta * 1.1f);
 		}
 		viewDirty = true;
 	}
 
 	//  Change the distance with wheel input
-	if (mouseMove.lZ != 0) {
+	/*if (mouseMove.lZ != 0) {
 		distance -= mouseMove.lZ / 100.0f;
 		distance = max(distance, 1.0f);
 		viewDirty = true;
-	}
+	}*/
 
 	if (viewDirty || projectionDirty) {
 		float nowTheta = theta;
