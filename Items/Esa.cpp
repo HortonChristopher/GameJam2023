@@ -42,10 +42,4 @@ void Esa::Update()
 	{
 		deathFlag = true;
 	}
-
-	//Debug Start
-	/*char msgbuf[256];
-	sprintf_s(msgbuf, 256, "X: %d\n", deathTimer);
-	OutputDebugStringA(msgbuf);*/
-	//Debug End
 }

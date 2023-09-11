@@ -15,7 +15,7 @@ protected:
 
 private: // 静的メンバ変数
 	// 消えるまでの時間
-	static const int32_t LifeTime = 300;
+	static const int32_t LifeTime = 240;
 
 public: // 静的メンバ関数
 	// 3Dオブジェクト生成

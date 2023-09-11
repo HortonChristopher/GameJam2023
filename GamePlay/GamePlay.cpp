@@ -132,8 +132,6 @@ void GamePlay::Initialize()
 		return;
 	}
 
-	
-
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 	// デバッグテキスト初期化
@@ -390,36 +388,129 @@ void GamePlay::Update()
 		horseRespawn += 1.0f;
 	}
 
-	if (input->TriggerKey(DIK_E))
+	if (input->TriggerMouseLeft())
 	{
 		AnimationFlag_T = true;
 		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
 
-		std::unique_ptr<Esa> newEsa = Esa::Create(
-			modelBullet,
-			{ x, 0.5f, z },
-			{0.5f, 0.5f, 0.5f}
-		);
+		switch (itemType)
+		{
+		case ESA:
+			switch (animalType)
+			{
+			case BUTA:
+			{
+				std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-		esaList.push_back(std::move(newEsa));
+				butaEsaList.push_back(std::move(newButaEsa));
+				break;
+			}
+			case HITSUJI:
+			{
+				std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
+
+				hitsujiEsaList.push_back(std::move(newHitsujiEsa));
+				break;
+			}
+			case USHI:
+			{
+				std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
+
+				ushiEsaList.push_back(std::move(newUshiEsa));
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		case TEKI:
+			switch (animalType)
+			{
+			case BUTA:
+			{
+				std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
+
+				butaTekiList.push_back(std::move(newButaTeki));
+				break;
+			}
+			case HITSUJI:
+			{
+				std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
+
+				hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+				break;
+			}
+			case USHI:
+			{
+				std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
+
+				ushiTekiList.push_back(std::move(newUshiTeki));
+				break;
+			}
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+	if (input->TriggerKey(DIK_E))
+	{
+		switch (itemType)
+		{
+		case ESA:
+			itemType = TEKI;
+			break;
+		case TEKI:
+			itemType = ESA;
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (input->TriggerKey(DIK_Q))
 	{
-		AnimationFlag_C = true;
-		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
-		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
-		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
-
-		std::unique_ptr<Teki> newTeki = Teki::Create(
-			modelBullet,
-			{ x, 0.5f, z },
-			{ 0.5f, 0.5f, 0.5f }
-		);
-
-		tekiList.push_back(std::move(newTeki));
+		switch (animalType)
+		{
+		case BUTA:
+			animalType = HITSUJI;
+			break;
+		case HITSUJI:
+			animalType = USHI;
+			break;
+		case USHI:
+			animalType = BUTA;
+			break;
+		default:
+			break;
+		}
 	}
 
 	//アニメーションフラグがtrueならタイマーを加算
@@ -469,13 +560,13 @@ void GamePlay::Update()
 				float closestTekiDistance = 1e30;
 
 				// Find the closest Teki
-				if (!tekiList.empty())
+				if (!butaTekiList.empty())
 				{
-					for (std::unique_ptr<Teki>& teki : tekiList) {
-						float distance = buta->SquaredDistance(butaPosition, teki->GetPosition());
+					for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList) {
+						float distance = buta->SquaredDistance(butaPosition, butaTeki->GetPosition());
 						if (distance < closestTekiDistance) {
 							closestTekiDistance = distance;
-							closestTekiPosition = teki->GetPosition();
+							closestTekiPosition = butaTeki->GetPosition();
 						}
 					}
 				}
@@ -484,13 +575,13 @@ void GamePlay::Update()
 				float closestEsaDistance = 1e30;
 
 				// Find the closest Esa
-				if (!esaList.empty())
+				if (!butaEsaList.empty())
 				{
-					for (std::unique_ptr<Esa>& esa : esaList) {
-						float distance = buta->SquaredDistance(butaPosition, esa->GetPosition());
+					for (std::unique_ptr<ButaEsa>& butaEsa : butaEsaList) {
+						float distance = buta->SquaredDistance(butaPosition, butaEsa->GetPosition());
 						if (distance < closestEsaDistance) {
 							closestEsaDistance = distance;
-							closestEsaPosition = esa->GetPosition();
+							closestEsaPosition = butaEsa->GetPosition();
 						}
 					}
 				}
@@ -533,13 +624,13 @@ void GamePlay::Update()
 				float closestTekiDistance = 1e30;
 
 				// Find the closest Teki
-				if (!tekiList.empty())
+				if (!hitsujiTekiList.empty())
 				{
-					for (std::unique_ptr<Teki>& teki : tekiList) {
-						float distance = hitsuji->SquaredDistance(hitsujiPosition, teki->GetPosition());
+					for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, hitsujiTeki->GetPosition());
 						if (distance < closestTekiDistance) {
 							closestTekiDistance = distance;
-							closestTekiPosition = teki->GetPosition();
+							closestTekiPosition = hitsujiTeki->GetPosition();
 						}
 					}
 				}
@@ -548,13 +639,13 @@ void GamePlay::Update()
 				float closestEsaDistance = 1e30;
 
 				// Find the closest Esa
-				if (!esaList.empty())
+				if (!hitsujiEsaList.empty())
 				{
-					for (std::unique_ptr<Esa>& esa : esaList) {
-						float distance = hitsuji->SquaredDistance(hitsujiPosition, esa->GetPosition());
+					for (std::unique_ptr<HitsujiEsa>& hitsujiEsa : hitsujiEsaList) {
+						float distance = hitsuji->SquaredDistance(hitsujiPosition, hitsujiEsa->GetPosition());
 						if (distance < closestEsaDistance) {
 							closestEsaDistance = distance;
-							closestEsaPosition = esa->GetPosition();
+							closestEsaPosition = hitsujiEsa->GetPosition();
 						}
 					}
 				}
@@ -597,13 +688,13 @@ void GamePlay::Update()
 				float closestTekiDistance = 1e30;
 
 				// Find the closest Teki
-				if (!tekiList.empty())
+				if (!ushiTekiList.empty())
 				{
-					for (std::unique_ptr<Teki>& teki : tekiList) {
-						float distance = ushi->SquaredDistance(ushiPosition, teki->GetPosition());
+					for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList) {
+						float distance = ushi->SquaredDistance(ushiPosition, ushiTeki->GetPosition());
 						if (distance < closestTekiDistance) {
 							closestTekiDistance = distance;
-							closestTekiPosition = teki->GetPosition();
+							closestTekiPosition = ushiTeki->GetPosition();
 						}
 					}
 				}
@@ -612,13 +703,13 @@ void GamePlay::Update()
 				float closestEsaDistance = 1e30;
 
 				// Find the closest Esa
-				if (!esaList.empty())
+				if (!ushiEsaList.empty())
 				{
-					for (std::unique_ptr<Esa>& esa : esaList) {
-						float distance = ushi->SquaredDistance(ushiPosition, esa->GetPosition());
+					for (std::unique_ptr<UshiEsa>& ushiEsa : ushiEsaList) {
+						float distance = ushi->SquaredDistance(ushiPosition, ushiEsa->GetPosition());
 						if (distance < closestEsaDistance) {
 							closestEsaDistance = distance;
-							closestEsaPosition = esa->GetPosition();
+							closestEsaPosition = ushiEsa->GetPosition();
 						}
 					}
 				}
@@ -667,8 +758,6 @@ void GamePlay::Update()
 		}
 	);
 
-	
-
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
 	skydome->SetPosition(player->GetPosition());
@@ -712,6 +801,36 @@ void GamePlay::Update()
 		teki->Update();
 	}
 
+	for (std::unique_ptr<ButaEsa>& butaEsa : butaEsaList)
+	{
+		butaEsa->Update();
+	}
+
+	for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
+	{
+		butaTeki->Update();
+	}
+
+	for (std::unique_ptr<HitsujiEsa>& hitsujiEsa : hitsujiEsaList)
+	{
+		hitsujiEsa->Update();
+	}
+
+	for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
+	{
+		hitsujiTeki->Update();
+	}
+
+	for (std::unique_ptr<UshiEsa>& ushiEsa : ushiEsaList)
+	{
+		ushiEsa->Update();
+	}
+
+	for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
+	{
+		ushiTeki->Update();
+	}
+
 	esaList.remove_if([](std::unique_ptr<Esa>& esa)
 		{
 			return esa->GetDeathFlag();
@@ -721,6 +840,42 @@ void GamePlay::Update()
 	tekiList.remove_if([](std::unique_ptr<Teki>& teki)
 		{
 			return teki->GetDeathFlag();
+		}
+	);
+
+	butaEsaList.remove_if([](std::unique_ptr<ButaEsa>& butaEsa)
+		{
+			return butaEsa->GetDeathFlag();
+		}
+	);
+
+	butaTekiList.remove_if([](std::unique_ptr<ButaTeki>& butaTeki)
+		{
+			return butaTeki->GetDeathFlag();
+		}
+	);
+
+	hitsujiEsaList.remove_if([](std::unique_ptr<HitsujiEsa>& hitsujiEsa)
+		{
+			return hitsujiEsa->GetDeathFlag();
+		}
+	);
+
+	hitsujiTekiList.remove_if([](std::unique_ptr<HitsujiTeki>& hitsujiTeki)
+		{
+			return hitsujiTeki->GetDeathFlag();
+		}
+	);
+
+	ushiEsaList.remove_if([](std::unique_ptr<UshiEsa>& ushiEsa)
+		{
+			return ushiEsa->GetDeathFlag();
+		}
+	);
+
+	ushiTekiList.remove_if([](std::unique_ptr<UshiTeki>& ushiTeki)
+		{
+			return ushiTeki->GetDeathFlag();
 		}
 	);
 
@@ -896,6 +1051,36 @@ void GamePlay::Draw()
 		teki->Draw();
 	}
 
+	for (std::unique_ptr<ButaEsa>& butaEsa : butaEsaList)
+	{
+		butaEsa->Draw();
+	}
+
+	for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
+	{
+		butaTeki->Draw();
+	}
+
+	for (std::unique_ptr<HitsujiEsa>& hitsujiEsa : hitsujiEsaList)
+	{
+		hitsujiEsa->Draw();
+	}
+
+	for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
+	{
+		hitsujiTeki->Draw();
+	}
+
+	for (std::unique_ptr<UshiEsa>& ushiEsa : ushiEsaList)
+	{
+		ushiEsa->Draw();
+	}
+
+	for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
+	{
+		ushiTeki->Draw();
+	}
+
 	// パーティクルの描画
 	circleParticle->Draw(cmdList);
 
@@ -950,8 +1135,6 @@ void GamePlay::DrawDebugText()
 		<< std::fixed << std::setprecision(5)
 		<< AnimationTimer_T << ")";
 	debugText.Print(AnimeTimer.str(), 0, 500, 1.0f);
-
-	
 
 	// 牛のゴール
 	std::ostringstream UshiGoalCount;
