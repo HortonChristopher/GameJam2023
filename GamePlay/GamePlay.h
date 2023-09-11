@@ -23,6 +23,12 @@
 #include "Ushi.h"
 #include "Esa.h"
 #include "Teki.h"
+#include "ButaEsa.h"
+#include "ButaTeki.h"
+#include "HitsujiEsa.h"
+#include "HitsujiTeki.h"
+#include "UshiEsa.h"
+#include "UshiTeki.h"
 
 #include "Player.h"
 #include "Bullet.h"
@@ -115,12 +121,20 @@ private: // 静的メンバ変数
 		game_gtxt_1
 	};
 
-	// プレイヤーの球
-	static enum BulletType
+	enum ItemType
 	{
-		Normal,
-		Charge
+		ESA = 0,
+		TEKI = 1
 	};
+	ItemType itemType = ESA;
+
+	enum AnimalType
+	{
+		BUTA = 0,
+		HITSUJI = 1,
+		USHI = 2
+	};
+	AnimalType animalType = BUTA;
 
 public: // メンバ関数
 
@@ -170,6 +184,12 @@ private: // メンバ変数
 	std::list<std::unique_ptr<Ushi>> ushiList;
 	std::list<std::unique_ptr<Esa>> esaList;
 	std::list<std::unique_ptr<Teki>> tekiList;
+	std::list<std::unique_ptr<ButaEsa>> butaEsaList;
+	std::list<std::unique_ptr<HitsujiEsa>> hitsujiEsaList;
+	std::list<std::unique_ptr<UshiEsa>> ushiEsaList;
+	std::list<std::unique_ptr<ButaTeki>> butaTekiList;
+	std::list<std::unique_ptr<HitsujiTeki>> hitsujiTekiList;
+	std::list<std::unique_ptr<UshiTeki>> ushiTekiList;
 
 	Sprite* gameBG = nullptr;
 	Sprite* Reticle = nullptr;

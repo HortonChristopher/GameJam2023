@@ -1,9 +1,9 @@
-#include "Teki.h"
+#include "ButaTeki.h"
 
-std::unique_ptr<Teki> Teki::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale)
+std::unique_ptr<ButaTeki> ButaTeki::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Teki* instance = new Teki();
+	ButaTeki* instance = new ButaTeki();
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -19,10 +19,10 @@ std::unique_ptr<Teki> Teki::Create(ObjModel* model, const XMFLOAT3 position, con
 		instance->SetModel(model);
 	}
 
-	return std::unique_ptr<Teki>(instance);
+	return std::unique_ptr<ButaTeki>(instance);
 }
 
-bool Teki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
+bool ButaTeki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
 {
 	if (!ObjObject::Initialize())
 	{
@@ -34,7 +34,7 @@ bool Teki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
 	return true;
 }
 
-void Teki::Update()
+void ButaTeki::Update()
 {
 	ObjObject::Update();
 
