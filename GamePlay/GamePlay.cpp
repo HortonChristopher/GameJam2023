@@ -274,6 +274,7 @@ void GamePlay::Initialize()
 
 	// パーティクル
 	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
 
 	//パーティクル発生用座標初期化
 	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
@@ -284,6 +285,7 @@ void GamePlay::Initialize()
 
 	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
 	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
+
 
 	// 座標のセット
 	camera->SetTarget(player->GetPosition());
@@ -333,6 +335,9 @@ void GamePlay::Update()
 	//マウス座標を2Dレティクルのスプライトに代入
 	ReticlePos.x = ((float)(mousePosition.x) / (float)width) * WinApp::window_width;
 	ReticlePos.y = ((float)(mousePosition.y) / (float)height) * WinApp::window_height;
+
+	//追い出しパーティクルの座標更新
+	CallPartPos = { player->GetPosition().x, player->GetPosition().y + 10 , player->GetPosition().z };
 
 	if (ReticlePos.x <= 280.0f)
 	{
@@ -796,7 +801,11 @@ void GamePlay::Update()
 		}
 	);
 
-	//Particle->DefaultParticle(10, 10, player->GetPosition(), 3.0f, 0.0f, {1.0f, 1.0f, 1.0f, 1.0f}, {0.2f, 0.2f, 0.2f, 1.0f});
+	if (input->GetInstance()->TriggerKey(DIK_L))
+	{
+		CallPart->ExpelParticle(2, CallPartPos, CallPartPos,
+			3.0f, 15.0f, 4.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+	}
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
@@ -816,6 +825,7 @@ void GamePlay::Update()
 	sheepGate->Update();
 	cowGate->Update();
 	Particle->Update();
+	CallPart->Update();
 
 	for (std::unique_ptr<Buta>& buta : butaList)
 	{
@@ -1154,6 +1164,7 @@ void GamePlay::Draw()
 
 	// パーティクルの描画
 	Particle->Draw(cmdList);
+	CallPart->Draw(cmdList);
 
 	// 3Dオブジェクト描画後処理
 	ObjObject::PostDraw();

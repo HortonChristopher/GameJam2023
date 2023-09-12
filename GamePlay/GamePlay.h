@@ -174,6 +174,7 @@ private: // メンバ変数
 	Camera* camera = nullptr;
 
 	ParticleManager* Particle = nullptr;
+	ParticleManager* CallPart = nullptr;
 
 	// Animal and Item lists
 	std::list<std::unique_ptr<Tori>> toriList;
@@ -323,4 +324,6 @@ private: // メンバ変数
 
 	XMFLOAT3 UshiGate_Left = {};
 	XMFLOAT3 UshiGate_Right = {};
+
+	XMFLOAT3 CallPartPos = {};
 };

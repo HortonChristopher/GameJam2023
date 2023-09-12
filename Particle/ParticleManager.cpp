@@ -765,3 +765,38 @@ void ParticleManager::LevelUpParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 E
 
 	}
 }
+
+void ParticleManager::ExpelParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 EndPosition, float Vel, int ParticleLife, float StartScale, float EndScale, XMFLOAT4 start_color, XMFLOAT4 end_color)
+{
+	for (int i = 0; i < PartNum; i++)
+	{
+		//中心座標
+		XMFLOAT3 Center{};
+		//半径
+		float Radius;
+		//角度
+		float angle;
+		//半径の長さ
+		float Length;
+
+		//引数の値を貰う
+		const float md_width = 5.0f;
+		XMFLOAT3 pos{};
+		pos.x = Position.x;
+		pos.y = Position.y;
+		pos.z = Position.z;
+		//パーティクルの速度
+		const float md_vel = Vel;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
+		vel.y = 1.0f;
+		vel.z = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
+		//重力に見立ててYのみ[-0.001f, 0]でランダムに分布
+		XMFLOAT3 acc{};
+		const float md_acc = 0.0001f;
+		acc.y = -(float)rand() / RAND_MAX * md_acc;
+
+		//追加
+		Add(ParticleLife, pos, vel, acc, start_color, end_color, StartScale, EndScale, 0.0f, 0.0f);
+	}
+}

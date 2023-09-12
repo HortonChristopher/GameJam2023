@@ -135,6 +135,9 @@ public: // メンバ関数
 	//ゴールパーティクル
 	void LevelUpParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 EndPosition, float Vel, int ParticleLife, float StartScale, float EndScale, XMFLOAT4 start_color, XMFLOAT4 end_color);
 
+	//追い出しパーティクル
+	void ExpelParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 EndPosition, float Vel, int ParticleLife, float StartScale, float EndScale, XMFLOAT4 start_color, XMFLOAT4 end_color);
+
 private: // メンバ変数
 	// デバイス
 	ID3D12Device* device = nullptr;
