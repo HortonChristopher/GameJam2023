@@ -273,7 +273,17 @@ void GamePlay::Initialize()
 	modelHorse = ObjModel::CreateFromOBJ("ushi");
 
 	// パーティクル
-	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+
+	//パーティクル発生用座標初期化
+	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
+	PigGate_Right = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z + 35 };
+
+	HitsujiGate_Left = { sheepGate->GetPosition().x + 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z};
+	HitsujiGate_Right = { sheepGate->GetPosition().x - 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z};
+
+	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
+	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
 
 	// 座標のセット
 	camera->SetTarget(player->GetPosition());
@@ -786,6 +796,8 @@ void GamePlay::Update()
 		}
 	);
 
+	//Particle->DefaultParticle(10, 10, player->GetPosition(), 3.0f, 0.0f, {1.0f, 1.0f, 1.0f, 1.0f}, {0.2f, 0.2f, 0.2f, 1.0f});
+
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
 	skydome->SetPosition(player->GetPosition());
@@ -803,19 +815,50 @@ void GamePlay::Update()
 	pigGate->Update();
 	sheepGate->Update();
 	cowGate->Update();
+	Particle->Update();
 
 	for (std::unique_ptr<Buta>& buta : butaList)
 	{
+		if (buta->GetgoalFlag() == true && buta->GetgoalTimer() <= 30)
+		{
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, PigGate_Left, PigGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, PigGate_Right, PigGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+		}
+
 		buta->Update();
 	}
 
 	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
 	{
+		if (hitsuji->GetgoalFlag() == true && hitsuji->GetgoalTimer() <= 30)
+		{
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, HitsujiGate_Left, HitsujiGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, HitsujiGate_Right, HitsujiGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+		}
+
 		hitsuji->Update();
 	}
 
 	for (std::unique_ptr<Ushi>& ushi : ushiList)
 	{
+		if (ushi->GetgoalFlag() == true && ushi->GetgoalTimer() <= 30)
+		{
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, UshiGate_Left, UshiGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, UshiGate_Right, UshiGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+		}
+
 		ushi->Update();
 	}
 
@@ -1110,7 +1153,7 @@ void GamePlay::Draw()
 	}
 
 	// パーティクルの描画
-	circleParticle->Draw(cmdList);
+	Particle->Draw(cmdList);
 
 	// 3Dオブジェクト描画後処理
 	ObjObject::PostDraw();

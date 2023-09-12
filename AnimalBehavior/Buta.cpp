@@ -32,6 +32,8 @@ bool Buta::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initia
 	this->scale = scale;
 	this->initial = initialB;
 
+	goalTimer = 0;
+
 	goal = new Goal();
 
 	return true;
@@ -40,6 +42,14 @@ bool Buta::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale, bool initia
 void Buta::Update()
 {
 	ObjObject::Update();
+
+	if (goalFlag == true)
+	{
+		if (goalTimer < 40)
+		{
+			goalTimer++;
+		}
+	}
 
 	if (!goalFlag)
 	{

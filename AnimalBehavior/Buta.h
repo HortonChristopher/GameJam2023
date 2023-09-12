@@ -61,6 +61,12 @@ public: // メンバ関数
 
 	void checkBoundaries();
 
+	//ゴールフラグゲッター
+	const bool& GetgoalFlag() { return goalFlag; }
+
+	//ゴールタイマー取得
+	const int& GetgoalTimer() { return goalTimer; }
+
 private: // メンバ変数
 	Goal* goal;
 
@@ -108,6 +114,10 @@ private: // メンバ変数
 	float z = 0.0f;
 	float degrees = 0.0f;
 	float yRotationOffset = 90.0f;
+
+	//ゴールタイマー
+	int goalTimer = 0;
+
 public:
 	// デスフラグ
 	bool initial = true; // Moving out of barn into play area
