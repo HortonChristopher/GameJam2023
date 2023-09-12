@@ -166,9 +166,25 @@ public: // メンバ関数
 	//デバッグテキスト用関数
 	void DrawDebugText();
 
+	void CameraInitialization();
+	void SoundInitialization();
+	void TextureInitialization();
+	void SpriteInitialization();
+	void DeviceAndPipelineInitialization();
+
+	void GateInitialization();
+
+	void PlayerFBXInitialization();
+
+	void ObjObjectInitialization();
+
 	void FenceCreation();
 	void UpdateFences();
 	void DrawFences();
+
+	void ParticleInitialization();
+
+	void InitialAnimalInitialization();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
