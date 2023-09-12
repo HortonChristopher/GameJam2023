@@ -121,6 +121,14 @@ private: // 静的メンバ変数
 		game_gtxt_1
 	};
 
+	enum AnimalSelection
+	{
+		BUTA = 0,
+		HITSUJI = 1,
+		USHI = 2
+	};
+	AnimalSelection animalSelection = BUTA;
+
 	enum ItemSelection
 	{
 		BUTA_ESA = 0,

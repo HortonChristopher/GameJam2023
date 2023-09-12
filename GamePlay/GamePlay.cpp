@@ -261,7 +261,7 @@ void GamePlay::Initialize()
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 40.0f, 1.0f, 40.0f });
+	ground->SetScale({ 80.0f, 1.0f, 80.0f });
 
 	// プレイヤー
 	player->SetPosition({ 0.0f, 0.5f, 0.0f });
@@ -276,6 +276,7 @@ void GamePlay::Initialize()
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
 
 	// 座標のセット
+	camera->title = false;
 	camera->SetTarget(player->GetPosition());
 	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
@@ -394,66 +395,36 @@ void GamePlay::Update()
 
 	if (mouseMove.lZ != 0)
 	{
-		switch (itemSelection)
+		switch (animalSelection)
 		{
-		case BUTA_ESA:
+		case BUTA:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = BUTA_TEKI;
+				animalSelection = HITSUJI;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = USHI_TEKI;
+				animalSelection = USHI;
 			}
 			break;
-		case BUTA_TEKI:
+		case HITSUJI:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = HITSUJI_ESA;
+				animalSelection = USHI;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = BUTA_ESA;
+				animalSelection = BUTA;
 			}
 			break;
-		case HITSUJI_ESA:
+		case USHI:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = HITSUJI_TEKI;
+				animalSelection = BUTA;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = BUTA_TEKI;
-			}
-			break;
-		case HITSUJI_TEKI:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = USHI_ESA;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = HITSUJI_ESA;
-			}
-			break;
-		case USHI_ESA:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = USHI_TEKI;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = HITSUJI_TEKI;
-			}
-			break;
-		case USHI_TEKI:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = BUTA_ESA;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = USHI_ESA;
+				animalSelection = HITSUJI;
 			}
 			break;
 		default:
@@ -461,114 +432,126 @@ void GamePlay::Update()
 		}
 	}
 
-	if (input->TriggerMouseLeft())
+	if (input->TriggerMouseLeft() || input->TriggerMouseRight())
 	{
 		AnimationFlag_T = true;
 		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
 
-		switch (itemSelection)
+		if (input->TriggerMouseLeft())
 		{
-		case BUTA_ESA:
-		{
-			if (!butaEsa)
+			switch (animalSelection)
 			{
-				std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				butaEsaList.push_back(std::move(newButaEsa));
-
-				butaEsa = true;
-			}
-			break;
-		}
-		case BUTA_TEKI:
-		{
-			if (!butaTeki)
+			case BUTA:
 			{
-				std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
+				if (!butaEsa)
+				{
+					std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-				butaTekiList.push_back(std::move(newButaTeki));
+					butaEsaList.push_back(std::move(newButaEsa));
 
-				butaTeki = true;
+					butaEsa = true;
+				}
+				break;
 			}
-			break;
-		}
-		case HITSUJI_ESA:
-		{
-			if (!hitsujiEsa)
+			case HITSUJI:
 			{
-				std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
+				if (!hitsujiEsa)
+				{
+					std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-				hitsujiEsaList.push_back(std::move(newHitsujiEsa));
+					hitsujiEsaList.push_back(std::move(newHitsujiEsa));
 
-				hitsujiEsa = true;
+					hitsujiEsa = true;
+				}
+
+				break;
 			}
-			
-			break;
-		}
-		case HITSUJI_TEKI:
-		{
-			if (!hitsujiTeki)
+			case USHI:
 			{
-				std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
+				if (!ushiEsa)
+				{
+					std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-				hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+					ushiEsaList.push_back(std::move(newUshiEsa));
 
-				hitsujiTeki = true;
+					ushiEsa = true;
+				}
+				break;
 			}
-			break;
+			default:
+				break;
+			}
 		}
-		case USHI_ESA:
+
+		if (input->TriggerMouseRight())
 		{
-			if (!ushiEsa)
+			switch (animalSelection)
 			{
-				std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				ushiEsaList.push_back(std::move(newUshiEsa));
-
-				ushiEsa = true;
-			}
-			break;
-		}
-		case USHI_TEKI:
-		{
-			if (!ushiTeki)
+			case BUTA:
 			{
-				std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
+				if (!butaTeki)
+				{
+					std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-				ushiTekiList.push_back(std::move(newUshiTeki));
+					butaTekiList.push_back(std::move(newButaTeki));
 
-				ushiTeki = true;
+					butaTeki = true;
+				}
+				break;
 			}
-			break;
-		}
-		default:
-			break;
+			case HITSUJI:
+			{
+				if (!hitsujiTeki)
+				{
+					std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
+
+					hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+
+					hitsujiTeki = true;
+				}
+				break;
+			}
+			case USHI:
+			{
+				if (!ushiTeki)
+				{
+					std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
+
+					ushiTekiList.push_back(std::move(newUshiTeki));
+
+					ushiTeki = true;
+				}
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 
@@ -601,8 +584,9 @@ void GamePlay::Update()
 		PlayerState = 0;
 	}
 
-	if (input->TriggerKey(DIK_SPACE))
+	if (timer <= 0.0f)
 	{
+		timer = 0.0f;
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
@@ -825,7 +809,7 @@ void GamePlay::Update()
 		{
 			if (!ushi->goalSet)
 			{
-				/*if (goalHorse < goalHorseMax)
+				if (goalHorse < goalHorseMax)
 				{
 					ushi->goalNumber = goalHorse;
 					goalHorse++;
@@ -837,7 +821,7 @@ void GamePlay::Update()
 					ushi->deathFlag = true;
 				}
 
-				if (!cowBonusTime)
+				/*if (!cowBonusTime)
 				{
 					cowBonusTime = true;
 					cowBonusTimeRemaining = cowBonusTimeMax;
@@ -1119,13 +1103,13 @@ void GamePlay::Update()
 	}
 
 	//Debug Start
-	char msgbuf[256];
+	//char msgbuf[256];
 	//char msgbuf2[256];
 	//char msgbuf3[256];
-	sprintf_s(msgbuf, 256, "Bonus Time: %f\n", bonusTimeRemaining);
+	//sprintf_s(msgbuf, 256, "Bonus Time: %f\n", bonusTimeRemaining);
 	//sprintf_s(msgbuf2, 256, "SheepBT: %f\n", sheepBonusTimeRemaining);
 	//sprintf_s(msgbuf3, 256, "CowBT: %f\n", cowBonusTimeRemaining);
-	OutputDebugStringA(msgbuf);
+	//OutputDebugStringA(msgbuf);
 	//OutputDebugStringA(msgbuf2);
 	//OutputDebugStringA(msgbuf3);
 	//Debug End

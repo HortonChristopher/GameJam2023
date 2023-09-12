@@ -129,5 +129,7 @@ public:
 	bool viewDirty = false;
 	bool dirty = false;
 	XMFLOAT3 eyeTransfer = { 0, 10, 0 };
+
+	bool title = false;
 };
 
