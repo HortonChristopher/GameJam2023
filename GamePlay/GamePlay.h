@@ -122,6 +122,14 @@ private: // 静的メンバ変数
 		score_base
 	};
 
+	enum AnimalSelection
+	{
+		BUTA = 0,
+		HITSUJI = 1,
+		USHI = 2
+	};
+	AnimalSelection animalSelection = BUTA;
+
 	enum ItemSelection
 	{
 		BUTA_ESA = 0,
@@ -264,7 +272,13 @@ private: // メンバ変数
 	FbxObject3d* objPlayerThrow = nullptr;
 	FbxObject3d* objPlayerCall = nullptr;
 
-	// Temporary
+	bool butaEsa = false;
+	bool butaTeki = false;
+	bool hitsujiEsa = false;
+	bool hitsujiTeki = false;
+	bool ushiEsa = false;
+	bool ushiTeki = false;
+
 	int pigNumber = 2;
 	const int pigNumberMax = 10;
 	int sheepNumber = 2;
@@ -285,12 +299,31 @@ private: // メンバ変数
 	const int goalHorseMax = 20;
 	float score = 0.0f;
 
+	bool pigBonusTime = false;
+	bool sheepBonusTime = false;
+	bool cowBonusTime = false;
+	float pigBonusTimeRemaining = 0.0f;
+	float pigBonusTimeEntries = 0.0f;
+	float sheepBonusTimeRemaining = 0.0f;
+	float sheepBonusTimeEntries = 0.0f;
+	float cowBonusTimeRemaining = 0.0f;
+	float cowBonusTimeEntries = 0.0f;
+	const float pigBonusTimeMax = 3600.0f;
+	const float sheepBonusTimeMax = 3600.0f;
+	const float cowBonusTimeMax = 3600.0f;
+
+	bool bonusTime = false;
+	float bonusTimeRemaining = 0.0f;
+	float bonusTimeEntries = 0.0f;
+	const float bonusTimeMax = 3600.0f;
+
 	// タイマーを変更したい場合は、この数字を変更してください。
 	// 希望の秒数に60をかける。
-	float frameTimer = 3600.0f;
+	float frameTimer = 7200.0f;
 	// これは変更しないでください。
 	// タイマーUIに使用する。
-	float timer = 60;
+	const float timerMax = 120.0f;
+	float timer = 120;
 
 	//FBXオブジェクト
 

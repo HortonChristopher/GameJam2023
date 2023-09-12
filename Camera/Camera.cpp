@@ -27,40 +27,73 @@ void Camera::Update()
 	// Get mouse input
 	Input::MouseMove mouseMove = input->GetMouseMove();
 
-	// Rotate the camera if the right mouse button is pressed
-	if (input->PushMouseRight())
+	if (title)
 	{
-		phi += 3.141592654f / 180.0f * mouseMove.lX / 7;
-		theta += 3.141592654f / 180.0f * mouseMove.lY / 7;
-		if (theta > 40 * 3.141592654f / 180.0f)
-			theta = 40 * 3.141592654f / 180.0f;
-		else if (theta < -40 * 3.141592654f / 180.0f)
-			theta = -40 * 3.141592654f / 180.0f;
-
-		if (phi > 360 * 3.141592654f / 180.0f)
-			phi -= 360 * 3.141592654f / 180.0f;
-		else if (phi < 0)
-			phi += 360 * 3.141592654f / 180.0f;
-
-		if (theta < 0)
+		angleY -= XMConvertToRadians(0.25f);
+		dirty = true;
+	}
+	else
+	{
+		// Rotate the camera
 		{
-			distance = 96 * (1 + theta * 1.1f);
+			phi += 3.141592654f / 180.0f * mouseMove.lX / 7;
+			theta += 3.141592654f / 180.0f * mouseMove.lY / 7;
+			if (theta > 40 * 3.141592654f / 180.0f)
+				theta = 40 * 3.141592654f / 180.0f;
+			else if (theta < -40 * 3.141592654f / 180.0f)
+				theta = -40 * 3.141592654f / 180.0f;
+
+			if (phi > 360 * 3.141592654f / 180.0f)
+				phi -= 360 * 3.141592654f / 180.0f;
+			else if (phi < 0)
+				phi += 360 * 3.141592654f / 180.0f;
+
+			if (theta < 0)
+			{
+				distance = 96 * (1 + theta * 1.1f);
+			}
+			viewDirty = true;
 		}
-		viewDirty = true;
+
+		//  Change the distance with wheel input
+		/*if (mouseMove.lZ != 0) {
+			distance -= mouseMove.lZ / 100.0f;
+			distance = max(distance, 1.0f);
+			viewDirty = true;
+		}*/
 	}
 
-	//  Change the distance with wheel input
-	/*if (mouseMove.lZ != 0) {
-		distance -= mouseMove.lZ / 100.0f;
-		distance = max(distance, 1.0f);
-		viewDirty = true;
-	}*/
-
 	if (viewDirty || projectionDirty) {
-		float nowTheta = theta;
-		if (theta < 0)
-			nowTheta = 0;
-		eye = Vector3(cos(phi) * cos(nowTheta), sin(nowTheta), sin(phi) * cos(nowTheta)) * distance + target;
+		if (title)
+		{
+			XMMATRIX matRotNew = XMMatrixIdentity();
+			matRotNew *= XMMatrixRotationY(-angleY);
+
+			// 累積の回転行列を合成
+			// ※回転行列を累積していくと、誤差でスケーリングがかかる危険がある為
+			// クォータニオンを使用する方が望ましい
+			matRot = matRotNew * matRot;
+
+			// 注視点から視点へのベクトルと、上方向ベクトル
+			XMVECTOR vTargetEye = { 0.0f, 0.0f, -distance, 1.0f };
+			XMVECTOR vUp = { 0.0f, 1.0f, 0.0f, 0.0f };
+
+			// ベクトルを回転
+			vTargetEye = XMVector3Transform(vTargetEye, matRot);
+			vUp = XMVector3Transform(vUp, matRot);
+
+			// 注視点からずらした位置に視点座標を決定
+			const XMFLOAT3& target = GetTarget();
+			SetEye({ target.x + vTargetEye.m128_f32[0], target.y + vTargetEye.m128_f32[1] + 100.0f, target.z + vTargetEye.m128_f32[2] });
+			SetUp({ vUp.m128_f32[0], vUp.m128_f32[1], vUp.m128_f32[2] });
+		}
+		else
+		{
+			float nowTheta = theta;
+			if (theta < 0)
+				nowTheta = 0;
+			eye = Vector3(cos(phi) * cos(nowTheta), sin(nowTheta), sin(phi) * cos(nowTheta)) * distance + target;
+		}
 
 		// 再計算必要なら
 		if (viewDirty) {

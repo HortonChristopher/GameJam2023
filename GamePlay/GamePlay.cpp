@@ -268,7 +268,7 @@ void GamePlay::Initialize()
 
 	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
 	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 40.0f, 1.0f, 40.0f });
+	ground->SetScale({ 80.0f, 1.0f, 80.0f });
 
 	// プレイヤー
 	player->SetPosition({ 0.0f, 0.5f, 0.0f });
@@ -283,6 +283,7 @@ void GamePlay::Initialize()
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
 
 	// 座標のセット
+	camera->title = false;
 	camera->SetTarget(player->GetPosition());
 	camera->SetEye({ 0, 2, -10 });
 	camera->SetUp({ 0, 1, 0 });
@@ -401,66 +402,36 @@ void GamePlay::Update()
 
 	if (mouseMove.lZ != 0)
 	{
-		switch (itemSelection)
+		switch (animalSelection)
 		{
-		case BUTA_ESA:
+		case BUTA:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = BUTA_TEKI;
+				animalSelection = HITSUJI;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = USHI_TEKI;
+				animalSelection = USHI;
 			}
 			break;
-		case BUTA_TEKI:
+		case HITSUJI:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = HITSUJI_ESA;
+				animalSelection = USHI;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = BUTA_ESA;
+				animalSelection = BUTA;
 			}
 			break;
-		case HITSUJI_ESA:
+		case USHI:
 			if (mouseMove.lZ < 0)
 			{
-				itemSelection = HITSUJI_TEKI;
+				animalSelection = BUTA;
 			}
 			else if (mouseMove.lZ > 0)
 			{
-				itemSelection = BUTA_TEKI;
-			}
-			break;
-		case HITSUJI_TEKI:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = USHI_ESA;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = HITSUJI_ESA;
-			}
-			break;
-		case USHI_ESA:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = USHI_TEKI;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = HITSUJI_TEKI;
-			}
-			break;
-		case USHI_TEKI:
-			if (mouseMove.lZ < 0)
-			{
-				itemSelection = BUTA_ESA;
-			}
-			else if (mouseMove.lZ > 0)
-			{
-				itemSelection = USHI_ESA;
+				animalSelection = HITSUJI;
 			}
 			break;
 		default:
@@ -468,83 +439,126 @@ void GamePlay::Update()
 		}
 	}
 
-	if (input->TriggerMouseLeft())
+	if (input->TriggerMouseLeft() || input->TriggerMouseRight())
 	{
 		AnimationFlag_T = true;
 		float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
 
-		switch (itemSelection)
+		if (input->TriggerMouseLeft())
 		{
-		case BUTA_ESA:
-		{
-			std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			switch (animalSelection)
+			{
+			case BUTA:
+			{
+				if (!butaEsa)
+				{
+					std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-			butaEsaList.push_back(std::move(newButaEsa));
-			break;
-		}
-		case BUTA_TEKI:
-		{
-			std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+					butaEsaList.push_back(std::move(newButaEsa));
 
-			butaTekiList.push_back(std::move(newButaTeki));
-			break;
-		}
-		case HITSUJI_ESA:
-		{
-			std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+					butaEsa = true;
+				}
+				break;
+			}
+			case HITSUJI:
+			{
+				if (!hitsujiEsa)
+				{
+					std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-			hitsujiEsaList.push_back(std::move(newHitsujiEsa));
-			break;
-		}
-		case HITSUJI_TEKI:
-		{
-			std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+					hitsujiEsaList.push_back(std::move(newHitsujiEsa));
 
-			hitsujiTekiList.push_back(std::move(newHitsujiTeki));
-			break;
-		}
-		case USHI_ESA:
-		{
-			std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+					hitsujiEsa = true;
+				}
 
-			ushiEsaList.push_back(std::move(newUshiEsa));
-			break;
-		}
-		case USHI_TEKI:
-		{
-			std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+				break;
+			}
+			case USHI:
+			{
+				if (!ushiEsa)
+				{
+					std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
 
-			ushiTekiList.push_back(std::move(newUshiTeki));
-			break;
+					ushiEsaList.push_back(std::move(newUshiEsa));
+
+					ushiEsa = true;
+				}
+				break;
+			}
+			default:
+				break;
+			}
 		}
-		default:
-			break;
+
+		if (input->TriggerMouseRight())
+		{
+			switch (animalSelection)
+			{
+			case BUTA:
+			{
+				if (!butaTeki)
+				{
+					std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
+
+					butaTekiList.push_back(std::move(newButaTeki));
+
+					butaTeki = true;
+				}
+				break;
+			}
+			case HITSUJI:
+			{
+				if (!hitsujiTeki)
+				{
+					std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
+
+					hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+
+					hitsujiTeki = true;
+				}
+				break;
+			}
+			case USHI:
+			{
+				if (!ushiTeki)
+				{
+					std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
+						modelBullet,
+						{ x, 0.5f, z },
+						{ 0.5f, 0.5f, 0.5f }
+					);
+
+					ushiTekiList.push_back(std::move(newUshiTeki));
+
+					ushiTeki = true;
+				}
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 
@@ -577,8 +591,9 @@ void GamePlay::Update()
 		PlayerState = 0;
 	}
 
-	if (input->TriggerKey(DIK_SPACE))
+	if (timer <= 0.0f)
 	{
+		timer = 0.0f;
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
@@ -641,7 +656,29 @@ void GamePlay::Update()
 					buta->deathFlag = true;
 				}
 
-				score += 10.0f;
+				/*if (!pigBonusTime)
+				{
+					pigBonusTime = true;
+					pigBonusTimeRemaining = pigBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (pigBonusTime)
+				{
+					pigBonusTimeEntries += 1.0f;
+					score += ((10.0f * pigBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				pigNumber--;
 			}
 		}
@@ -705,7 +742,29 @@ void GamePlay::Update()
 					hitsuji->deathFlag = true;
 				}
 
-				score += 10.0f;
+				/*if (!sheepBonusTime)
+				{
+					sheepBonusTime = true;
+					sheepBonusTimeRemaining = sheepBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (sheepBonusTime)
+				{
+					sheepBonusTimeEntries += 1.0f;
+					score += ((10.0f * sheepBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				sheepNumber--;
 			}
 		}
@@ -769,7 +828,29 @@ void GamePlay::Update()
 					ushi->deathFlag = true;
 				}
 
-				score += 10.0f;
+				/*if (!cowBonusTime)
+				{
+					cowBonusTime = true;
+					cowBonusTimeRemaining = cowBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (cowBonusTime)
+				{
+					cowBonusTimeEntries += 1.0f;
+					score += ((10.0f * cowBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				horseNumber--;
 			}
 		}
@@ -792,6 +873,31 @@ void GamePlay::Update()
 			return ushi->GetDeathFlag();
 		}
 	);
+
+	if (butaEsaList.empty())
+	{
+		butaEsa = false;
+	}
+	if (butaTekiList.empty())
+	{
+		butaTeki = false;
+	}
+	if (hitsujiEsaList.empty())
+	{
+		hitsujiEsa = false;
+	}
+	if (hitsujiTekiList.empty())
+	{
+		hitsujiTeki = false;
+	}
+	if (ushiEsaList.empty())
+	{
+		ushiEsa = false;
+	}
+	if (ushiTekiList.empty())
+	{
+		ushiTeki = false;
+	}
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
@@ -960,18 +1066,59 @@ void GamePlay::Update()
 	frameTimer -= 1.0f;
 	timer = (frameTimer / 60.0f);
 
-	meterTimer->Update(timer, 60.0f, { 1240, 45 });
+	meterTimer->Update(timer, timerMax, {1240, 45});
+
+	/*if (pigBonusTimeRemaining <= 0.0f)
+	{
+		pigBonusTime = false;
+		pigBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		pigBonusTimeRemaining -= 1.0f;
+	}
+
+	if (sheepBonusTimeRemaining <= 0.0f)
+	{
+		sheepBonusTime = false;
+		sheepBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		sheepBonusTimeRemaining -= 1.0f;
+	}
+
+	if (cowBonusTimeRemaining <= 0.0f)
+	{
+		cowBonusTime = false;
+		cowBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		cowBonusTimeRemaining -= 1.0f;
+	}*/
+
+	if (bonusTimeRemaining <= 0.0f)
+	{
+		bonusTime = false;
+		bonusTimeRemaining = 0.0f;
+		bonusTimeEntries = 0.0f;
+	}
+	else
+	{
+		bonusTimeRemaining -= 1.0f;
+	}
 
 	//Debug Start
-	/*char msgbuf[256];
-	char msgbuf2[256];
-	char msgbuf3[256];
-	sprintf_s(msgbuf, 256, "FT: %f\n", frameTimer);
-	sprintf_s(msgbuf2, 256, "T: %d\n", timer);
-	sprintf_s(msgbuf3, 256, "S: %f\n", score);
-	OutputDebugStringA(msgbuf);
-	OutputDebugStringA(msgbuf2);
-	OutputDebugStringA(msgbuf3)*/
+	//char msgbuf[256];
+	//char msgbuf2[256];
+	//char msgbuf3[256];
+	//sprintf_s(msgbuf, 256, "Bonus Time: %f\n", bonusTimeRemaining);
+	//sprintf_s(msgbuf2, 256, "SheepBT: %f\n", sheepBonusTimeRemaining);
+	//sprintf_s(msgbuf3, 256, "CowBT: %f\n", cowBonusTimeRemaining);
+	//OutputDebugStringA(msgbuf);
+	//OutputDebugStringA(msgbuf2);
+	//OutputDebugStringA(msgbuf3);
 	//Debug End
 
 	//DrawDebugText();
