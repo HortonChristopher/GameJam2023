@@ -460,10 +460,6 @@ void GamePlay::Update()
 			break;
 		}
 	}
-	
-	char msgbuf[256];
-	sprintf_s(msgbuf, 256, "itemSelection: %d\n", itemSelection);
-	OutputDebugStringA(msgbuf);
 
 	if (input->TriggerMouseLeft())
 	{
