@@ -192,6 +192,8 @@ public: // メンバ関数
 
 	void InitialAnimalInitialization();
 
+	const int& GetPlayerState() { return PlayerState; }
+
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	Input* input = Input::GetInstance();
@@ -201,7 +203,8 @@ private: // メンバ変数
 	
 	Camera* camera = nullptr;
 
-	ParticleManager* circleParticle = nullptr;
+	ParticleManager* Particle = nullptr;
+	ParticleManager* CallPart = nullptr;
 
 	// Animal and Item lists
 	std::list<std::unique_ptr<Tori>> toriList;
@@ -376,4 +379,16 @@ private: // メンバ変数
 	//アニメーションフレーム数
 	int ThrowFrame = 132;
 	int CallFrame = 191;
+
+	//パーティクル発生用座標
+	XMFLOAT3 PigGate_Left = {};
+	XMFLOAT3 PigGate_Right = {};
+
+	XMFLOAT3 HitsujiGate_Left = {};
+	XMFLOAT3 HitsujiGate_Right = {};
+
+	XMFLOAT3 UshiGate_Left = {};
+	XMFLOAT3 UshiGate_Right = {};
+
+	XMFLOAT3 CallPartPos = {};
 };

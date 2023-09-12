@@ -132,6 +132,12 @@ public: // メンバ関数
 	// 弾パーティクル生成
 	void BulletParticle(int PartNum, int Life, XMFLOAT3 position, XMFLOAT4 start_color, XMFLOAT4 end_color, float start_scale);
 
+	//ゴールパーティクル
+	void LevelUpParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 EndPosition, float Vel, int ParticleLife, float StartScale, float EndScale, XMFLOAT4 start_color, XMFLOAT4 end_color);
+
+	//追い出しパーティクル
+	void ExpelParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 EndPosition, float Vel, int ParticleLife, float StartScale, float EndScale, XMFLOAT4 start_color, XMFLOAT4 end_color);
+
 private: // メンバ変数
 	// デバイス
 	ID3D12Device* device = nullptr;

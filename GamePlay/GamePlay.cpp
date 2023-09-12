@@ -138,6 +138,9 @@ void GamePlay::Update()
 		// This locks the cursor to not leave the game screen, with the side effect of locking it to that size so long
 		// as the game is running.
 		ClipCursor(&rect);
+	//追い出しパーティクルの座標更新
+	CallPartPos = { player->GetPosition().x, player->GetPosition().y + 10 , player->GetPosition().z };
+
 
 		//移動時は走りモーションにする
 		if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
@@ -694,6 +697,11 @@ void GamePlay::Update()
 		{
 			ushiTeki = false;
 		}
+	if (input->GetInstance()->TriggerKey(DIK_L))
+	{
+		CallPart->ExpelParticle(2, CallPartPos, CallPartPos,
+			3.0f, 15.0f, 4.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+	}
 
 		camera->SetTarget(player->GetPosition());
 		ground->Update();
@@ -709,24 +717,56 @@ void GamePlay::Update()
 		// Fences
 		UpdateFences();
 
-		pigGate->Update();
-		sheepGate->Update();
-		cowGate->Update();
+	pigGate->Update();
+	sheepGate->Update();
+	cowGate->Update();
+	Particle->Update();
+	CallPart->Update();
 
-		for (std::unique_ptr<Buta>& buta : butaList)
+	for (std::unique_ptr<Buta>& buta : butaList)
+	{
+		if (buta->GetgoalFlag() == true && buta->GetgoalTimer() <= 30)
 		{
-			buta->Update();
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, PigGate_Left, PigGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, PigGate_Right, PigGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
 
-		for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
+		buta->Update();
+	}
+
+	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
+	{
+		if (hitsuji->GetgoalFlag() == true && hitsuji->GetgoalTimer() <= 30)
 		{
-			hitsuji->Update();
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, HitsujiGate_Left, HitsujiGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, HitsujiGate_Right, HitsujiGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
 
-		for (std::unique_ptr<Ushi>& ushi : ushiList)
+		hitsuji->Update();
+	}
+
+	for (std::unique_ptr<Ushi>& ushi : ushiList)
+	{
+		if (ushi->GetgoalFlag() == true && ushi->GetgoalTimer() <= 30)
 		{
-			ushi->Update();
+			//パーティクル発生 player->GetPosition()
+			Particle->LevelUpParticle(10, UshiGate_Left, UshiGate_Left,
+				5.0f, 15.0f, 8.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+
+			Particle->LevelUpParticle(10, UshiGate_Right, UshiGate_Right,
+				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
+
+		ushi->Update();
+	}
 
 		for (std::unique_ptr<Esa>& esa : esaList)
 		{
@@ -1061,7 +1101,8 @@ void GamePlay::Draw()
 	}
 
 	// パーティクルの描画
-	circleParticle->Draw(cmdList);
+	Particle->Draw(cmdList);
+	CallPart->Draw(cmdList);
 
 	// 3Dオブジェクト描画後処理
 	ObjObject::PostDraw();
@@ -1709,6 +1750,20 @@ void GamePlay::ParticleInitialization()
 {
 	// パーティクル
 	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+
+	// パーティクル
+	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
+
+	//パーティクル発生用座標初期化
+	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
+	PigGate_Right = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z + 35 };
+
+	HitsujiGate_Left = { sheepGate->GetPosition().x + 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
+	HitsujiGate_Right = { sheepGate->GetPosition().x - 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
+
+	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
+	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
 }
 
 void GamePlay::InitialAnimalInitialization()
