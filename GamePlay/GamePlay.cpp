@@ -867,7 +867,7 @@ void GamePlay::Update()
 
 	// ゲームタイマー
 	std::ostringstream GameTimer;
-	GameTimer << std::fixed << std::setprecision(0)<< timer ;
+	GameTimer << std::fixed << std::setprecision(0) << timer;
 	scoreText.Print(GameTimer.str(), { 1230, 67 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
 }
 

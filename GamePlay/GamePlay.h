@@ -336,7 +336,7 @@ private: // メンバ変数
 	// これは変更しないでください。
 	// タイマーUIに使用する。
 	const float timerMax = 120.0f;
-	float timer = 120;
+	int timer = 120;
 
 	//FBXオブジェクト
 
