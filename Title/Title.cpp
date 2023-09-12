@@ -1,5 +1,7 @@
 #include "Title.h"
 
+extern bool run;
+
 Title::Title()
 {
 }
@@ -160,6 +162,11 @@ void Title::Update()
 	for (std::unique_ptr<Ushi>& ushi : ushiList)
 	{
 		ushi->Update();
+	}
+
+	if (input->TriggerKey(DIK_ESCAPE))
+	{
+		run = false;
 	}
 }
 

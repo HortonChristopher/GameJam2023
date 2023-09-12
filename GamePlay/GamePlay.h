@@ -118,6 +118,11 @@ private: // 静的メンバ変数
 		sheep_icon,
 		pig_icon,
 
+		pause_menu,
+		pause_menu_s1,
+		pause_menu_s2,
+		pause_menu_s3,
+
 		game_gtxt_1,
 		score_base
 	};
@@ -219,6 +224,11 @@ private: // メンバ変数
 	Sprite* cowIcon = nullptr;
 	Sprite* sheepIcon = nullptr;
 	Sprite* pigIcon = nullptr;
+
+	Sprite* pauseMenu = nullptr;
+	Sprite* pauseMenuS1 = nullptr;
+	Sprite* pauseMenuS2 = nullptr;
+	Sprite* pauseMenuS3 = nullptr;
 
 	Sprite* score_gtxt_1 = nullptr;
 
@@ -332,6 +342,9 @@ private: // メンバ変数
 	float bonusTimeRemaining = 0.0f;
 	float bonusTimeEntries = 0.0f;
 	const float bonusTimeMax = 3600.0f;
+
+	bool pause = false;
+	int pauseSelection = 0;
 
 	// タイマーを変更したい場合は、この数字を変更してください。
 	// 希望の秒数に60をかける。

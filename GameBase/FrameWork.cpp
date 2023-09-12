@@ -1,13 +1,14 @@
 #include "FrameWork.h"
 
 extern HWND hwnd = nullptr;
+extern bool run = true;
 
 void FrameWork::Run()
 {
 	// ゲームの初期化
 	Initialize();
 
-	while (true) // ゲームループ
+	while (run) // ゲームループ
 	{
 		// 更新
 		Update();
