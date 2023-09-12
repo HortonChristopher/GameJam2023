@@ -1,7 +1,7 @@
 #pragma once
 #include "ObjObject.h"
 
-class Teki :
+class ButaTeki :
 	public ObjObject
 {
 protected:
@@ -19,7 +19,7 @@ private: // 静的メンバ変数
 
 public: // 静的メンバ関数
 	// 3Dオブジェクト生成
-	static std::unique_ptr<Teki>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale);
+	static std::unique_ptr<ButaTeki>Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale);
 
 public: // メンバ関数
 	// 初期化

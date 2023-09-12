@@ -274,6 +274,24 @@
     <ClCompile Include="AnimalBehavior\Ushi.cpp">
       <Filter>AnimalBehavior</Filter>
     </ClCompile>
+    <ClCompile Include="Items\UshiEsa.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\UshiTeki.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\ButaEsa.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\ButaTeki.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\HitsujiEsa.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Items\HitsujiTeki.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FBX.hlsli">
@@ -486,6 +504,24 @@
     </ClInclude>
     <ClInclude Include="AnimalBehavior\Ushi.h">
       <Filter>AnimalBehavior</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\UshiEsa.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\UshiTeki.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\ButaEsa.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\ButaTeki.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\HitsujiEsa.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Items\HitsujiTeki.h">
+      <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

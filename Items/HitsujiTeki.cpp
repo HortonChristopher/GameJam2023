@@ -1,9 +1,9 @@
-#include "Teki.h"
+#include "HitsujiTeki.h"
 
-std::unique_ptr<Teki> Teki::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale)
+std::unique_ptr<HitsujiTeki> HitsujiTeki::Create(ObjModel* model, const XMFLOAT3 position, const XMFLOAT3 scale)
 {
 	// 3Dオブジェクトのインスタンスを生成
-	Teki* instance = new Teki();
+	HitsujiTeki* instance = new HitsujiTeki();
 	if (instance == nullptr) {
 		return nullptr;
 	}
@@ -19,10 +19,10 @@ std::unique_ptr<Teki> Teki::Create(ObjModel* model, const XMFLOAT3 position, con
 		instance->SetModel(model);
 	}
 
-	return std::unique_ptr<Teki>(instance);
+	return std::unique_ptr<HitsujiTeki>(instance);
 }
 
-bool Teki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
+bool HitsujiTeki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
 {
 	if (!ObjObject::Initialize())
 	{
@@ -34,7 +34,7 @@ bool Teki::Initialize(const XMFLOAT3 position, const XMFLOAT3 scale)
 	return true;
 }
 
-void Teki::Update()
+void HitsujiTeki::Update()
 {
 	ObjObject::Update();
 
