@@ -132,6 +132,11 @@ void GamePlay::Initialize()
 		return;
 	}
 
+	if (!Sprite::LoadTexture(TextureNumber::score_base, L"Resources/Sprite/GameUI/scoreBase.png")) {
+		assert(0);
+		return;
+	}
+
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 	// デバッグテキスト初期化
@@ -157,6 +162,8 @@ void GamePlay::Initialize()
 
 	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 75.0f,60.0f });
 	score_gtxt_1->SetSize({133.0f, 28.0f});
+
+	scoreBase = Sprite::Create(TextureNumber::score_base, { 5.0f,5.0f });
 
 	// タイマーUI
 	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
@@ -1121,6 +1128,7 @@ void GamePlay::Draw()
 	Sprite::PreDraw(cmdList);
 	
 	// 前景スプライト描画
+	scoreBase->Draw();
 	cowIcon->Draw();
 	sheepIcon->Draw();
 	pigIcon->Draw();

@@ -118,7 +118,8 @@ private: // 静的メンバ変数
 		sheep_icon,
 		pig_icon,
 
-		game_gtxt_1
+		game_gtxt_1,
+		score_base
 	};
 
 	enum ItemSelection
@@ -196,6 +197,8 @@ private: // メンバ変数
 	Sprite* pigIcon = nullptr;
 
 	Sprite* score_gtxt_1 = nullptr;
+
+	Sprite* scoreBase = nullptr;
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;
