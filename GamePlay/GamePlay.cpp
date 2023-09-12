@@ -430,7 +430,7 @@ void GamePlay::Update()
 		AnimationTimer_T++;
 	}
 
-	if (AnimationTimer_T >= 60)
+	if (AnimationTimer_T >= ThrowFrame)
 	{
 		AnimationFlag_T = false;
 		AnimationTimer_T = 0;
@@ -444,7 +444,7 @@ void GamePlay::Update()
 		AnimationTimer_C++;
 	}
 
-	if (AnimationTimer_C >= 60)
+	if (AnimationTimer_C >= CallFrame)
 	{
 		AnimationFlag_C = false;
 		AnimationTimer_C = 0;
@@ -726,29 +726,46 @@ void GamePlay::Update()
 
 	//FBX各種の座標、ローテート更新
 	//待機
-	objPlayerStop->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
-	objPlayerStop->SetRotation(player->GetRotation());
-	objPlayerStop->Update();
 
-	//歩き
-	objPlayerWalking->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
-	objPlayerWalking->SetRotation(player->GetRotation());
-	objPlayerWalking->Update();
+	if (PlayerState == 0)
+	{
+		objPlayerStop->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+		objPlayerStop->SetRotation(player->GetRotation());
+		objPlayerStop->Update();
+	}
 
-	//走り
-	objPlayerRun->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
-	objPlayerRun->SetRotation(player->GetRotation());
-	objPlayerRun->Update();
+	if (PlayerState == 1)
+	{
+		//歩き
+		objPlayerWalking->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+		objPlayerWalking->SetRotation(player->GetRotation());
+		objPlayerWalking->Update();
+	}
 
-	//エサ投げ
-	objPlayerThrow->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
-	objPlayerThrow->SetRotation(player->GetRotation());
-	objPlayerThrow->Update();
+	if (PlayerState == 2)
+	{
+		//走り
+		objPlayerRun->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+		objPlayerRun->SetRotation(player->GetRotation());
+		objPlayerRun->Update();
 
-	//
-	objPlayerCall->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
-	objPlayerCall->SetRotation(player->GetRotation());
-	objPlayerCall->Update();
+	}
+
+	if (PlayerState == 3)
+	{
+		//エサ投げ
+		objPlayerThrow->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+		objPlayerThrow->SetRotation(player->GetRotation());
+		objPlayerThrow->Update();
+	}
+
+	if (PlayerState == 4)
+	{
+		//
+		objPlayerCall->SetPosition({ player->GetPosition().x, player->GetPosition().y - 0.5f, player->GetPosition().z });
+		objPlayerCall->SetRotation(player->GetRotation());
+		objPlayerCall->Update();
+	}
 
 	frameTimer -= 1.0f;
 	timer = (frameTimer / 60.0f);

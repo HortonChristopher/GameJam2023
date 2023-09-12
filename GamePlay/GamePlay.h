@@ -291,4 +291,8 @@ private: // メンバ変数
 	//アニメーションタイマー切り替え用フラグ
 	bool AnimationFlag_T = false;
 	bool AnimationFlag_C = false;
+
+	//アニメーションフレーム数
+	int ThrowFrame = 132;
+	int CallFrame = 191;
 };
