@@ -302,6 +302,9 @@ void GamePlay::Finalize()
 
 void GamePlay::Update()
 {
+	// Get mouse input
+	Input::MouseMove mouseMove = input->GetMouseMove();
+
 	//RECT構造体へのポインタ
 	RECT rect;
 
@@ -389,6 +392,79 @@ void GamePlay::Update()
 		horseRespawn += 1.0f;
 	}
 
+	if (mouseMove.lZ != 0)
+	{
+		switch (itemSelection)
+		{
+		case BUTA_ESA:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = BUTA_TEKI;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = USHI_TEKI;
+			}
+			break;
+		case BUTA_TEKI:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = HITSUJI_ESA;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = BUTA_ESA;
+			}
+			break;
+		case HITSUJI_ESA:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = HITSUJI_TEKI;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = BUTA_TEKI;
+			}
+			break;
+		case HITSUJI_TEKI:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = USHI_ESA;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = HITSUJI_ESA;
+			}
+			break;
+		case USHI_ESA:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = USHI_TEKI;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = HITSUJI_TEKI;
+			}
+			break;
+		case USHI_TEKI:
+			if (mouseMove.lZ < 0)
+			{
+				itemSelection = BUTA_ESA;
+			}
+			else if (mouseMove.lZ > 0)
+			{
+				itemSelection = USHI_ESA;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
+	char msgbuf[256];
+	sprintf_s(msgbuf, 256, "itemSelection: %d\n", itemSelection);
+	OutputDebugStringA(msgbuf);
+
 	if (input->TriggerMouseLeft())
 	{
 		AnimationFlag_T = true;
@@ -396,119 +472,74 @@ void GamePlay::Update()
 		float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 		float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
 
-		switch (itemType)
+		switch (itemSelection)
 		{
-		case ESA:
-			switch (animalType)
-			{
-			case BUTA:
-			{
-				std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
+		case BUTA_ESA:
+		{
+			std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
 
-				butaEsaList.push_back(std::move(newButaEsa));
-				break;
-			}
-			case HITSUJI:
-			{
-				std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				hitsujiEsaList.push_back(std::move(newHitsujiEsa));
-				break;
-			}
-			case USHI:
-			{
-				std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				ushiEsaList.push_back(std::move(newUshiEsa));
-				break;
-			}
-			default:
-				break;
-			}
-			break;
-		case TEKI:
-			switch (animalType)
-			{
-			case BUTA:
-			{
-				std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				butaTekiList.push_back(std::move(newButaTeki));
-				break;
-			}
-			case HITSUJI:
-			{
-				std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				hitsujiTekiList.push_back(std::move(newHitsujiTeki));
-				break;
-			}
-			case USHI:
-			{
-				std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
-					modelBullet,
-					{ x, 0.5f, z },
-					{ 0.5f, 0.5f, 0.5f }
-				);
-
-				ushiTekiList.push_back(std::move(newUshiTeki));
-				break;
-			}
-			default:
-				break;
-			}
+			butaEsaList.push_back(std::move(newButaEsa));
 			break;
 		}
-	}
-
-	if (input->TriggerKey(DIK_E))
-	{
-		switch (itemType)
+		case BUTA_TEKI:
 		{
-		case ESA:
-			itemType = TEKI;
-			break;
-		case TEKI:
-			itemType = ESA;
-			break;
-		default:
+			std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
+
+			butaTekiList.push_back(std::move(newButaTeki));
 			break;
 		}
-	}
-
-	if (input->TriggerKey(DIK_Q))
-	{
-		switch (animalType)
+		case HITSUJI_ESA:
 		{
-		case BUTA:
-			animalType = HITSUJI;
+			std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
+
+			hitsujiEsaList.push_back(std::move(newHitsujiEsa));
 			break;
-		case HITSUJI:
-			animalType = USHI;
+		}
+		case HITSUJI_TEKI:
+		{
+			std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
+
+			hitsujiTekiList.push_back(std::move(newHitsujiTeki));
 			break;
-		case USHI:
-			animalType = BUTA;
+		}
+		case USHI_ESA:
+		{
+			std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
+
+			ushiEsaList.push_back(std::move(newUshiEsa));
 			break;
+		}
+		case USHI_TEKI:
+		{
+			std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
+				modelBullet,
+				{ x, 0.5f, z },
+				{ 0.5f, 0.5f, 0.5f }
+			);
+
+			ushiTekiList.push_back(std::move(newUshiTeki));
+			break;
+		}
 		default:
 			break;
 		}

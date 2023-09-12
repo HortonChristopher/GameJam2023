@@ -121,20 +121,16 @@ private: // 静的メンバ変数
 		game_gtxt_1
 	};
 
-	enum ItemType
+	enum ItemSelection
 	{
-		ESA = 0,
-		TEKI = 1
+		BUTA_ESA = 0,
+		BUTA_TEKI = 1,
+		HITSUJI_ESA = 2,
+		HITSUJI_TEKI = 3,
+		USHI_ESA = 4,
+		USHI_TEKI = 5
 	};
-	ItemType itemType = ESA;
-
-	enum AnimalType
-	{
-		BUTA = 0,
-		HITSUJI = 1,
-		USHI = 2
-	};
-	AnimalType animalType = BUTA;
+	ItemSelection itemSelection = BUTA_ESA;
 
 public: // メンバ関数
 
