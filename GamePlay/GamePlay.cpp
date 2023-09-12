@@ -1749,7 +1749,7 @@ void GamePlay::DrawFences()
 void GamePlay::ParticleInitialization()
 {
 	// パーティクル
-	circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+	//circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
 
 	// パーティクル
 	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
