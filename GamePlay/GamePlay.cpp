@@ -472,68 +472,99 @@ void GamePlay::Update()
 		{
 		case BUTA_ESA:
 		{
-			std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!butaEsa)
+			{
+				std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			butaEsaList.push_back(std::move(newButaEsa));
+				butaEsaList.push_back(std::move(newButaEsa));
+
+				butaEsa = true;
+			}
 			break;
 		}
 		case BUTA_TEKI:
 		{
-			std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!butaTeki)
+			{
+				std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			butaTekiList.push_back(std::move(newButaTeki));
+				butaTekiList.push_back(std::move(newButaTeki));
+
+				butaTeki = true;
+			}
 			break;
 		}
 		case HITSUJI_ESA:
 		{
-			std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!hitsujiEsa)
+			{
+				std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			hitsujiEsaList.push_back(std::move(newHitsujiEsa));
+				hitsujiEsaList.push_back(std::move(newHitsujiEsa));
+
+				hitsujiEsa = true;
+			}
+			
 			break;
 		}
 		case HITSUJI_TEKI:
 		{
-			std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!hitsujiTeki)
+			{
+				std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+				hitsujiTekiList.push_back(std::move(newHitsujiTeki));
+
+				hitsujiTeki = true;
+			}
 			break;
 		}
 		case USHI_ESA:
 		{
-			std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!ushiEsa)
+			{
+				std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			ushiEsaList.push_back(std::move(newUshiEsa));
+				ushiEsaList.push_back(std::move(newUshiEsa));
+
+				ushiEsa = true;
+			}
 			break;
 		}
 		case USHI_TEKI:
 		{
-			std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
-				modelBullet,
-				{ x, 0.5f, z },
-				{ 0.5f, 0.5f, 0.5f }
-			);
+			if (!ushiTeki)
+			{
+				std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
+					modelBullet,
+					{ x, 0.5f, z },
+					{ 0.5f, 0.5f, 0.5f }
+				);
 
-			ushiTekiList.push_back(std::move(newUshiTeki));
+				ushiTekiList.push_back(std::move(newUshiTeki));
+
+				ushiTeki = true;
+			}
 			break;
 		}
 		default:
@@ -634,7 +665,29 @@ void GamePlay::Update()
 					buta->deathFlag = true;
 				}
 
-				score += 10.0f;
+				/*if (!pigBonusTime)
+				{
+					pigBonusTime = true;
+					pigBonusTimeRemaining = pigBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (pigBonusTime)
+				{
+					pigBonusTimeEntries += 1.0f;
+					score += ((10.0f * pigBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				pigNumber--;
 			}
 		}
@@ -698,7 +751,29 @@ void GamePlay::Update()
 					hitsuji->deathFlag = true;
 				}
 
-				score += 10.0f;
+				/*if (!sheepBonusTime)
+				{
+					sheepBonusTime = true;
+					sheepBonusTimeRemaining = sheepBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (sheepBonusTime)
+				{
+					sheepBonusTimeEntries += 1.0f;
+					score += ((10.0f * sheepBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				sheepNumber--;
 			}
 		}
@@ -750,7 +825,7 @@ void GamePlay::Update()
 		{
 			if (!ushi->goalSet)
 			{
-				if (goalHorse < goalHorseMax)
+				/*if (goalHorse < goalHorseMax)
 				{
 					ushi->goalNumber = goalHorse;
 					goalHorse++;
@@ -762,7 +837,29 @@ void GamePlay::Update()
 					ushi->deathFlag = true;
 				}
 
-				score += 10.0f;
+				if (!cowBonusTime)
+				{
+					cowBonusTime = true;
+					cowBonusTimeRemaining = cowBonusTimeMax;
+					score += 10.0f;
+				}
+				else if (cowBonusTime)
+				{
+					cowBonusTimeEntries += 1.0f;
+					score += ((10.0f * cowBonusTimeEntries) + 10.0f);
+				}*/
+
+				if (!bonusTime)
+				{
+					bonusTime = true;
+					bonusTimeRemaining = bonusTimeMax;
+					score += 10.0f;
+				}
+				else if (bonusTime)
+				{
+					bonusTimeEntries += 1.0f;
+					score += ((10.0f * bonusTimeEntries) + 10.0f);
+				}
 				horseNumber--;
 			}
 		}
@@ -785,6 +882,31 @@ void GamePlay::Update()
 			return ushi->GetDeathFlag();
 		}
 	);
+
+	if (butaEsaList.empty())
+	{
+		butaEsa = false;
+	}
+	if (butaTekiList.empty())
+	{
+		butaTeki = false;
+	}
+	if (hitsujiEsaList.empty())
+	{
+		hitsujiEsa = false;
+	}
+	if (hitsujiTekiList.empty())
+	{
+		hitsujiTeki = false;
+	}
+	if (ushiEsaList.empty())
+	{
+		ushiEsa = false;
+	}
+	if (ushiTekiList.empty())
+	{
+		ushiTeki = false;
+	}
 
 	camera->SetTarget(player->GetPosition());
 	ground->Update();
@@ -953,18 +1075,59 @@ void GamePlay::Update()
 	frameTimer -= 1.0f;
 	timer = (frameTimer / 60.0f);
 
-	meterTimer->Update(timer, 60.0f, { 1240, 45 });
+	meterTimer->Update(timer, timerMax, {1240, 45});
+
+	/*if (pigBonusTimeRemaining <= 0.0f)
+	{
+		pigBonusTime = false;
+		pigBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		pigBonusTimeRemaining -= 1.0f;
+	}
+
+	if (sheepBonusTimeRemaining <= 0.0f)
+	{
+		sheepBonusTime = false;
+		sheepBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		sheepBonusTimeRemaining -= 1.0f;
+	}
+
+	if (cowBonusTimeRemaining <= 0.0f)
+	{
+		cowBonusTime = false;
+		cowBonusTimeRemaining = 0.0f;
+	}
+	else
+	{
+		cowBonusTimeRemaining -= 1.0f;
+	}*/
+
+	if (bonusTimeRemaining <= 0.0f)
+	{
+		bonusTime = false;
+		bonusTimeRemaining = 0.0f;
+		bonusTimeEntries = 0.0f;
+	}
+	else
+	{
+		bonusTimeRemaining -= 1.0f;
+	}
 
 	//Debug Start
-	/*char msgbuf[256];
-	char msgbuf2[256];
-	char msgbuf3[256];
-	sprintf_s(msgbuf, 256, "FT: %f\n", frameTimer);
-	sprintf_s(msgbuf2, 256, "T: %d\n", timer);
-	sprintf_s(msgbuf3, 256, "S: %f\n", score);
+	char msgbuf[256];
+	//char msgbuf2[256];
+	//char msgbuf3[256];
+	sprintf_s(msgbuf, 256, "Bonus Time: %f\n", bonusTimeRemaining);
+	//sprintf_s(msgbuf2, 256, "SheepBT: %f\n", sheepBonusTimeRemaining);
+	//sprintf_s(msgbuf3, 256, "CowBT: %f\n", cowBonusTimeRemaining);
 	OutputDebugStringA(msgbuf);
-	OutputDebugStringA(msgbuf2);
-	OutputDebugStringA(msgbuf3)*/
+	//OutputDebugStringA(msgbuf2);
+	//OutputDebugStringA(msgbuf3);
 	//Debug End
 
 	//DrawDebugText();
