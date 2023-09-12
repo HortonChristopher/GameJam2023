@@ -145,87 +145,108 @@ void Player::Move()
 	{
 	/*	phase_ = State::Run;*/
 		moveDirection = {};
-
-		if (input->PushKey(DIK_A))
+		
+		if (MoveCancel == false)
 		{
-			moveDirection += camDirectionX * -1;
-		}
-		else if (input->PushKey(DIK_D))
-		{
-			moveDirection += camDirectionX;
-		}
-		if (input->PushKey(DIK_S))
-		{
-			moveDirection += camDirectionZ * -1;
-		}
-		else if (input->PushKey(DIK_W))
-		{
-			moveDirection += camDirectionZ;
-		}
-
-		moveDirection.Normalize();
-		direction.Normalize();
-
-		float cosA = direction.Dot(moveDirection);
-
-		if (cosA > 1.0f)
-		{
-			cosA = 1.0f;
-		}
-		else if (cosA < -1.0f)
-		{
-			cosA = -1.0f;
-		}
-
-		float rotY = (float)acos(cosA) * 180 / 3.14159365f;
-		const Vector3 CrossVec = direction.Cross(moveDirection);
-
-		float rotSpeed = rotateSpeed;
-
-		if (abs(rotY) < 55)
-		{
-			position.x += moveDirection.x * speed;
-			position.y += moveDirection.y * speed;
-			position.z += moveDirection.z * speed;
-
-			if (position.x > mapBoundaries)
+			if (input->PushKey(DIK_A))
 			{
-				position.x = mapBoundaries;
+				moveDirection += camDirectionX * -1;
 			}
-			else if (position.x < -mapBoundaries)
+			else if (input->PushKey(DIK_D))
 			{
-				position.x = -mapBoundaries;
+				moveDirection += camDirectionX;
 			}
-			if (position.z > mapBoundaries)
+			if (input->PushKey(DIK_S))
 			{
-				position.z = mapBoundaries;
+				moveDirection += camDirectionZ * -1;
 			}
-			else if (position.z < -mapBoundaries)
+			else if (input->PushKey(DIK_W))
 			{
-				position.z = -mapBoundaries;
+				moveDirection += camDirectionZ;
 			}
+
+
+			moveDirection.Normalize();
+			direction.Normalize();
+
+			float cosA = direction.Dot(moveDirection);
+
+			if (cosA > 1.0f)
+			{
+				cosA = 1.0f;
+			}
+			else if (cosA < -1.0f)
+			{
+				cosA = -1.0f;
+			}
+
+			float rotY = (float)acos(cosA) * 180 / 3.14159365f;
+			const Vector3 CrossVec = direction.Cross(moveDirection);
+
+			float rotSpeed = rotateSpeed;
+
+			if (abs(rotY) < 55)
+			{
+				position.x += moveDirection.x * speed;
+				position.y += moveDirection.y * speed;
+				position.z += moveDirection.z * speed;
+
+				if (position.x > mapBoundaries)
+				{
+					position.x = mapBoundaries;
+				}
+				else if (position.x < -mapBoundaries)
+				{
+					position.x = -mapBoundaries;
+				}
+				if (position.z > mapBoundaries)
+				{
+					position.z = mapBoundaries;
+				}
+				else if (position.z < -mapBoundaries)
+				{
+					position.z = -mapBoundaries;
+				}
+			}
+
+			if (rotSpeed > abs(rotY))
+			{
+				rotSpeed = rotY;
+			}
+
+			if (CrossVec.y < 0)
+			{
+				rotSpeed *= -1;
+			}
+
+			rotation.y += rotSpeed;
+
+			XMMATRIX matRotation = XMMatrixRotationY(XMConvertToRadians(rotSpeed));
+			XMVECTOR dir = { direction.x, direction.y, direction.z, 0 };
+			dir = XMVector3TransformNormal(dir, matRotation);
+			direction = dir;
+
+			SetPosition(position);
+			SetRotation(rotation);
 		}
-
-		if (rotSpeed > abs(rotY))
-		{
-			rotSpeed = rotY;
-		}
-
-		if (CrossVec.y < 0)
-		{
-			rotSpeed *= -1;
-		}
-
-		rotation.y += rotSpeed;
-
-		XMMATRIX matRotation = XMMatrixRotationY(XMConvertToRadians(rotSpeed));
-		XMVECTOR dir = { direction.x, direction.y, direction.z, 0 };
-		dir = XMVector3TransformNormal(dir, matRotation);
-		direction = dir;
-
-		SetPosition(position);
-		SetRotation(rotation);
 	}
+
+	if (input->TriggerMouseLeft())
+	{
+		MoveCancel = true;
+	}
+
+	if (MoveCancel == true)
+	{
+		MoveCancelTimer++;
+	}
+
+	if (MoveCancelTimer >= 132)
+	{
+		MoveCancelTimer = 0;
+		MoveCancel = false;
+	}
+
 
 	/*else
 	{

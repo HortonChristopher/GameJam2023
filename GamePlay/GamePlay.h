@@ -162,6 +162,8 @@ public: // メンバ関数
 	void UpdateFences();
 	void DrawFences();
 
+	const int& GetPlayerState() { return PlayerState; }
+
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	Input* input = Input::GetInstance();

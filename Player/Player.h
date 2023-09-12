@@ -174,5 +174,9 @@ public:
 	float HP = HPMAX;
 
 	bool boostCancel = false;
-	//float boostCancelTimer = 
+
+	//ˆÚ“®ƒLƒƒƒ“ƒZƒ‹•Ï”
+	bool MoveCancel = false;
+	int MoveCancelTimer = 0;
+
 };
