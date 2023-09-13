@@ -21,9 +21,7 @@ void StageSelect::Initialize()
 	sound->Initialize();
 
 	//音声のロード
-	sound->LoadWav("SE/Title/Start.wav");
-	sound->LoadWav("SE/Title/Move.wav");
-	sound->LoadWav("SE/Title/StageSelect.wav");
+	sound->LoadWav("SE/Game/Title.wav");
 
 	// カメラ生成
 	camera = new Camera(WinApp::window_width, WinApp::window_height);
@@ -50,6 +48,8 @@ void StageSelect::Initialize()
 	camera->SetTarget({ 0, 0, 0 });
 	camera->SetEye({ 0, 0, 10 });
 	camera->SetUp({ 0, 1, 0 });
+
+	sound->PlayWav("SE/Game/Title.wav", 0.1f, true);
 }
 
 void StageSelect::Finalize()
@@ -66,6 +66,7 @@ void StageSelect::Update()
 			explanationPage = 1;
 			break;
 		case 1:
+			sound->StopWav("SE/Game/Title.wav");
 			//シーン切り替え
 			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 			break;

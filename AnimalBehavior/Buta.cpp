@@ -127,6 +127,7 @@ void Buta::Update()
 				}
 
 				timer += timerOneFrame;
+				timer += timerOneFrame;
 				break;
 			default:
 				break;
