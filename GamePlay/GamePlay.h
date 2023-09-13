@@ -139,7 +139,8 @@ private: // 静的メンバ変数
 		bonus_base,
 		esa_icon,
 		teki_icon,
-		game_gtxt_2
+		game_gtxt_2,
+		finish,
 	};
 
 	enum AnimalSelection
@@ -271,6 +272,9 @@ private: // メンバ変数
 
 	//黒背景
 	Sprite* Black = nullptr;
+
+	//フィニッシュ
+	Sprite* Finish = nullptr;
 
 	GageUI* bonusGage = nullptr;
 
@@ -462,4 +466,7 @@ private: // メンバ変数
 	//フィニッシュSE再生タイマー
 	int FinishTimer = 0;
 	bool FinishSEFlag = false;
+
+	//フィニッシュアルファ
+	float FinishAlpha = 0.0f;
 };
