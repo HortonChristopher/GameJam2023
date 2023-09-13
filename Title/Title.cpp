@@ -10,8 +10,86 @@ Title::~Title()
 {
 }
 
+bool Title::IsTooClose(const XMFLOAT3& point1, const XMFLOAT3& point2, float minDistance) {
+	float dx = point1.x - point2.x;
+	float dz = point1.z - point2.z;
+	return dx * dx + dz * dz < minDistance * minDistance;
+}
+
+DirectX::XMFLOAT3 Title::GenerateRandomCoordinate(float innerRadius, float outerRadius, float angleMin, float angleMax, const std::vector<XMFLOAT3>& existingPoints, float minDistance) {
+	XMFLOAT3 coordinate;
+	bool valid;
+	do {
+		valid = true;
+
+		// Generate a random angle between angleMin and angleMax
+		float angle = angleMin + (float(rand()) / RAND_MAX) * (angleMax - angleMin);
+
+		// Generate a random radius between innerRadius and outerRadius
+		float radius = innerRadius + (float(rand()) / RAND_MAX) * (outerRadius - innerRadius);
+
+		// Convert polar coordinates (angle & radius) to Cartesian coordinates
+		coordinate.x = radius * cos(angle);
+		coordinate.y = 0.0f;
+		coordinate.z = radius * sin(angle);
+
+		for (const XMFLOAT3& existingPoint : existingPoints) {
+			if (IsTooClose(coordinate, existingPoint, minDistance)) {
+				valid = false;
+				break;
+			}
+		}
+	} while (!valid);
+
+	return coordinate;
+}
+
+DirectX::XMFLOAT3 Title::CalculateRotation(const XMFLOAT3& coordinate) {
+	float yaw = atan2(-coordinate.z, -coordinate.x);  // Note the '-' to make it face towards (0, 0, 0)
+	return XMFLOAT3(0.0f, yaw, 0.0f);
+}
+
+std::pair<std::vector<DirectX::XMFLOAT3>, std::vector<DirectX::XMFLOAT3>> Title::GenerateCoordinatesAndRotations() {
+	// Seed the random number generator
+	std::srand(std::time(0));
+
+	std::vector<XMFLOAT3> allCoordinates;
+	std::vector<XMFLOAT3> allRotations;
+
+	// Generate 20 coordinates for each of the 4 quadrants
+	for (int quadrant = 0; quadrant < 4; ++quadrant) {
+		float angleMin = float(quadrant) * 0.5f * 3.14159265358979323846f;
+		float angleMax = float(quadrant + 1) * 0.5f * 3.14159265358979323846f;
+
+		float rotationValue = 0.0f;
+
+		// Manually set the rotation based on the quadrant
+		switch (quadrant) {
+		case 0: rotationValue = 0.0f; break; // North-East
+		case 1: rotationValue = 4.71238898038f; break; // South-East (90 degrees in radians)
+		case 2: rotationValue = 3.14159265359f; break; // South-West (180 degrees in radians)
+		case 3: rotationValue = 1.57079632679f; break; // North-West (270 degrees in radians)
+		}
+
+		for (int i = 0; i < 20; ++i) {
+			XMFLOAT3 coordinate = GenerateRandomCoordinate(300.0f, 450.0f, angleMin, angleMax, allCoordinates, 10.0f);
+			allCoordinates.push_back(coordinate);
+
+			// Set rotation manually
+			XMFLOAT3 rotation = XMFLOAT3(0.0f, rotationValue, 0.0f);
+
+			allRotations.push_back(rotation);
+		}
+	}
+
+	return { allCoordinates, allRotations };
+}
+
 void Title::Initialize()
 {
+	// Seed the random number generator
+	std::srand(std::time(0));
+
 	// ƒTƒEƒ“ƒh‰Šú‰»
 	sound->Initialize();
 
@@ -71,10 +149,148 @@ void Title::Initialize()
 	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
 	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
 
+	pigSign = ObjObject::Create();
+	pigSignModel = ObjModel::CreateFromOBJ("butakanban");
+	pigSign->SetModel(pigSignModel);
+	pigSign->SetPosition({ -152.5f, 0.0f, -40.0f });
+	pigSign->SetRotation({ 0.0f, 270.0f, 0.0f });
+
+	sheepSign = ObjObject::Create();
+	sheepSignModel = ObjModel::CreateFromOBJ("hitsuzikanban");
+	sheepSign->SetModel(sheepSignModel);
+	sheepSign->SetPosition({ 40.0f, 0.0f, -152.5f });
+	sheepSign->SetRotation({ 0.0f, 180.0f, 0.0f });
+
+	cowSign = ObjObject::Create();
+	cowSignModel = ObjModel::CreateFromOBJ("ushikanban");
+	cowSign->SetModel(cowSignModel);
+	cowSign->SetPosition({ 152.5f, 0.0f, 40.0f });
+	cowSign->SetRotation({ 0.0f, 90.0f, 0.0f });
+
 	// 3D OBJ
 	ground = ObjObject::Create();
 	modelGround = ObjModel::CreateFromOBJ("grand");
 	ground->SetModel(modelGround);
+
+	// Silo
+	siloObject = ObjObject::Create();
+	siloModel = ObjModel::CreateFromOBJ("RanchSilo");
+	siloObject->SetModel(siloModel);
+	siloObject->SetPosition({ 60.0f, 0.0f, 225.0f });
+	siloObject->SetRotation({ 0.0f, 180.0f, 0.0f });
+	siloObject->SetScale({ 6.0f, 6.0f, 6.0f });
+
+	// Tree
+	treeModel = ObjModel::CreateFromOBJ("RanchTree");
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i] = ObjObject::Create();
+		trees[i]->SetModel(treeModel);
+		switch (i)
+		{
+		case 0:
+			trees[i]->SetPosition({ -130.0f, 0.0f, 180.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 1:
+			trees[i]->SetPosition({ -180.0f, 0.0f, 130.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 2:
+			trees[i]->SetPosition({ -190.0f, 0.0f, 190.0f });
+			trees[i]->SetRotation({ 0.0f, 270.0f, 0.0f });
+			break;
+		case 3:
+			trees[i]->SetPosition({ -130.0f, 0.0f, -180.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 4:
+			trees[i]->SetPosition({ -180.0f, 0.0f, -130.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 5:
+			trees[i]->SetPosition({ -190.0f, 0.0f, -190.0f });
+			trees[i]->SetRotation({ 0.0f, 180.0f, 0.0f });
+			break;
+		case 6:
+			trees[i]->SetPosition({ 130.0f, 0.0f, -180.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 7:
+			trees[i]->SetPosition({ 180.0f, 0.0f, -130.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 8:
+			trees[i]->SetPosition({ 190.0f, 0.0f, -190.0f });
+			trees[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
+			break;
+		case 9:
+			trees[i]->SetPosition({ 130.0f, 0.0f, 180.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 10:
+			trees[i]->SetPosition({ 180.0f, 0.0f, 130.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 11:
+			trees[i]->SetPosition({ 190.0f, 0.0f, 190.0f });
+			trees[i]->SetRotation({ 0.0f, 0.0f, 0.0f });
+			break;
+		case 12:
+			trees[i]->SetPosition({ -100.0f, 0.0f, 200.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 13:
+			trees[i]->SetPosition({ -200.0f, 0.0f, 100.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 14:
+			trees[i]->SetPosition({ -100.0f, 0.0f, -200.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 15:
+			trees[i]->SetPosition({ -200.0f, 0.0f, -100.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 16:
+			trees[i]->SetPosition({ 100.0f, 0.0f, -200.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 17:
+			trees[i]->SetPosition({ 200.0f, 0.0f, -100.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 18:
+			trees[i]->SetPosition({ 100.0f, 0.0f, 200.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 19:
+			trees[i]->SetPosition({ 200.0f, 0.0f, 100.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		}
+		trees[i]->SetScale({ 2.5f, 2.5f, 2.5f });
+	}
+
+	// Generate coordinates and rotations
+	std::pair<std::vector<XMFLOAT3>, std::vector<XMFLOAT3>> data = GenerateCoordinatesAndRotations();
+
+	// Extract the vectors from the pair
+	std::vector<XMFLOAT3>& coordinates = data.first;
+	std::vector<XMFLOAT3>& rotations = data.second;
+
+	// Assume object is some array or vector of pointers to your objects
+	for (size_t i = 0; i < coordinates.size(); ++i) {
+		randomTrees[i] = ObjObject::Create();
+		randomTrees[i]->SetModel(treeModel);
+		randomTrees[i]->SetPosition(coordinates[i]);
+
+		float radiansToDegrees = 180.0f / 3.14159265358979323846f;
+		XMFLOAT3 convertedRotation = { 0.0f, rotations[i].y * radiansToDegrees, 0.0f };
+
+		randomTrees[i]->SetRotation(convertedRotation);
+		randomTrees[i]->SetScale({ 2.5f, 2.5f, 2.5f });
+	}
 
 	// Spawn barn
 	barn = ObjObject::Create();
@@ -141,9 +357,24 @@ void Title::Update()
 
 	// Spawn Barn
 	barn->Update();
+	siloObject->Update();
+
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i]->Update();
+	}
+
+	for (int i = 0; i < 80; i++)
+	{
+		randomTrees[i]->Update();
+	}
 
 	// Fences
 	UpdateFences();
+
+	pigSign->Update();
+	sheepSign->Update();
+	cowSign->Update();
 
 	pigGate->Update();
 	sheepGate->Update();
@@ -199,6 +430,17 @@ void Title::Draw()
 
 	// Spawn Barn
 	barn->Draw();
+	siloObject->Draw();
+
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i]->Draw();
+	}
+
+	for (int i = 0; i < 80; i++)
+	{
+		randomTrees[i]->Draw();
+	}
 
 	// Fences
 	DrawFences();
@@ -206,6 +448,10 @@ void Title::Draw()
 	pigGate->Draw();
 	sheepGate->Draw();
 	cowGate->Draw();
+
+	pigSign->Draw();
+	sheepSign->Draw();
+	cowSign->Draw();
 	
 	for (std::unique_ptr<Buta>& buta : butaList)
 	{

@@ -361,6 +361,24 @@ void GamePlay::Initialize()
 	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
 	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
 
+	pigSign = ObjObject::Create();
+	pigSignModel = ObjModel::CreateFromOBJ("butakanban");
+	pigSign->SetModel(pigSignModel);
+	pigSign->SetPosition({ -152.5f, 0.0f, -40.0f });
+	pigSign->SetRotation({ 0.0f, 270.0f, 0.0f });
+
+	sheepSign = ObjObject::Create();
+	sheepSignModel = ObjModel::CreateFromOBJ("hitsuzikanban");
+	sheepSign->SetModel(sheepSignModel);
+	sheepSign->SetPosition({ 40.0f, 0.0f, -152.5f });
+	sheepSign->SetRotation({ 0.0f, 180.0f, 0.0f });
+
+	cowSign = ObjObject::Create();
+	cowSignModel = ObjModel::CreateFromOBJ("ushikanban");
+	cowSign->SetModel(cowSignModel);
+	cowSign->SetPosition({ 152.5f, 0.0f, 40.0f });
+	cowSign->SetRotation({ 0.0f, 90.0f, 0.0f });
+
 	// プレイヤー
 	player = Player::Create();
 
@@ -1298,6 +1316,10 @@ void GamePlay::Update()
 	// Fences
 	UpdateFences();
 
+	pigSign->Update();
+	sheepSign->Update();
+	cowSign->Update();
+
 	pigGate->Update();
 	sheepGate->Update();
 	cowGate->Update();
@@ -1674,6 +1696,10 @@ void GamePlay::Draw()
 	pigGate->Draw();
 	sheepGate->Draw();
 	cowGate->Draw();
+
+	pigSign->Draw();
+	sheepSign->Draw();
+	cowSign->Draw();
 
 	//プレイヤーの描画
 	if (PlayerState == 0)

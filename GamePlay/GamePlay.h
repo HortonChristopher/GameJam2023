@@ -316,6 +316,13 @@ private: // メンバ変数
 	ObjObject* cowGate = nullptr;
 	ObjModel* cowGateModel = nullptr;
 
+	ObjObject* pigSign = nullptr;
+	ObjModel* pigSignModel = nullptr;
+	ObjObject* sheepSign = nullptr;
+	ObjModel* sheepSignModel = nullptr;
+	ObjObject* cowSign = nullptr;
+	ObjModel* cowSignModel = nullptr;
+
 	ObjObject* siloObject = nullptr;
 	ObjModel* siloModel = nullptr;
 	std::array<ObjObject*, 20> trees = { {} };
