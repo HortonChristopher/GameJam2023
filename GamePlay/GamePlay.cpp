@@ -29,7 +29,7 @@ void GamePlay::Initialize()
 
 	//FBXカメラセット
 	FbxObject3d::SetCamera(camera);
-	
+
 	//デバイスをセット
 	FbxObject3d::SetDevice(dxCommon->GetDevice());
 
@@ -82,7 +82,7 @@ void GamePlay::Initialize()
 	}
 
 	// スピード
-	if (!Sprite::LoadTexture(TextureNumber::speed, L"Resources/Sprite/GameUI/Speed.png")) {
+	if (!Sprite::LoadTexture(TextureNumber::speed, L"Resources/Sprite/GameUI/timerNeedle.png")) {
 		assert(0);
 		return;
 	}
@@ -137,6 +137,31 @@ void GamePlay::Initialize()
 		return;
 	}
 
+	if (!Sprite::LoadTexture(TextureNumber::timer_base, L"Resources/Sprite/GameUI/timerBase.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::item_base, L"Resources/Sprite/GameUI/itemBase.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::bonus_base, L"Resources/Sprite/GameUI/bonusBase.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::esa_icon, L"Resources/Sprite/GameUI/Esa.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::teki_icon, L"Resources/Sprite/GameUI/Teki.png")) {
+		assert(0);
+		return;
+	}
+
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 	// デバッグテキスト初期化
@@ -156,17 +181,47 @@ void GamePlay::Initialize()
 
 	StoragePos = Sprite::Create(TextureNumber::reticle, { (float)mousePosition.x, (float)mousePosition.y });
 
-	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 5.0f,5.0f });
-	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 105.0f,5.0f });
-	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 205.0f,5.0f });
+	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 50.0f,50.0f });
+	cowIcon->SetAnchorPoint({ 0.5f, 0.5f });
 
-	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 75.0f,60.0f });
-	score_gtxt_1->SetSize({133.0f, 28.0f});
+	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 165.0f,50.0f });
+	sheepIcon->SetAnchorPoint({ 0.5f, 0.5f });
+
+	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 280.0f,50.0f });
+	pigIcon->SetAnchorPoint({ 0.5f, 0.5f });
+
+	cowItemIcon = Sprite::Create(TextureNumber::cow_icon, { 1139.0f,653.0f });
+	cowItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
+	cowItemIcon->SetSize({96.0f, 96.0f});
+
+	sheepItemIcon = Sprite::Create(TextureNumber::sheep_icon, { 1139.0f,653.0f });
+	sheepItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
+	sheepItemIcon->SetSize({ 96.0f, 96.0f });
+
+	pigItemIcon = Sprite::Create(TextureNumber::pig_icon, { 1139.0f,653.0f });
+	pigItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
+	pigItemIcon->SetSize({ 96.0f, 96.0f });
+
+	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 30.0f,105.0f });
+	score_gtxt_1->SetColor({ 1.0f, 0.6f, 0.1f, 1.0f });
 
 	scoreBase = Sprite::Create(TextureNumber::score_base, { 5.0f,5.0f });
 
+	itemBase = Sprite::Create(TextureNumber::item_base, { 1275.0f,715.0f });
+	itemBase->SetAnchorPoint({ 1, 1 });
+
+	esaIcon = Sprite::Create(TextureNumber::esa_icon, { 1051.0f,653.0f });
+	esaIcon->SetAnchorPoint({ 0.5f, 0.5f });
+
+	tekiIcon = Sprite::Create(TextureNumber::teki_icon, { 1227.0f,653.0f });
+	tekiIcon->SetAnchorPoint({ 0.5f, 0.5f });
+
+	bonusGage = GageUI::Create({ 5.0f,715.0f }, { 384.0f, 25.0f }, { 1.0f, 0.6f, 0.1f, 1.0f });
+
 	// タイマーUI
-	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+	meterTimer = MeterUI::Create({ 1275.0f,5.0f }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+
+
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
@@ -293,7 +348,7 @@ void GamePlay::Initialize()
 
 	for (int i = 0; i < 2; i++)
 	{
-		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f}, {1.0f, 1.0f, 1.0f}, false);
+		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f }, { 1.0f, 1.0f, 1.0f }, false);
 		butaList.push_back(std::move(newButa));
 		std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { -130.0f + (260.0f * i), player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f }, false);
 		hitsujiList.push_back(std::move(newHitsuji));
@@ -350,15 +405,15 @@ void GamePlay::Update()
 		ReticlePos.y = 575.0f;
 	}
 	//移動時は走りモーションにする
-		if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
-		{
-			PlayerState = 2;
-		}
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_A) || input->PushKey(DIK_S) || input->PushKey(DIK_D))
+	{
+		PlayerState = 2;
+	}
 
-		else
-		{
-			PlayerState = 0;
-		}
+	else
+	{
+		PlayerState = 0;
+	}
 
 
 	if (pigRespawn >= pigRespawnMax && pigNumber < pigNumberMax)
@@ -906,7 +961,7 @@ void GamePlay::Update()
 	camera->Update();
 	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
 	player->Update();
-	
+
 	// Spawn Barn
 	barn->Update();
 
@@ -1066,7 +1121,9 @@ void GamePlay::Update()
 	frameTimer -= 1.0f;
 	timer = (frameTimer / 60.0f);
 
-	meterTimer->Update(timer, timerMax, {1240, 45});
+	meterTimer->Update(timer, timerMax, { 1240, 45 });
+
+	bonusGage->Update(timer, timerMax, { 5.0f,715.0f }, { 0.8f, 0.6f, 0.1f, 1.0f }, { 0.8f, 0.6f, 0.1f, 1.0f });
 
 	/*if (pigBonusTimeRemaining <= 0.0f)
 	{
@@ -1125,25 +1182,25 @@ void GamePlay::Update()
 
 	// スコアの描画
 	std::ostringstream Score;
-	Score << std::fixed << std::setprecision(0)  << score;
-	scoreText.Print(Score.str(), { 250, 90 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+	Score << std::fixed << std::setprecision(0) << score;
+	scoreText.Print(Score.str(), { 155, 130 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream CowGoalCount;
-	CowGoalCount <<  std::fixed << std::setprecision(0)  << goalHorse;
-	scoreText.Print(CowGoalCount.str(), { 80, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+	CowGoalCount << std::fixed << std::setprecision(0) << goalHorse;
+	scoreText.Print(CowGoalCount.str(), { 115.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream SheepGoalCount;
 	SheepGoalCount << std::fixed << std::setprecision(0) << goalSheep;
-	scoreText.Print(SheepGoalCount.str(), { 180, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+	scoreText.Print(SheepGoalCount.str(), { 230.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream PigGoalCount;
 	PigGoalCount << std::fixed << std::setprecision(0) << goalPigs;
-	scoreText.Print(PigGoalCount.str(), { 280, 45 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+	scoreText.Print(PigGoalCount.str(), { 345, 68 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	// ゲームタイマー
 	std::ostringstream GameTimer;
-	GameTimer << std::fixed << std::setprecision(0)<< timer ;
-	scoreText.Print(GameTimer.str(), { 1230, 67 }, { 0.760f, 0.929f, 1.0f, 1.0f }, 0.8f);
+	GameTimer << std::fixed << std::setprecision(0) << timer;
+	scoreText.Print(GameTimer.str(), { 1119.0f, 63.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 }
 
 void GamePlay::Draw()
@@ -1171,7 +1228,7 @@ void GamePlay::Draw()
 	ground->Draw();
 	skydome->Draw();
 	//player->Draw();
-	
+
 	// Spawn Barn
 	barn->Draw();
 
@@ -1273,12 +1330,31 @@ void GamePlay::Draw()
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
-	
+
 	// 前景スプライト描画
 	scoreBase->Draw();
+	itemBase->Draw();
+	bonusGage->Draw();
+
 	cowIcon->Draw();
 	sheepIcon->Draw();
 	pigIcon->Draw();
+
+	if (animalSelection == USHI)
+	{
+		cowItemIcon->Draw();
+	}
+	else if (animalSelection == HITSUJI)
+	{
+		sheepItemIcon->Draw();
+	}
+	else if (animalSelection == BUTA)
+	{
+		pigItemIcon->Draw();
+	}
+
+	esaIcon->Draw();
+	tekiIcon->Draw();
 
 	meterTimer->Draw();
 

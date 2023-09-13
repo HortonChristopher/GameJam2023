@@ -119,7 +119,12 @@ private: // 静的メンバ変数
 		pig_icon,
 
 		game_gtxt_1,
-		score_base
+		score_base,
+		timer_base,
+		item_base,
+		bonus_base,
+		esa_icon,
+		teki_icon
 	};
 
 	enum AnimalSelection
@@ -204,9 +209,19 @@ private: // メンバ変数
 	Sprite* sheepIcon = nullptr;
 	Sprite* pigIcon = nullptr;
 
+	Sprite* cowItemIcon = nullptr;
+	Sprite* sheepItemIcon = nullptr;
+	Sprite* pigItemIcon = nullptr;
+
 	Sprite* score_gtxt_1 = nullptr;
 
 	Sprite* scoreBase = nullptr;
+	Sprite* itemBase = nullptr;
+
+	Sprite* esaIcon = nullptr;
+	Sprite* tekiIcon = nullptr;
+
+	GageUI* bonusGage = nullptr;
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;

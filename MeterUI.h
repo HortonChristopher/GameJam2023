@@ -34,7 +34,17 @@ private: // 静的メンバ変数
 		// ボス
 		game_boss_frame_1,
 		game_boss_frame_2,
-		game_boss_gauge
+		game_boss_gauge,
+
+		cow_icon,
+		sheep_icon,
+		pig_icon,
+
+		game_gtxt_1,
+		score_base,
+		timer_base,
+		item_base,
+		bonus_base
 	};
 
 public: // 静的メンバ関数

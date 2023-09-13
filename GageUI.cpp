@@ -20,21 +20,17 @@ GageUI* GageUI::Create(XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color)
 bool GageUI::Initialize(XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color)
 {
 	// UIのベース
-	gageBase = Sprite::Create(TextureNumber::game_boss_frame_1, { position.x + 10.0f, position.y });
-	gageMain = Sprite::Create(TextureNumber::game_boss_gauge, position);
-	gageCover = Sprite::Create(TextureNumber::game_boss_frame_2, { position.x + 10.0f, position.y });
+	gageBase = Sprite::Create(TextureNumber::bonus_base, position);
+	gageMain = Sprite::Create(TextureNumber::game_boss_gauge, { position.x + 16.0f , position.y - 16.0f });
 
 	// 差分ゲージ
 	// gageMain->SetColor({ 0.6f, 0.6f, 0.1f, 1.0f });
 	gageMain->SetColor(color);
 	gageMain->SetSize(size);
-	gageMain->SetAnchorPoint({ 1.0f, 0.5f });
+	gageMain->SetAnchorPoint({ 0.0f, 1.0f });
 
 	// メインゲージ
-	gageBase->SetAnchorPoint({ 1.0f, 0.5f });
-
-	// UIのフレーム
-	gageCover->SetAnchorPoint({ 1.0f, 0.5f });
+	gageBase->SetAnchorPoint({ 0.0f, 1.0f });
 
 	maxSize = size;
 
@@ -50,9 +46,8 @@ void GageUI::Update(float nowVal, float maxVal, XMFLOAT2 position, XMFLOAT4 star
 	gageColor = Lerp::LerpFloat4(end_color, start_color, ratio);
 
 	// 座標をセット
-	gageBase->SetPosition({ position.x + 10.0f, position.y });
-	gageMain->SetPosition(position);
-	gageCover->SetPosition({ position.x + 10.0f, position.y });
+	gageBase->SetPosition(position);
+	gageMain->SetPosition({ position.x + 16.0f , position.y - 16.0f });
 
 	gageMain->SetColor(gageColor);
 
@@ -64,5 +59,4 @@ void GageUI::Draw()
 {
 	gageBase->Draw();
 	gageMain->Draw();
-	gageCover->Draw();
 }
