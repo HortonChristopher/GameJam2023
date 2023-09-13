@@ -44,11 +44,15 @@ void GamePlay::Initialize()
 	// サウンド初期化
 	sound->Initialize();
 
-	sound->LoadWav("SE/Game/game_player_shot.wav");
-	sound->LoadWav("SE/Game/game_boss_shot.wav");
-	sound->LoadWav("SE/Game/game_player_damage.wav");
-	sound->LoadWav("SE/Game/game_boss_damage.wav");
-	sound->LoadWav("BGM/Game/game_bgm.wav");
+	sound->LoadWav("SE/Game/Call.wav");
+	sound->LoadWav("SE/Game/GameFinish.wav");
+	sound->LoadWav("SE/Game/Goal.wav");
+	sound->LoadWav("SE/Game/Throw.wav");
+	sound->LoadWav("SE/Game/Decide.wav");
+	sound->LoadWav("SE/Game/Menu.wav");
+	sound->LoadWav("SE/Game/MenuMove.wav");
+	sound->LoadWav("SE/Game/GameBGM.wav");
+
 
 	if (!Sprite::LoadTexture(TextureNumber::game_bg, L"Resources/Sprite/GameUI/game_bg.png")) {
 		assert(0);
@@ -403,6 +407,8 @@ void GamePlay::Initialize()
 	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
 
 	ShowCursor(false);
+
+	sound->PlayWav("SE/Game/GameBGM.wav", 0.07f, true);
 }
 
 void GamePlay::Finalize()
@@ -411,6 +417,7 @@ void GamePlay::Finalize()
 
 void GamePlay::Update()
 {
+
 	if (pause)
 	{
 		if (input->TriggerKey(DIK_ESCAPE))
@@ -423,9 +430,11 @@ void GamePlay::Update()
 			switch (pauseSelection)
 			{
 			case 0:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 1;
 				break;
 			case 1:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 2;
 				break;
 			case 2:
@@ -441,9 +450,11 @@ void GamePlay::Update()
 			case 0:
 				break;
 			case 1:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 0;
 				break;
 			case 2:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 1;
 				break;
 			default:
@@ -456,9 +467,12 @@ void GamePlay::Update()
 			switch (pauseSelection)
 			{
 			case 0:
+				sound->PlayWav("SE/Game/Decide.wav", 0.7f);
 				pause = false;
 				break;
 			case 1:
+
+				sound->StopWav("SE/Game/GameBGM.wav");
 				//シーン切り替え
 				SceneManager::GetInstance()->ChangeScene("TITLE");
 				break;
@@ -472,6 +486,7 @@ void GamePlay::Update()
 	{
 		if (input->TriggerKey(DIK_ESCAPE))
 		{
+			sound->PlayWav("SE/Game/Menu.wav", 0.7f);
 			pause = true;
 		}
 
@@ -565,30 +580,36 @@ void GamePlay::Update()
 			case BUTA:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = HITSUJI;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = USHI;
 				}
 				break;
 			case HITSUJI:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = USHI;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = BUTA;
 				}
 				break;
 			case USHI:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = BUTA;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = HITSUJI;
 				}
 				break;
@@ -601,11 +622,20 @@ void GamePlay::Update()
 		{
 			if (input->TriggerMouseLeft() == true)
 			{
+				if (AnimationFlag_T == false)
+				{
+					sound->PlayWav("SE/Game/Throw.wav", 0.07f);
+				}
+				
 				AnimationFlag_T = true;
 			}
 
 			if (input->TriggerMouseRight() == true)
 			{
+				if (AnimationFlag_C == false)
+				{
+					sound->PlayWav("SE/Game/Call.wav", 0.07f);
+				}
 				AnimationFlag_C = true;
 			}
 			
@@ -761,6 +791,7 @@ void GamePlay::Update()
 		if (timer <= 0.0f)
 		{
 			timer = 0.0f;
+			sound->StopWav("SE/Game/GameBGM.wav");
 			//シーン切り替え
 			SceneManager::GetInstance()->ChangeScene("RESULT");
 		}
@@ -1130,6 +1161,16 @@ void GamePlay::Update()
 					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
 			}
 		}
+
+		if (buta->GetgoalFlag() == true)
+		{
+			if (buta->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				buta->SetGoalSEFlag(true);
+			}
+		}
+
 		buta->Update();
 	}
 
@@ -1166,6 +1207,15 @@ void GamePlay::Update()
 			}
 		}
 
+		if (hitsuji->GetgoalFlag() == true)
+		{
+			if (hitsuji->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				hitsuji->SetGoalSEFlag(true);
+			}
+		}
+
 		hitsuji->Update();
 	}
 
@@ -1199,6 +1249,15 @@ void GamePlay::Update()
 			{
 				FoodPart->ExpelParticle(3, CowPartPos_F, CowPartPos_F,
 					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+		}
+
+		if (ushi->GetgoalFlag() == true)
+		{
+			if (ushi->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				ushi->SetGoalSEFlag(true);
 			}
 		}
 		ushi->Update();

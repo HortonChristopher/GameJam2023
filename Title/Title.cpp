@@ -16,9 +16,7 @@ void Title::Initialize()
 	sound->Initialize();
 
 	//音声のロード
-	sound->LoadWav("SE/Title/Crash.wav");
-	sound->LoadWav("SE/Title/Push.wav");
-	sound->LoadWav("SE/Title/BGM.wav");
+	sound->LoadWav("SE/Game/Title.wav");
 
 
 	// カメラ生成
@@ -117,6 +115,8 @@ void Title::Initialize()
 		ushiList.push_back(std::move(newUshi));
 	}
 
+	sound->PlayWav("SE/Game/Title.wav", 0.1f, true);
+
 	ShowCursor(false);
 }
 
@@ -129,6 +129,7 @@ void Title::Update()
 {
 	if (input->TriggerKey(DIK_SPACE))
 	{
+		sound->StopWav("SE/Game/Title.wav");
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
 	}

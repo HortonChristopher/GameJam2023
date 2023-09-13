@@ -14,9 +14,7 @@ void Result::Initialize()
 	sound->Initialize();
 
 	//音声のロード
-	sound->LoadWav("SE/Title/Start.wav");
-	sound->LoadWav("SE/Title/Move.wav");
-	sound->LoadWav("SE/Title/StageSelect.wav");
+	sound->LoadWav("SE/Game/Result.wav");
 
 	// カメラ生成
 	camera = new Camera(WinApp::window_width, WinApp::window_height);
@@ -37,6 +35,8 @@ void Result::Initialize()
 	camera->SetTarget({ 0, 0, 0 });
 	camera->SetEye({ 0, 0, 10 });
 	camera->SetUp({ 0, 1, 0 });
+
+	sound->PlayWav("SE/Game/Result.wav", 0.5f, true);
 }
 
 void Result::Finalize()
@@ -47,6 +47,7 @@ void Result::Update()
 {
 	if (input->TriggerKey(DIK_SPACE))
 	{
+		sound->StopWav("SE/Game/Result.wav");
 		//シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}

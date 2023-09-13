@@ -79,6 +79,12 @@ public: // メンバ関数
 	//エサフラグゲット
 	const bool& GetFoodFlag() { return FoodFlag; }
 
+	//ゴールSEフラグセット
+	void SetGoalSEFlag(bool flag) { this->GoalSEFlag = flag; }
+
+	//ゴールSEフラグゲット
+	const bool& GetGoalSEFlag() { return GoalSEFlag; }
+
 private: // メンバ変数
 	Goal* goal;
 
@@ -141,6 +147,9 @@ private: // メンバ変数
 
 	//エサフラグ
 	bool FoodFlag = false;
+
+	//ゴールSEフラグ
+	bool GoalSEFlag = false;
 
 public:
 	// デスフラグ
