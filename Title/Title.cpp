@@ -177,7 +177,7 @@ void Title::Initialize()
 	siloModel = ObjModel::CreateFromOBJ("RanchSilo");
 	siloObject->SetModel(siloModel);
 	siloObject->SetPosition({ 60.0f, 0.0f, 225.0f });
-	siloObject->SetRotation({ 0.0f, 180.0f, 0.0f });
+	siloObject->SetRotation({ 0.0f, 0.0f, 0.0f });
 	siloObject->SetScale({ 6.0f, 6.0f, 6.0f });
 
 	// Tree

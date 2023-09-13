@@ -304,6 +304,8 @@ private: // メンバ変数
 
 	ObjModel* modelBullet = nullptr;
 
+	ObjModel* modelEsa = nullptr;
+
 	ObjModel* modelPig = nullptr;
 	ObjModel* modelSheep = nullptr;
 	ObjModel* modelHorse = nullptr;

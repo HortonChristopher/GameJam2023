@@ -382,6 +382,8 @@ void GamePlay::Initialize()
 	// プレイヤー
 	player = Player::Create();
 
+	modelEsa = ObjModel::CreateFromOBJ("esa");
+
 	//プレイヤーFBXモデル
 	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
 	modelPlayerWalking = FbxLoader::GetInstance()->LoadModelFromFile("Walking");
@@ -445,7 +447,7 @@ void GamePlay::Initialize()
 	siloModel = ObjModel::CreateFromOBJ("RanchSilo");
 	siloObject->SetModel(siloModel);
 	siloObject->SetPosition({ 60.0f, 0.0f, 225.0f });
-	siloObject->SetRotation({ 0.0f, 180.0f, 0.0f });
+	siloObject->SetRotation({ 0.0f, 0.0f, 0.0f });
 	siloObject->SetScale({ 6.0f, 6.0f, 6.0f });
 
 	// Tree
@@ -581,7 +583,7 @@ void GamePlay::Initialize()
 	ground->SetScale({ 80.0f, 1.0f, 80.0f });
 
 	// プレイヤー
-	player->SetPosition({ 0.0f, 0.5f, 0.0f });
+	player->SetPosition({ 0.0f, 0.0f, 0.0f });
 	player->SetRotation({ 0.0f, 0.0f, 0.0f });
 	player->SetScale({ 1.0f, 1.0f, 1.0f });
 
@@ -735,7 +737,7 @@ void GamePlay::Update()
 
 		if (pigRespawn >= pigRespawnMax && pigNumber < pigNumberMax)
 		{
-			std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			butaList.push_back(std::move(newButa));
 
 			pigRespawn = 0.0f;
@@ -748,7 +750,7 @@ void GamePlay::Update()
 
 		if (sheepRespawn >= sheepRespawnMax && sheepNumber < sheepNumberMax)
 		{
-			std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			hitsujiList.push_back(std::move(newHitsuji));
 
 			sheepRespawn = 0.0f;
@@ -761,7 +763,7 @@ void GamePlay::Update()
 
 		if (horseRespawn >= horseRespawnMax && horseNumber < horseNumberMax)
 		{
-			std::unique_ptr<Ushi> newHorse = Ushi::Create(modelHorse, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Ushi> newHorse = Ushi::Create(modelHorse, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			ushiList.push_back(std::move(newHorse));
 
 			horseRespawn = 0.0f;
@@ -836,8 +838,8 @@ void GamePlay::Update()
 					if (!butaEsa)
 					{
 						std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -852,8 +854,8 @@ void GamePlay::Update()
 					if (!hitsujiEsa)
 					{
 						std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -869,8 +871,8 @@ void GamePlay::Update()
 					if (!ushiEsa)
 					{
 						std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -895,7 +897,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -911,7 +913,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -927,7 +929,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -1291,7 +1293,7 @@ void GamePlay::Update()
 			3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 
-	camera->SetTarget(player->GetPosition());
+	camera->SetTarget({player->GetPosition().x, player->GetPosition().y + 0.1f, player->GetPosition().z});
 	ground->Update();
 	skydome->SetPosition(player->GetPosition());
 	skydome->Update();
@@ -1757,30 +1759,30 @@ void GamePlay::Draw()
 		butaEsa->Draw();
 	}
 
-	for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
+	/*for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
 	{
 		butaTeki->Draw();
-	}
+	}*/
 
 	for (std::unique_ptr<HitsujiEsa>& hitsujiEsa : hitsujiEsaList)
 	{
 		hitsujiEsa->Draw();
 	}
 
-	for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
+	/*for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
 	{
 		hitsujiTeki->Draw();
-	}
+	}*/
 
 	for (std::unique_ptr<UshiEsa>& ushiEsa : ushiEsaList)
 	{
 		ushiEsa->Draw();
 	}
 
-	for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
+	/*for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
 	{
 		ushiTeki->Draw();
-	}
+	}*/
 
 	// パーティクルの描画
 	Particle->Draw(cmdList);
