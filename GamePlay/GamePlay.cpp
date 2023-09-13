@@ -160,7 +160,7 @@ void GamePlay::Initialize()
 	}
 
 	//黒背景
-	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
+	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/Effect/loading_effect_1.png")) {
 		assert(0);
 		return;
 	}
@@ -630,6 +630,19 @@ void GamePlay::Initialize()
 	ShowCursor(false);
 
 	sound->PlayWav("SE/Game/GameBGM.wav", 0.07f, true);
+
+	//黒背景初期化
+	Black = Sprite::Create(TextureNumber::black, { 0.0f, 0.0f });
+	Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+
+	//黒前景のアルファ値のリセット
+	BlackAlpha = 1.0f;
+	BlackFlag = true;
+
+	//フィニッシュ演出用各種変数初期化
+	FinishFlag = false;
+	FinishTimer = 0;
+	FinishSEFlag = false;
 }
 
 void GamePlay::Finalize()
@@ -638,6 +651,18 @@ void GamePlay::Finalize()
 
 void GamePlay::Update()
 {
+
+	if (BlackAlpha > 0.0f && BlackFlag == true && FinishFlag == false)
+	{
+		BlackAlpha -= 0.04f;
+		Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+	}
+
+	if (BlackAlpha < 0.0f && BlackFlag == true && FinishFlag == false)
+	{
+		BlackAlpha = 0.0f;
+		BlackFlag == false;
+	}
 
 	if (pause)
 	{
@@ -1011,10 +1036,34 @@ void GamePlay::Update()
 
 		if (timer <= 0.0f)
 		{
-			timer = 0.0f;
-			sound->StopWav("SE/Game/GameBGM.wav");
-			//シーン切り替え
-			SceneManager::GetInstance()->ChangeScene("RESULT");
+			FinishTimer++;
+
+			if (FinishSEFlag == false)
+			{
+				sound->PlayWav("SE/Game/GameFinish.wav", 0.7f);
+				FinishSEFlag = true;
+			}
+			
+		}
+
+		if (FinishTimer >= 180)
+		{
+			FinishFlag = true;
+		}
+
+		if (FinishFlag == true)
+		{
+			BlackAlpha += 0.04f;
+			Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+
+			if (BlackAlpha >= 1.0f)
+			{
+				BlackFlag = true;
+				timer = 0.0f;
+				sound->StopWav("SE/Game/GameBGM.wav");
+				//シーン切り替え
+				SceneManager::GetInstance()->ChangeScene("RESULT");
+			}
 		}
 
 		for (std::unique_ptr<Buta>& buta : butaList)
@@ -1918,7 +1967,7 @@ void GamePlay::Draw()
 			break;
 		}
 	}
-
+	Black->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 #pragma endregion

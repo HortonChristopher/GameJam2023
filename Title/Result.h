@@ -104,6 +104,14 @@ private: // メンバ変数
 	Sprite* stageSelectBG = nullptr;
 
 	Sprite* resultPage = nullptr;
+	Sprite* Black = nullptr;
+
+	//黒背景のアルファ値
+	float BlackAlpha = 1.0f;
+
+	bool BlackFlag = false;
+
+	bool SceneFlag = false;
 
 	Sprite* cowItemIcon = nullptr;
 	Sprite* sheepItemIcon = nullptr;
