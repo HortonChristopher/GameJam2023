@@ -19,6 +19,7 @@ private: // 静的メンバ変数
 	static enum TextureNumber
 	{
 		debug_txt,
+		score_txt,
 		game_bg,
 		reticle,
 		black,
@@ -33,7 +34,17 @@ private: // 静的メンバ変数
 		// ボス
 		game_boss_frame_1,
 		game_boss_frame_2,
-		game_boss_gauge
+		game_boss_gauge,
+
+		cow_icon,
+		sheep_icon,
+		pig_icon,
+
+		game_gtxt_1,
+		score_base,
+		timer_base,
+		item_base,
+		bonus_base
 	};
 
 public: // 静的メンバ関数
@@ -49,10 +60,8 @@ public: // 静的メンバ関数
 private:
 	Sprite* gageBase = nullptr;
 	Sprite* gageMain = nullptr;
-	Sprite* gageCover = nullptr;
-	Sprite* gageDelta = nullptr;
-
-	XMFLOAT2 nowSize = { 530.0f, 30.0f };
+	
+	XMFLOAT2 nowSize = { 384.0f, 25.0f };
 	XMFLOAT2 maxSize = {};
 
 	float ratio = {};

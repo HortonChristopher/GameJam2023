@@ -19,17 +19,14 @@ MeterUI* MeterUI::Create(XMFLOAT2 position, float rotation, XMFLOAT4 color)
 
 bool MeterUI::Initialize(XMFLOAT2 position, float rotation, XMFLOAT4 color)
 {
-	//meterBase = 
-	meterNeedle = Sprite::Create(TextureNumber::speed, {position.x, position.y + 44.0f});
-	meterBase = Sprite::Create(TextureNumber::meter, position);
+	meterNeedle = Sprite::Create(TextureNumber::speed, { position.x - 48.0f , position.y + 48.0f });
+	meterBase = Sprite::Create(TextureNumber::timer_base, position);
 
 	meterNeedle->SetRotation(rotation);
 	meterNeedle->SetColor(color);
-	meterNeedle->SetAnchorPoint({ 0.9f, 0.5 });
-	meterNeedle->SetSize({50.0f, 16.0f});
+	meterNeedle->SetAnchorPoint({ 0.5f, 0.5f });
 
-	meterBase->SetAnchorPoint({ 0.5f, 0.5f });
-	meterBase->SetSize({210.0f, 120.0f});
+	meterBase->SetAnchorPoint({ 1.0f, 0.0f });
 
 	return true;
 }
@@ -48,6 +45,6 @@ void MeterUI::Update(float nowVal, float maxVal, XMFLOAT2 position)
 void MeterUI::Draw()
 {
 	
-	//meterBase->Draw();
+	meterBase->Draw();
 	meterNeedle->Draw();
 }
