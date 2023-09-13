@@ -50,6 +50,7 @@ private: // 静的メンバ変数
 	static enum TextureNumber
 	{
 		title_bg,
+		titlescreen,
 		titlefont,
 		pressspace,
 		black
@@ -99,6 +100,8 @@ private: // メンバ変数
 
 	//スプライト
 	Sprite* titleBG = nullptr;
+	Sprite* titleScreen = nullptr;
+	Sprite* pressSpace = nullptr;
 	Sprite* Black = nullptr;
 
 	ObjObject* ground = nullptr;

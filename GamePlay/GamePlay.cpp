@@ -1116,6 +1116,7 @@ void GamePlay::Update()
 					else
 					{
 						buta->goalSet = true;
+						goalPigs++;
 						buta->deathFlag = true;
 					}
 
@@ -1204,6 +1205,7 @@ void GamePlay::Update()
 					else
 					{
 						hitsuji->goalSet = true;
+						goalSheep++;
 						hitsuji->deathFlag = true;
 					}
 
@@ -1292,6 +1294,8 @@ void GamePlay::Update()
 					else
 					{
 						ushi->goalSet = true;
+						goalHorse++;
+
 						ushi->deathFlag = true;
 					}
 
@@ -1324,24 +1328,6 @@ void GamePlay::Update()
 				}
 			}
 		}
-
-		butaList.remove_if([](std::unique_ptr<Buta>& buta)
-			{
-				return buta->GetDeathFlag();
-			}
-		);
-
-		hitsujiList.remove_if([](std::unique_ptr<Hitsuji>& hitsuji)
-			{
-				return hitsuji->GetDeathFlag();
-			}
-		);
-
-		ushiList.remove_if([](std::unique_ptr<Ushi>& ushi)
-			{
-				return ushi->GetDeathFlag();
-			}
-		);
 
 		if (butaEsaList.empty())
 		{
@@ -1680,6 +1666,24 @@ void GamePlay::Update()
 		meterTimer->Update(timer, timerMax, { 1240, 45 });
 
 	bonusGage->Update(bonusTimeRemaining, bonusTimeMax, { 5.0f,715.0f }, { 0.8f, 0.6f, 0.1f, 1.0f }, { 0.8f, 0.6f, 0.1f, 1.0f });
+
+	butaList.remove_if([](std::unique_ptr<Buta>& buta)
+		{
+			return buta->GetDeathFlag();
+		}
+	);
+
+	hitsujiList.remove_if([](std::unique_ptr<Hitsuji>& hitsuji)
+		{
+			return hitsuji->GetDeathFlag();
+		}
+	);
+
+	ushiList.remove_if([](std::unique_ptr<Ushi>& ushi)
+		{
+			return ushi->GetDeathFlag();
+		}
+	);
 
 	/*if (pigBonusTimeRemaining <= 0.0f)
 	{

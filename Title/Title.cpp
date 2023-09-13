@@ -104,17 +104,17 @@ void Title::Initialize()
 	ObjObject::SetCamera(camera);
 	ObjectParticle::SetCamera(camera);
 
-	if (!Sprite::LoadTexture(TextureNumber::title_bg, L"Resources/Sprite/TitleUI/Title.jpg")) {
+	if (!Sprite::LoadTexture(TextureNumber::titlescreen, L"Resources/Sprite/TitleUI/Title.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pressspace, L"Resources/Sprite/TitleUI/push.png")) {
 		assert(0);
 		return;
 	}
 
 	if (!Sprite::LoadTexture(TextureNumber::titlefont, L"Resources/Sprite/TitleUI/TitleFont.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pressspace, L"Resources/Sprite/TitleUI/PressSpace.png")) {
 		assert(0);
 		return;
 	}
@@ -126,6 +126,8 @@ void Title::Initialize()
 	}
 
 	titleBG = Sprite::Create(TextureNumber::title_bg, { 0.0f,0.0f });
+	titleScreen = Sprite::Create(TextureNumber::titlescreen, { 368.0f, 150.0f });
+	pressSpace = Sprite::Create(TextureNumber::pressspace, { 528.0f, 450.0f });
 
 	Black = Sprite::Create(TextureNumber::black, { 0.0f, 0.0f });
 	Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
@@ -511,6 +513,8 @@ void Title::Draw()
 	Sprite::PreDraw(cmdList);
 
 	// 前景スプライト描画
+	titleScreen->Draw();
+	pressSpace->Draw();
 	Black->Draw();
 
 	// スプライト描画後処理

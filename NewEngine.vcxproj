@@ -209,6 +209,7 @@
     <ClCompile Include="ReflectBullet.cpp" />
     <ClCompile Include="GameBase\SceneFactory.cpp" />
     <ClCompile Include="GameBase\SceneManager.cpp" />
+    <ClCompile Include="ScoreManager.cpp" />
     <ClCompile Include="ScoreText\ScoreText.cpp" />
     <ClCompile Include="Sound\Sound.cpp" />
     <ClCompile Include="Math\Spline.cpp" />
@@ -366,6 +367,7 @@
     <ClInclude Include="ReflectBullet.h" />
     <ClInclude Include="GameBase\SceneFactory.h" />
     <ClInclude Include="GameBase\SceneManager.h" />
+    <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="ScoreText\ScoreText.h" />
     <ClInclude Include="Sound\Sound.h" />
     <ClInclude Include="Math\Spline.h" />
