@@ -190,6 +190,11 @@ void GamePlay::Initialize()
 		return;
 	}
 
+	if (!Sprite::LoadTexture(TextureNumber::game_gtxt_2, L"Resources/Sprite/GameUI/game_gtxt_2.png")) {
+		assert(0);
+		return;
+	}
+
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 	// デバッグテキスト初期化
@@ -212,10 +217,10 @@ void GamePlay::Initialize()
 	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 50.0f,50.0f });
 	cowIcon->SetAnchorPoint({ 0.5f, 0.5f });
 
-	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 165.0f,50.0f });
+	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 175.0f,50.0f });
 	sheepIcon->SetAnchorPoint({ 0.5f, 0.5f });
 
-	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 280.0f,50.0f });
+	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 300.0f,50.0f });
 	pigIcon->SetAnchorPoint({ 0.5f, 0.5f });
 
 	cowItemIcon = Sprite::Create(TextureNumber::cow_icon, { 1139.0f,653.0f });
@@ -230,8 +235,11 @@ void GamePlay::Initialize()
 	pigItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
 	pigItemIcon->SetSize({ 96.0f, 96.0f });
 
-	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 30.0f,105.0f });
+	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 30.0f,91.0f });
 	score_gtxt_1->SetColor({ 1.0f, 0.6f, 0.1f, 1.0f });
+
+	bonus_gtxt_2 = Sprite::Create(TextureNumber::game_gtxt_2, { 30.0f,641.0f });
+	bonus_gtxt_2->SetColor({ 1.0f, 0.6f, 0.1f, 1.0f });
 
 	scoreBase = Sprite::Create(TextureNumber::score_base, { 5.0f,5.0f });
 
@@ -1332,7 +1340,7 @@ void GamePlay::Update()
 
 		meterTimer->Update(timer, timerMax, { 1240, 45 });
 
-	bonusGage->Update(timer, timerMax, { 5.0f,715.0f }, { 0.8f, 0.6f, 0.1f, 1.0f }, { 0.8f, 0.6f, 0.1f, 1.0f });
+	bonusGage->Update(bonusTimeRemaining, bonusTimeMax, { 5.0f,715.0f }, { 0.8f, 0.6f, 0.1f, 1.0f }, { 0.8f, 0.6f, 0.1f, 1.0f });
 
 	/*if (pigBonusTimeRemaining <= 0.0f)
 	{
@@ -1393,7 +1401,7 @@ void GamePlay::Update()
 	// スコアの描画
 	std::ostringstream Score;
 	Score << std::fixed << std::setprecision(0) << score;
-	scoreText.Print(Score.str(), { 155, 130 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
+	scoreText.Print(Score.str(), { 155, 117 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream CowGoalCount;
 	CowGoalCount << std::fixed << std::setprecision(0) << goalHorse;
@@ -1401,11 +1409,11 @@ void GamePlay::Update()
 
 	std::ostringstream SheepGoalCount;
 	SheepGoalCount << std::fixed << std::setprecision(0) << goalSheep;
-	scoreText.Print(SheepGoalCount.str(), { 230.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
+	scoreText.Print(SheepGoalCount.str(), { 240.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream PigGoalCount;
 	PigGoalCount << std::fixed << std::setprecision(0) << goalPigs;
-	scoreText.Print(PigGoalCount.str(), { 345, 68 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
+	scoreText.Print(PigGoalCount.str(), { 365, 68 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	// ゲームタイマー
 	std::ostringstream GameTimer;
@@ -1571,6 +1579,7 @@ void GamePlay::Draw()
 	meterTimer->Draw();
 
 	score_gtxt_1->Draw();
+	bonus_gtxt_2->Draw();
 
 	player->DebugTextDraw();
 

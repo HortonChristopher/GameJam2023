@@ -129,7 +129,8 @@ private: // 静的メンバ変数
 		item_base,
 		bonus_base,
 		esa_icon,
-		teki_icon
+		teki_icon,
+		game_gtxt_2
 	};
 
 	enum AnimalSelection
@@ -244,6 +245,7 @@ private: // メンバ変数
 	Sprite* pigItemIcon = nullptr;
 
 	Sprite* score_gtxt_1 = nullptr;
+	Sprite* bonus_gtxt_2 = nullptr;
 
 	Sprite* scoreBase = nullptr;
 	Sprite* itemBase = nullptr;
