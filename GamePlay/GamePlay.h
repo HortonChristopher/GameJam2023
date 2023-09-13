@@ -53,6 +53,8 @@
 #include "MeterUI.h"
 #include "ProcessUI.h"
 
+#include "ScoreManager.h"
+
 #include <cassert>
 #include <sstream>
 #include <iomanip>
@@ -219,6 +221,7 @@ private: // メンバ変数
 	Sound* sound = Sound::GetInstance();
 	DebugText debugText;
 	ScoreText scoreText;
+	ScoreManager* scoreManager = ScoreManager::GetInstance();
 	
 	Camera* camera = nullptr;
 
@@ -366,13 +369,13 @@ private: // メンバ変数
 	const float sheepRespawnMax = 360.0f;
 	float horseRespawn = 0.0f;
 	const float horseRespawnMax = 300.0f;
-	int goalPigs = 0;
+	//int goalPigs = 0;
 	const int goalPigsMax = 20;
-	int goalSheep = 0;
+	//int goalSheep = 0;
 	const int goalSheepMax = 20;
-	int goalHorse = 0;
+	//int goalHorse = 0;
 	const int goalHorseMax = 20;
-	float score = 0.0f;
+	//float score = 0.0f;
 
 	bool pigBonusTime = false;
 	bool sheepBonusTime = false;

@@ -8,10 +8,10 @@ public: // ƒƒ“ƒoŠÖ”]
 
 public: // ƒƒ“ƒo•Ï”
 	float score = 0.0f;
-	
+
 	int goalPigs = 0;
-	
+
 	int goalSheep = 0;
-	
+
 	int goalHorse = 0;
 };
