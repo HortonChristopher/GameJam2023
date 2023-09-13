@@ -104,7 +104,7 @@ void Title::Initialize()
 	ObjObject::SetCamera(camera);
 	ObjectParticle::SetCamera(camera);
 
-	if (!Sprite::LoadTexture(TextureNumber::title_bg, L"Resources/Sprite/TitleUI/Title.jpg")) {
+	if (!Sprite::LoadTexture(TextureNumber::titlescreen, L"Resources/Sprite/TitleUI/Title.png")) {
 		assert(0);
 		return;
 	}
@@ -118,13 +118,14 @@ void Title::Initialize()
 		assert(0);
 		return;
 	}
-
+	`
 	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
 		assert(0);
 		return;
 	}
 
 	titleBG = Sprite::Create(TextureNumber::title_bg, { 0.0f,0.0f });
+	titleScreen = Sprite::Create(TextureNumber::titlescreen, { 368.0f, 150.0f });
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
@@ -492,6 +493,7 @@ void Title::Draw()
 	Sprite::PreDraw(cmdList);
 
 	// 前景スプライト描画
+	titleScreen->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
