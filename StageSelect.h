@@ -96,5 +96,9 @@ private: // ƒƒ“ƒo•Ï”
 	Sprite* setsumei2 = nullptr;
 
 	int explanationPage = 0;
+	
+	bool changeTimerBool = false;
+	const float changeTimerMax = 30.0f;
+	float changeTimer = 0.0f;
 };
 

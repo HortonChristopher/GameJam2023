@@ -161,4 +161,8 @@ private: // ƒƒ“ƒo•Ï”
 	std::array<ObjObject*, 20> trees = { {} };
 	std::array<ObjObject*, 80> randomTrees = { {} };
 	ObjModel* treeModel = nullptr;
+
+	bool changeTimerBool = false;
+	const float changeTimerMax = 30.0f;
+	float changeTimer = 0.0f;
 };

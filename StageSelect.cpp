@@ -22,6 +22,7 @@ void StageSelect::Initialize()
 
 	//音声のロード
 	sound->LoadWav("SE/Game/Title.wav");
+	sound->LoadWav("SE/Game/MenuMove.wav");
 
 	// カメラ生成
 	camera = new Camera(WinApp::window_width, WinApp::window_height);
@@ -63,16 +64,34 @@ void StageSelect::Update()
 		switch (explanationPage)
 		{
 		case 0:
+			sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 			explanationPage = 1;
 			break;
 		case 1:
-			sound->StopWav("SE/Game/Title.wav");
-			//シーン切り替え
-			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+			if (input->TriggerKey(DIK_SPACE))
+			{
+				if (!changeTimerBool)
+				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
+					changeTimerBool = true;
+				}
+			}
+			
 			break;
 		default:
 			break;
 		}
+	}
+
+	if (changeTimerBool && (changeTimer >= changeTimerMax))
+	{
+		sound->StopWav("SE/Game/Title.wav");
+		//シーン切り替え
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
+	else if (changeTimerBool)
+	{
+		changeTimer += 1.0f;
 	}
 
 	//カメラ更新
