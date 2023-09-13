@@ -99,6 +99,7 @@ private: // メンバ変数
 
 	//スプライト
 	Sprite* titleBG = nullptr;
+	Sprite* Black = nullptr;
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;
@@ -165,4 +166,7 @@ private: // メンバ変数
 	bool changeTimerBool = false;
 	const float changeTimerMax = 30.0f;
 	float changeTimer = 0.0f;
+
+	//黒背景のアルファ値
+	float BlackAlpha = 1.0f;
 };

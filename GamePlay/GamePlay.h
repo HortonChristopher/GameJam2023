@@ -266,6 +266,9 @@ private: // メンバ変数
 	Sprite* esaIcon = nullptr;
 	Sprite* tekiIcon = nullptr;
 
+	//黒背景
+	Sprite* Black = nullptr;
+
 	GageUI* bonusGage = nullptr;
 
 	ObjObject* ground = nullptr;
@@ -445,4 +448,15 @@ private: // メンバ変数
 	XMFLOAT3 PigPartPos_F = {};
 	XMFLOAT3 SheepPartPos_F = {};
 	XMFLOAT3 CowPartPos_F = {};
+
+	//黒背景のアルファ値
+	float BlackAlpha = 1.0f;
+
+	bool BlackFlag = true;
+
+	bool FinishFlag = false;
+
+	//フィニッシュSE再生タイマー
+	int FinishTimer = 0;
+	bool FinishSEFlag = false;
 };

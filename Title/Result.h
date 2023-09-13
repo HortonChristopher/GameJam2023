@@ -36,6 +36,7 @@ private: // 静的メンバ変数
 	{
 		debug_txt,
 		result,
+		black,
 	};
 
 public:
@@ -67,4 +68,12 @@ private: // メンバ変数
 	Sprite* stageSelectBG = nullptr;
 
 	Sprite* resultPage = nullptr;
+	Sprite* Black = nullptr;
+
+	//黒背景のアルファ値
+	float BlackAlpha = 1.0f;
+
+	bool BlackFlag = false;
+
+	bool SceneFlag = false;
 };

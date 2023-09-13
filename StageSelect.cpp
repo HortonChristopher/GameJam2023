@@ -40,6 +40,19 @@ void StageSelect::Initialize()
 		return;
 	}
 
+	//ローディング用
+	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/Effect/loading_effect_1.png")) {
+		assert(0);
+		return;
+	}
+
+	Black = Sprite::Create(TextureNumber::black, { 0.0f, 0.0f });
+	Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+
+	//黒前景のアルファ値のリセット
+	BlackAlpha = 1.0f;
+
+
 	// デバッグテキスト用テクスチャ読み込み
 	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
 
@@ -59,6 +72,16 @@ void StageSelect::Finalize()
 
 void StageSelect::Update()
 {
+	if (BlackAlpha > 0.0f && changeTimerBool == false)
+	{
+		BlackAlpha -= 0.04f;
+		Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+	}
+	else if(BlackAlpha < 0.0f && changeTimerBool == false)
+	{
+		BlackAlpha = 0.0f;
+	}
+
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		switch (explanationPage)
@@ -92,6 +115,8 @@ void StageSelect::Update()
 	else if (changeTimerBool)
 	{
 		changeTimer += 1.0f;
+		BlackAlpha += 0.04f;
+		Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
 	}
 
 	//カメラ更新
@@ -142,7 +167,7 @@ void StageSelect::Draw()
 	Sprite::PreDraw(cmdList);
 
 	// 前景スプライト描画
-	
+	Black->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

@@ -91,6 +91,7 @@ private: // メンバ変数
 	Camera* camera = nullptr;
 
 	Sprite* stageSelectBG = nullptr;
+	Sprite* Black = nullptr;
 
 	Sprite* setsumei1 = nullptr;
 	Sprite* setsumei2 = nullptr;
@@ -100,5 +101,8 @@ private: // メンバ変数
 	bool changeTimerBool = false;
 	const float changeTimerMax = 30.0f;
 	float changeTimer = 0.0f;
+
+	//黒背景のアルファ値
+	float BlackAlpha = 1.0f;
 };
 

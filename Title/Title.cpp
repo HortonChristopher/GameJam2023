@@ -119,12 +119,16 @@ void Title::Initialize()
 		return;
 	}
 
-	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
+	//ローディング用
+	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/Effect/loading_effect_1.png")) {
 		assert(0);
 		return;
 	}
 
 	titleBG = Sprite::Create(TextureNumber::title_bg, { 0.0f,0.0f });
+
+	Black = Sprite::Create(TextureNumber::black, { 0.0f, 0.0f });
+	Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
@@ -333,6 +337,9 @@ void Title::Initialize()
 
 	sound->PlayWav("SE/Game/Title.wav", 0.1f, true);
 
+	//黒前景のアルファ値のリセット
+	BlackAlpha = 1.0f;
+
 	ShowCursor(false);
 }
 
@@ -343,6 +350,16 @@ void Title::Finalize()
 
 void Title::Update()
 {
+	if (BlackAlpha > 0.0f && changeTimerBool == false)
+	{
+		BlackAlpha -= 0.04f;
+		Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
+	}
+	else if(BlackAlpha < 0.0f && changeTimerBool == false)
+	{
+		BlackAlpha = 0.0f;
+	}
+
 	if (input->TriggerKey(DIK_SPACE))
 	{
 		if (!changeTimerBool)
@@ -361,6 +378,8 @@ void Title::Update()
 	else if (changeTimerBool)
 	{
 		changeTimer += 1.0f;
+		BlackAlpha += 0.04f;
+		Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
 	}
 
 	ground->Update();
@@ -492,6 +511,7 @@ void Title::Draw()
 	Sprite::PreDraw(cmdList);
 
 	// 前景スプライト描画
+	Black->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
