@@ -67,6 +67,18 @@ public: // メンバ関数
 	//ゴールタイマー取得
 	const int& GetgoalTimer() { return goalTimer; }
 
+	//逃げタイマー取得
+	const int& GetRunTimer() { return RunTimer; }
+
+	//逃げフラグゲット
+	const bool& GetRunFlag() { return RunFlag; }
+
+	//エサタイマー取得
+	const int& GetFoodTimer() { return FoodTimer; }
+
+	//エサフラグゲット
+	const bool& GetFoodFlag() { return FoodFlag; }
+
 private: // メンバ変数
 	Goal* goal;
 
@@ -117,6 +129,18 @@ private: // メンバ変数
 
 	//ゴールタイマー
 	int goalTimer = 0;
+
+	//逃げパーティクル用タイマー
+	int RunTimer = 0;
+
+	//追い出しフラグ
+	bool RunFlag = false;
+
+	//エサ用パーティクルタイマー
+	int FoodTimer = 0;
+
+	//エサフラグ
+	bool FoodFlag = false;
 public:
 	// デスフラグ
 	bool initial = true; // Moving out of barn into play area

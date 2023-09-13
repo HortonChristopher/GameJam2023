@@ -176,7 +176,10 @@ public:
 	bool boostCancel = false;
 
 	//ˆÚ“®ƒLƒƒƒ“ƒZƒ‹•Ï”
-	bool MoveCancel = false;
-	int MoveCancelTimer = 0;
+	bool MoveCancel_T = false;
+	int MoveCancelTimer_T = 0;
+
+	bool MoveCancel_C = false;
+	int MoveCancelTimer_C = 0;
 
 };

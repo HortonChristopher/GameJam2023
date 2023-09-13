@@ -109,6 +109,9 @@ void Ushi::Update()
 				}
 
 				timer += timerOneFrame;
+				FoodTimer++;
+				FoodFlag = true;
+
 				break;
 			case Esa_Standing:
 				if (timer >= standingTimer)
@@ -118,6 +121,8 @@ void Ushi::Update()
 					moving = false;
 					randomCooldown = (float)(rand() % randomCooldownTimesTwo + randomCooldownTime);
 					esaReaction = Esa_None;
+					FoodTimer = 0;
+					FoodFlag = false;
 					break;
 				}
 
@@ -238,12 +243,18 @@ void Ushi::Move(bool forwardBackwards)
 			position.x += velocity.x * speed * (tekiFleeMultiplier + randomVarience);
 			position.y += velocity.y * speed * (tekiFleeMultiplier + randomVarience);
 			position.z += velocity.z * speed * (tekiFleeMultiplier + randomVarience);
+
+			RunTimer++;
+			RunFlag = true;
 		}
 		else
 		{
 			position.x += velocity.x * speed;
 			position.y += velocity.y * speed;
 			position.z += velocity.z * speed;
+
+			RunTimer = 0;
+			RunFlag = false;
 		}
 	}
 	else

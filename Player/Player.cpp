@@ -50,37 +50,6 @@ bool Player::Initialize()
 
 void Player::Update()
 {
-	/*switch (phase_)
-	{
-	case State::Stop:
-		default:
-		StateNum = State::Stop;
-
-		break;
-
-	case State::Walk:
-		StateNum = State::Walk;
-
-		break;
-
-	case State::Run:
-		StateNum = State::Run;
-
-		break;
-
-	case State::Throw:
-		StateNum = State::Throw;
-
-		break;
-
-	case State::Call:
-		StateNum = State::Call;
-
-		break;
-
-	}*/
-
-
 	ObjObject::Update();
 
 	//ブースト
@@ -146,7 +115,7 @@ void Player::Move()
 	/*	phase_ = State::Run;*/
 		moveDirection = {};
 		
-		if (MoveCancel == false)
+		if (MoveCancel_T == false && MoveCancel_C == false)
 		{
 			if (input->PushKey(DIK_A))
 			{
@@ -233,18 +202,34 @@ void Player::Move()
 
 	if (input->TriggerMouseLeft())
 	{
-		MoveCancel = true;
+		MoveCancel_T = true;
 	}
 
-	if (MoveCancel == true)
+	if (MoveCancel_T == true)
 	{
-		MoveCancelTimer++;
+		MoveCancelTimer_T++;
 	}
 
-	if (MoveCancelTimer >= 132)
+	if (MoveCancelTimer_T >= 132)
 	{
-		MoveCancelTimer = 0;
-		MoveCancel = false;
+		MoveCancelTimer_T = 0;
+		MoveCancel_T = false;
+	}
+
+	if (input->TriggerMouseRight())
+	{
+		MoveCancel_C = true;
+	}
+
+	if (MoveCancel_C == true)
+	{
+		MoveCancelTimer_C++;
+	}
+
+	if (MoveCancelTimer_C >= 191)
+	{
+		MoveCancelTimer_C = 0;
+		MoveCancel_C = false;
 	}
 
 

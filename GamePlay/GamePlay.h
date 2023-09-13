@@ -205,6 +205,7 @@ private: // メンバ変数
 
 	ParticleManager* Particle = nullptr;
 	ParticleManager* CallPart = nullptr;
+	ParticleManager* FoodPart = nullptr;
 
 	// Animal and Item lists
 	std::list<std::unique_ptr<Tori>> toriList;
@@ -391,4 +392,12 @@ private: // メンバ変数
 	XMFLOAT3 UshiGate_Right = {};
 
 	XMFLOAT3 CallPartPos = {};
+
+	XMFLOAT3 PigPartPos = {};
+	XMFLOAT3 SheepPartPos = {};
+	XMFLOAT3 CowPartPos = {};
+
+	XMFLOAT3 PigPartPos_F = {};
+	XMFLOAT3 SheepPartPos_F = {};
+	XMFLOAT3 CowPartPos_F = {};
 };

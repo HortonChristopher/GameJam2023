@@ -770,21 +770,12 @@ void ParticleManager::ExpelParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 End
 {
 	for (int i = 0; i < PartNum; i++)
 	{
-		//中心座標
-		XMFLOAT3 Center{};
-		//半径
-		float Radius;
-		//角度
-		float angle;
-		//半径の長さ
-		float Length;
-
 		//引数の値を貰う
-		const float md_width = 5.0f;
+		const float rnd_pos = 5.0f;
 		XMFLOAT3 pos{};
-		pos.x = Position.x;
-		pos.y = Position.y;
-		pos.z = Position.z;
+		pos.x = ((float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f) + Position.x;
+		pos.y = ((float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f) + Position.y;
+		pos.z = ((float)rand() / RAND_MAX * rnd_pos - rnd_pos / 2.0f) + Position.z;
 		//パーティクルの速度
 		const float md_vel = Vel;
 		XMFLOAT3 vel{};
@@ -793,7 +784,7 @@ void ParticleManager::ExpelParticle(int PartNum, XMFLOAT3 Position, XMFLOAT3 End
 		vel.z = (float)rand() / RAND_MAX * md_vel - md_vel / 2.0f;
 		//重力に見立ててYのみ[-0.001f, 0]でランダムに分布
 		XMFLOAT3 acc{};
-		const float md_acc = 0.0001f;
+		const float md_acc = 1.0f;
 		acc.y = -(float)rand() / RAND_MAX * md_acc;
 
 		//追加

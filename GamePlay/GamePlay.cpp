@@ -234,7 +234,16 @@ void GamePlay::Update()
 
 		if (input->TriggerMouseLeft() || input->TriggerMouseRight())
 		{
-			AnimationFlag_T = true;
+			if (input->TriggerMouseLeft() == true)
+			{
+				AnimationFlag_T = true;
+			}
+
+			if (input->TriggerMouseRight() == true)
+			{
+				AnimationFlag_C = true;
+			}
+			
 			float yawInRadians = XMConvertToRadians(player->GetRotation().y);
 			float x = player->GetPosition().x + sin(yawInRadians) * 8.0f;
 			float z = player->GetPosition().z + cos(yawInRadians) * 8.0f;
@@ -699,8 +708,8 @@ void GamePlay::Update()
 		}
 	if (input->GetInstance()->TriggerKey(DIK_L))
 	{
-		CallPart->ExpelParticle(2, CallPartPos, CallPartPos,
-			3.0f, 15.0f, 4.0f, 0.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
+		CallPart->ExpelParticle(3, CallPartPos, CallPartPos,
+			3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 
 		camera->SetTarget(player->GetPosition());
@@ -722,9 +731,13 @@ void GamePlay::Update()
 	cowGate->Update();
 	Particle->Update();
 	CallPart->Update();
+	FoodPart->Update();
 
 	for (std::unique_ptr<Buta>& buta : butaList)
 	{
+		PigPartPos = { buta->GetPosition().x, buta->GetPosition().y + 5, buta->GetPosition().z };
+		PigPartPos_F = { buta->GetPosition().x, buta->GetPosition().y + 5, buta->GetPosition().z };
+
 		if (buta->GetgoalFlag() == true && buta->GetgoalTimer() <= 30)
 		{
 			//パーティクル発生 player->GetPosition()
@@ -735,11 +748,31 @@ void GamePlay::Update()
 				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
 
+		if (buta->GetRunFlag() == true)
+		{
+			if (buta->GetRunTimer() == 10 || buta->GetRunTimer() == 30 || buta->GetRunTimer() == 50 || buta->GetRunTimer() == 70)
+			{
+				CallPart->ExpelParticle(3, PigPartPos, PigPartPos,
+					3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+			}
+		}
+
+		if (buta->GetFoodFlag() == true)
+		{
+			if (buta->GetFoodTimer() == 10 || buta->GetFoodTimer() == 30 || buta->GetFoodTimer() == 50 || buta->GetFoodTimer() == 70)
+			{
+				FoodPart->ExpelParticle(3, PigPartPos_F, PigPartPos_F,
+					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+		}
 		buta->Update();
 	}
 
 	for (std::unique_ptr<Hitsuji>& hitsuji : hitsujiList)
 	{
+		SheepPartPos = { hitsuji->GetPosition().x, hitsuji->GetPosition().y + 5, hitsuji->GetPosition().z };
+		SheepPartPos_F = { hitsuji->GetPosition().x,  hitsuji->GetPosition().y + 5,  hitsuji->GetPosition().z };
+
 		if (hitsuji->GetgoalFlag() == true && hitsuji->GetgoalTimer() <= 30)
 		{
 			//パーティクル発生 player->GetPosition()
@@ -750,11 +783,32 @@ void GamePlay::Update()
 				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
 
+		if (hitsuji->GetRunFlag() == true)
+		{
+			if (hitsuji->GetRunTimer() == 10 || hitsuji->GetRunTimer() == 30 || hitsuji->GetRunTimer() == 50 || hitsuji->GetRunTimer() == 70)
+			{
+				CallPart->ExpelParticle(3, SheepPartPos, SheepPartPos,
+					3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+			}
+		}
+
+		if (hitsuji->GetFoodFlag() == true)
+		{
+			if (hitsuji->GetFoodTimer() == 10 || hitsuji->GetFoodTimer() == 30 || hitsuji->GetFoodTimer() == 50 || hitsuji->GetFoodTimer() == 70)
+			{
+				FoodPart->ExpelParticle(3, SheepPartPos_F, SheepPartPos_F,
+					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+		}
+
 		hitsuji->Update();
 	}
 
 	for (std::unique_ptr<Ushi>& ushi : ushiList)
 	{
+		CowPartPos = { ushi->GetPosition().x, ushi->GetPosition().y + 5, ushi->GetPosition().z };
+		CowPartPos_F = { ushi->GetPosition().x,  ushi->GetPosition().y + 5, ushi->GetPosition().z };
+
 		if (ushi->GetgoalFlag() == true && ushi->GetgoalTimer() <= 30)
 		{
 			//パーティクル発生 player->GetPosition()
@@ -765,6 +819,23 @@ void GamePlay::Update()
 				5.0f, 15.0f, 8.0f, 1.0f, { 0.921f, 0.039f, 0.886f, 1.0f }, { 0.200f, 0.482f, 0.176f, 1.0f });
 		}
 
+		if (ushi->GetRunFlag() == true)
+		{
+			if (ushi->GetRunTimer() == 10 || ushi->GetRunTimer() == 30 || ushi->GetRunTimer() == 50 || ushi->GetRunTimer() == 70)
+			{
+				CallPart->ExpelParticle(3, CowPartPos, CowPartPos,
+					3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
+			}
+		}
+
+		if (ushi->GetFoodFlag() == true)
+		{
+			if (ushi->GetFoodTimer() == 10 || ushi->GetFoodTimer() == 30 || ushi->GetFoodTimer() == 50 || ushi->GetFoodTimer() == 70)
+			{
+				FoodPart->ExpelParticle(3, CowPartPos_F, CowPartPos_F,
+					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+		}
 		ushi->Update();
 	}
 
@@ -1103,6 +1174,7 @@ void GamePlay::Draw()
 	// パーティクルの描画
 	Particle->Draw(cmdList);
 	CallPart->Draw(cmdList);
+	FoodPart->Draw(cmdList);
 
 	// 3Dオブジェクト描画後処理
 	ObjObject::PostDraw();
@@ -1749,11 +1821,9 @@ void GamePlay::DrawFences()
 void GamePlay::ParticleInitialization()
 {
 	// パーティクル
-	//circleParticle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
-
-	// パーティクル
 	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
-	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
+	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/water.png");
+	FoodPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
 
 	//パーティクル発生用座標初期化
 	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
