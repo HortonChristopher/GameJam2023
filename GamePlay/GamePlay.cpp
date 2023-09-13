@@ -165,6 +165,12 @@ void GamePlay::Initialize()
 		return;
 	}
 
+	//フィニッシュ
+	if (!Sprite::LoadTexture(TextureNumber::finish, L"Resources/Sprite/GameUI/Finish.png")) {
+		assert(0);
+		return;
+	}
+
 	//黒背景
 	if (!Sprite::LoadTexture(TextureNumber::rule, L"Resources/Sprite/TitleUI/Rule.png")) {
 		assert(0);
@@ -639,10 +645,16 @@ void GamePlay::Initialize()
 	BlackAlpha = 1.0f;
 	BlackFlag = true;
 
+	//フィニッシュ初期化
+	Finish = Sprite::Create(TextureNumber::finish, { 0.0f, 0.0f });
+	Finish->SetColor({ 1.0f, 1.0f, 1.0f, FinishAlpha });
+
 	//フィニッシュ演出用各種変数初期化
 	FinishFlag = false;
 	FinishTimer = 0;
 	FinishSEFlag = false;
+	FinishAlpha = 0.0f;
+
 }
 
 void GamePlay::Finalize()
@@ -1038,6 +1050,12 @@ void GamePlay::Update()
 		{
 			FinishTimer++;
 
+			if (FinishFlag == false)
+			{
+				FinishAlpha += 0.02f;
+				Finish->SetColor({ 1.0f, 1.0f, 1.0f, FinishAlpha });
+			}
+
 			if (FinishSEFlag == false)
 			{
 				sound->PlayWav("SE/Game/GameFinish.wav", 0.7f);
@@ -1046,13 +1064,17 @@ void GamePlay::Update()
 			
 		}
 
-		if (FinishTimer >= 180)
+		if (FinishTimer >= 180 && FinishFlag == false)
 		{
+			FinishAlpha = 1.0f;
 			FinishFlag = true;
 		}
 
 		if (FinishFlag == true)
 		{
+			FinishAlpha -= 0.04f;
+			Finish->SetColor({ 1.0f, 1.0f, 1.0f, FinishAlpha });
+
 			BlackAlpha += 0.04f;
 			Black->SetColor({ 1.0f, 1.0f, 1.0f, BlackAlpha });
 
@@ -1968,6 +1990,7 @@ void GamePlay::Draw()
 		}
 	}
 	Black->Draw();
+	Finish->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 #pragma endregion
