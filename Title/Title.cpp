@@ -126,7 +126,7 @@ void Title::Initialize()
 
 	titleBG = Sprite::Create(TextureNumber::title_bg, { 0.0f,0.0f });
 	titleScreen = Sprite::Create(TextureNumber::titlescreen, { 368.0f, 150.0f });
-	pressSpace = Sprite::Create(TextureNumber::pressspace, { 528.0f, 450.0f });
+	pressSpace = Sprite::Create(TextureNumber::pressspace, { 528.0f, 500.0f });
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");

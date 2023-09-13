@@ -342,7 +342,7 @@ void GamePlay::Initialize()
 	pauseMenuS3 = Sprite::Create(TextureNumber::pause_menu_s3, { 0.0f, 0.0f });
 
 	// タイマーUI
-	meterTimer = MeterUI::Create({ 1275.0f,5.0f }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+	meterTimer = MeterUI::Create({ 1275.0f,5.0f }, 360.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
@@ -621,6 +621,11 @@ void GamePlay::Initialize()
 
 	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
 	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
+
+	scoreManager->score = 0;
+	scoreManager->goalHorse = 0;
+	scoreManager->goalPigs = 0;
+	scoreManager->goalSheep = 0;
 
 	ShowCursor(false);
 
@@ -1058,15 +1063,16 @@ void GamePlay::Update()
 			{
 				if (!buta->goalSet)
 				{
-					if (goalPigs < goalPigsMax)
+					if (scoreManager->goalPigs < goalPigsMax)
 					{
-						buta->goalNumber = goalPigs;
-						goalPigs++;
+						buta->goalNumber = scoreManager->goalPigs;
+						scoreManager->goalPigs++;
 						buta->goalSet = true;
 					}
 					else
 					{
 						buta->goalSet = true;
+						scoreManager->goalPigs++;
 						buta->deathFlag = true;
 					}
 
@@ -1086,12 +1092,12 @@ void GamePlay::Update()
 					{
 						bonusTime = true;
 						bonusTimeRemaining = bonusTimeMax;
-						score += 10.0f;
+						scoreManager->score += 10.0f;
 					}
 					else if (bonusTime)
 					{
 						bonusTimeEntries += 1.0f;
-						score += ((10.0f * bonusTimeEntries) + 10.0f);
+						scoreManager->score += ((10.0f * bonusTimeEntries) + 10.0f);
 					}
 
 					frameTimer += 60.0f;
@@ -1146,15 +1152,16 @@ void GamePlay::Update()
 			{
 				if (!hitsuji->goalSet)
 				{
-					if (goalSheep < goalSheepMax)
+					if (scoreManager->goalSheep < goalSheepMax)
 					{
-						hitsuji->goalNumber = goalSheep;
-						goalSheep++;
+						hitsuji->goalNumber = scoreManager->goalSheep;
+						scoreManager->goalSheep++;
 						hitsuji->goalSet = true;
 					}
 					else
 					{
 						hitsuji->goalSet = true;
+						scoreManager->goalSheep++;
 						hitsuji->deathFlag = true;
 					}
 
@@ -1174,12 +1181,12 @@ void GamePlay::Update()
 					{
 						bonusTime = true;
 						bonusTimeRemaining = bonusTimeMax;
-						score += 10.0f;
+						scoreManager->score += 10.0f;
 					}
 					else if (bonusTime)
 					{
 						bonusTimeEntries += 1.0f;
-						score += ((10.0f * bonusTimeEntries) + 10.0f);
+						scoreManager->score += ((10.0f * bonusTimeEntries) + 10.0f);
 					}
 
 					frameTimer += 60.0f;
@@ -1234,15 +1241,16 @@ void GamePlay::Update()
 			{
 				if (!ushi->goalSet)
 				{
-					if (goalHorse < goalHorseMax)
+					if (scoreManager->goalHorse < goalHorseMax)
 					{
-						ushi->goalNumber = goalHorse;
-						goalHorse++;
+						ushi->goalNumber = scoreManager->goalHorse;
+						scoreManager->goalHorse++;
 						ushi->goalSet = true;
 					}
 					else
 					{
 						ushi->goalSet = true;
+						scoreManager->goalHorse++;
 						ushi->deathFlag = true;
 					}
 
@@ -1262,12 +1270,12 @@ void GamePlay::Update()
 					{
 						bonusTime = true;
 						bonusTimeRemaining = bonusTimeMax;
-						score += 10.0f;
+						scoreManager->score += 10.0f;
 					}
 					else if (bonusTime)
 					{
 						bonusTimeEntries += 1.0f;
-						score += ((10.0f * bonusTimeEntries) + 10.0f);
+						scoreManager->score += ((10.0f * bonusTimeEntries) + 10.0f);
 					}
 
 					frameTimer += 60.0f;
@@ -1690,19 +1698,19 @@ void GamePlay::Update()
 
 	// スコアの描画
 	std::ostringstream Score;
-	Score << std::fixed << std::setprecision(0) << score;
+	Score << std::fixed << std::setprecision(0) << scoreManager->score;
 	scoreText.Print(Score.str(), { 155, 117 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream CowGoalCount;
-	CowGoalCount << std::fixed << std::setprecision(0) << goalHorse;
+	CowGoalCount << std::fixed << std::setprecision(0) << scoreManager->goalHorse;
 	scoreText.Print(CowGoalCount.str(), { 115.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream SheepGoalCount;
-	SheepGoalCount << std::fixed << std::setprecision(0) << goalSheep;
+	SheepGoalCount << std::fixed << std::setprecision(0) << scoreManager->goalSheep;
 	scoreText.Print(SheepGoalCount.str(), { 240.0f,68.0f }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	std::ostringstream PigGoalCount;
-	PigGoalCount << std::fixed << std::setprecision(0) << goalPigs;
+	PigGoalCount << std::fixed << std::setprecision(0) << scoreManager->goalPigs;
 	scoreText.Print(PigGoalCount.str(), { 365, 68 }, { 1.0f, 0.6f, 0.1f, 1.0f }, 1.0f);
 
 	// ゲームタイマー
@@ -1945,28 +1953,28 @@ void GamePlay::DrawDebugText()
 	std::ostringstream UshiGoalCount;
 	UshiGoalCount << "UshiGoalCount("
 		<< std::fixed << std::setprecision(5)
-		<< goalHorse << ")";
+		<< scoreManager->goalHorse << ")";
 	debugText.Print(UshiGoalCount.str(), 0, 540, 1.0f);
 
 	// 羊のゴール
 	std::ostringstream HitsuziGoalCount;
 	HitsuziGoalCount << "HitsuziGoalCount("
 		<< std::fixed << std::setprecision(5)
-		<< goalSheep << ")";
+		<< scoreManager->goalSheep << ")";
 	debugText.Print(HitsuziGoalCount.str(), 200, 540, 1.0f);
 
 	// 豚のゴール
 	std::ostringstream ButaGoalCount;
 	ButaGoalCount << "ButaGoalCount("
 		<< std::fixed << std::setprecision(5)
-		<< goalPigs << ")";
+		<< scoreManager->goalPigs << ")";
 	debugText.Print(ButaGoalCount.str(), 400, 540, 1.0f);
 
 	// スコア
 	std::ostringstream GameScore;
 	GameScore << "GameScore("
 		<< std::fixed << std::setprecision(5)
-		<< score << ")";
+		<< scoreManager->score << ")";
 	debugText.Print(GameScore.str(), 0, 560, 1.0f);
 }
 
