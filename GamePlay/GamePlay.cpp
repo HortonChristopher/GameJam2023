@@ -17,25 +17,327 @@ GamePlay::~GamePlay()
 
 void GamePlay::Initialize()
 {
-	CameraInitialization();
+	// カメラ生成
+	camera = new Camera(WinApp::window_width, WinApp::window_height);
 
-	DeviceAndPipelineInitialization();
+	// カメラセット
+	ObjObject::SetCamera(camera);
+	Player::SetCamera(camera);
+	Boss::SetCamera(camera);
 
-	SoundInitialization();
+	//FBXカメラセット
+	FbxObject3d::SetCamera(camera);
 
-	TextureInitialization();
+	// 座標のセット
+	camera->title = false;
+	camera->SetTarget({ 0.0f, 0.0f, 0.0f });
+	camera->SetEye({ 0, 2, -10 });
+	camera->SetUp({ 0, 1, 0 });
+	camera->SetDistance(96.0f);
 
-	SpriteInitialization();
+	//デバイスをセット
+	FbxObject3d::SetDevice(dxCommon->GetDevice());
 
-	GateInitialization();
+	//グラフィックパイプライン生成
+	FbxObject3d::CreateGraphicsPipeline();
 
-	PlayerFBXInitialization();
+	// サウンド初期化
+	sound->Initialize();
 
-	ObjObjectInitialization();
+	sound->LoadWav("SE/Game/game_player_shot.wav");
+	sound->LoadWav("SE/Game/game_boss_shot.wav");
+	sound->LoadWav("SE/Game/game_player_damage.wav");
+	sound->LoadWav("SE/Game/game_boss_damage.wav");
+	sound->LoadWav("BGM/Game/game_bgm.wav");
 
-	InitialAnimalInitialization();
+	if (!Sprite::LoadTexture(TextureNumber::game_bg, L"Resources/Sprite/GameUI/game_bg.png")) {
+		assert(0);
+		return;
+	}
 
-	ParticleInitialization();
+	//レティクルテクスチャ
+	if (!Sprite::LoadTexture(TextureNumber::reticle, L"Resources/Re.png")) {
+		assert(0);
+		return;
+	}
+
+	// ゲージUI
+	if (!Sprite::LoadTexture(TextureNumber::game_boss_frame_1, L"Resources/Sprite/GameUI/BossHpUI/game_boss_frame_1.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::game_boss_frame_2, L"Resources/Sprite/GameUI/BossHpUI/game_boss_frame_2.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::game_boss_gauge, L"Resources/Sprite/GameUI/BossHpUI/game_boss_gauge.png")) {
+		assert(0);
+		return;
+	}
+
+	//黒背景
+	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
+		assert(0);
+		return;
+	}
+
+	//黒背景
+	if (!Sprite::LoadTexture(TextureNumber::rule, L"Resources/Sprite/TitleUI/Rule.png")) {
+		assert(0);
+		return;
+	}
+
+	// スピード
+	if (!Sprite::LoadTexture(TextureNumber::speed, L"Resources/Sprite/GameUI/Speed.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::meter, L"Resources/Sprite/GameUI/meter.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::process, L"Resources/Sprite/GameUI/process.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::breakshield, L"Resources/Sprite/GameUI/breakshield.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::breakmaincore, L"Resources/Sprite/GameUI/breakmaincore.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::breakcore, L"Resources/Sprite/GameUI/breakcore.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::cow_icon, L"Resources/Sprite/GameUI/CowIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::sheep_icon, L"Resources/Sprite/GameUI/SheepIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pig_icon, L"Resources/Sprite/GameUI/PigIcon.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::game_gtxt_1, L"Resources/Sprite/GameUI/game_gtxt_1.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::score_base, L"Resources/Sprite/GameUI/scoreBase.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pause_menu, L"Resources/Sprite/GameUI/PauseMenu.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s1, L"Resources/Sprite/GameUI/PauseMenuS1.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s2, L"Resources/Sprite/GameUI/PauseMenuS2.png")) {
+		assert(0);
+		return;
+	}
+
+	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s3, L"Resources/Sprite/GameUI/PauseMenuS3.png")) {
+		assert(0);
+		return;
+	}
+
+	// デバッグテキスト用テクスチャ読み込み
+	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
+	// デバッグテキスト初期化
+	debugText.Initialize(0);
+	// スコアテキスト用テクスチャ読み込み
+	if (!Sprite::LoadTexture(score_txt, L"Resources/Sprite/Common/common_dtxt_2.png")) {
+		assert(0);
+		return;
+	}
+	// スコアテキスト初期化
+	scoreText.Initialize(score_txt);
+
+	// スプライト
+	gameBG = Sprite::Create(TextureNumber::game_bg, { 0.0f,0.0f });
+
+	Reticle = Sprite::Create(TextureNumber::reticle, ReticlePos);
+
+	StoragePos = Sprite::Create(TextureNumber::reticle, { (float)mousePosition.x, (float)mousePosition.y });
+
+	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 5.0f,5.0f });
+	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 105.0f,5.0f });
+	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 205.0f,5.0f });
+
+	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 75.0f,60.0f });
+	score_gtxt_1->SetSize({ 133.0f, 28.0f });
+
+	scoreBase = Sprite::Create(TextureNumber::score_base, { 5.0f,5.0f });
+
+	pauseMenu = Sprite::Create(TextureNumber::pause_menu, { 0.0f, 0.0f });
+	pauseMenuS1 = Sprite::Create(TextureNumber::pause_menu_s1, { 0.0f, 0.0f });
+	pauseMenuS2 = Sprite::Create(TextureNumber::pause_menu_s2, { 0.0f, 0.0f });
+	pauseMenuS3 = Sprite::Create(TextureNumber::pause_menu_s3, { 0.0f, 0.0f });
+
+	// タイマーUI
+	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+
+	pigGate = ObjObject::Create();
+	pigGateModel = ObjModel::CreateFromOBJ("butagate");
+	pigGate->SetModel(pigGateModel);
+	pigGate->SetPosition({ -155.0f, 0.0f, 0.0f });
+	pigGate->SetRotation({ 0.0f, 270.0f, 0.0f });
+	pigGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
+	sheepGate = ObjObject::Create();
+	sheepGateModel = ObjModel::CreateFromOBJ("hutsuzigate");
+	sheepGate->SetModel(sheepGateModel);
+	sheepGate->SetPosition({ 0.0f, 0.0f, -155.0f });
+	sheepGate->SetRotation({ 0.0f, 180.0f, 0.0f });
+	sheepGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
+	cowGate = ObjObject::Create();
+	cowGateModel = ObjModel::CreateFromOBJ("ushigate");
+	cowGate->SetModel(cowGateModel);
+	cowGate->SetPosition({ 155.0f, 0.0f, 0.0f });
+	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
+	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
+
+	// プレイヤー
+	player = Player::Create();
+
+	//プレイヤーFBXモデル
+	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
+	modelPlayerWalking = FbxLoader::GetInstance()->LoadModelFromFile("Walking");
+	modelPlayerRun = FbxLoader::GetInstance()->LoadModelFromFile("Running");
+	modelPlayerThrow = FbxLoader::GetInstance()->LoadModelFromFile("Throw");
+	modelPlayerCall = FbxLoader::GetInstance()->LoadModelFromFile("Call");
+
+	//プレイヤーFBXオブジェクト
+	//待機
+	objPlayerStop = new FbxObject3d;
+	objPlayerStop->Initialize();
+	objPlayerStop->SetModel(modelPlayerStop);
+
+	objPlayerStop->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerStop->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerStop->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//歩き
+	objPlayerWalking = new FbxObject3d;
+	objPlayerWalking->Initialize();
+	objPlayerWalking->SetModel(modelPlayerWalking);
+
+	objPlayerWalking->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerWalking->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerWalking->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//走り
+	objPlayerRun = new FbxObject3d;
+	objPlayerRun->Initialize();
+	objPlayerRun->SetModel(modelPlayerRun);
+
+	objPlayerRun->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerRun->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerRun->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//エサ投げ
+	objPlayerThrow = new FbxObject3d;
+	objPlayerThrow->Initialize();
+	objPlayerThrow->SetModel(modelPlayerThrow);
+
+	objPlayerThrow->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerThrow->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerThrow->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	//追い出し
+	objPlayerCall = new FbxObject3d;
+	objPlayerCall->Initialize();
+	objPlayerCall->SetModel(modelPlayerCall);
+
+	objPlayerCall->SetPosition({ 0.0f, 0.0f, 0.0f });
+	objPlayerCall->SetRotation({ 0.0f, 0.0f, 0.0f });
+	objPlayerCall->SetScale({ 0.5f, 0.5f, 0.5f });
+
+	// 3D OBJ
+	ground = ObjObject::Create();
+	modelGround = ObjModel::CreateFromOBJ("grand");
+	ground->SetModel(modelGround);
+
+	// Spawn barn
+	barn = ObjObject::Create();
+	modelBarn = ObjModel::CreateFromOBJ("RanchHut");
+	barn->SetModel(modelBarn);
+	barn->SetPosition({ 0.0f, 0.0f, 255.0f });
+	barn->SetRotation({ 0.0f, 0.0f, 0.0f });
+	barn->SetScale({ 6.0f, 6.0f, 6.0f });
+
+	// Fences
+	FenceCreation();
+
+	skydome = ObjObject::Create();
+	modelSkydome = ObjModel::CreateFromOBJ("skydome");
+	skydome->SetModel(modelSkydome);
+	skydome->SetScale({ 8.0f, 8.0f, 8.0f });
+
+	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
+	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
+	ground->SetScale({ 80.0f, 1.0f, 80.0f });
+
+	// プレイヤー
+	player->SetPosition({ 0.0f, 0.5f, 0.0f });
+	player->SetRotation({ 0.0f, 0.0f, 0.0f });
+	player->SetScale({ 1.0f, 1.0f, 1.0f });
+
+	modelBullet = ObjModel::CreateFromOBJ("bullet2");
+
+	modelPig = ObjModel::CreateFromOBJ("buta");
+	modelSheep = ObjModel::CreateFromOBJ("hitsuzi");
+	modelHorse = ObjModel::CreateFromOBJ("ushi");
+
+	for (int i = 0; i < 2; i++)
+	{
+		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		butaList.push_back(std::move(newButa));
+		std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { -130.0f + (260.0f * i), player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		hitsujiList.push_back(std::move(newHitsuji));
+		std::unique_ptr<Ushi> newUshi = Ushi::Create(modelHorse, { -130.0f + (260.0f * i), player->GetPosition().y, -130.0f }, { 1.0f, 1.0f, 1.0f }, false);
+		ushiList.push_back(std::move(newUshi));
+	}
+
+	// パーティクル
+	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
+	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/water.png");
+	FoodPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
+
+	//パーティクル発生用座標初期化
+	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
+	PigGate_Right = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z + 35 };
+
+	HitsujiGate_Left = { sheepGate->GetPosition().x + 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
+	HitsujiGate_Right = { sheepGate->GetPosition().x - 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
+
+	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
+	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
 
 	ShowCursor(false);
 }
@@ -397,7 +699,7 @@ void GamePlay::Update()
 		{
 			timer = 0.0f;
 			//シーン切り替え
-			SceneManager::GetInstance()->ChangeScene("TITLE");
+			SceneManager::GetInstance()->ChangeScene("RESULT");
 		}
 
 		for (std::unique_ptr<Buta>& buta : butaList)
@@ -1280,319 +1582,42 @@ void GamePlay::DrawDebugText()
 
 void GamePlay::CameraInitialization()
 {
-	// カメラ生成
-	camera = new Camera(WinApp::window_width, WinApp::window_height);
-
-	// カメラセット
-	ObjObject::SetCamera(camera);
-	Player::SetCamera(camera);
-	Boss::SetCamera(camera);
-
-	//FBXカメラセット
-	FbxObject3d::SetCamera(camera);
-
-	// 座標のセット
-	camera->title = false;
-	camera->SetTarget({ 0.0f, 0.0f, 0.0f });
-	camera->SetEye({ 0, 2, -10 });
-	camera->SetUp({ 0, 1, 0 });
-	camera->SetDistance(96.0f);
+	
 }
 
 void GamePlay::SoundInitialization()
 {
-	// サウンド初期化
-	sound->Initialize();
-
-	sound->LoadWav("SE/Game/game_player_shot.wav");
-	sound->LoadWav("SE/Game/game_boss_shot.wav");
-	sound->LoadWav("SE/Game/game_player_damage.wav");
-	sound->LoadWav("SE/Game/game_boss_damage.wav");
-	sound->LoadWav("BGM/Game/game_bgm.wav");
+	
 }
 
 void GamePlay::TextureInitialization()
 {
-	if (!Sprite::LoadTexture(TextureNumber::game_bg, L"Resources/Sprite/GameUI/game_bg.png")) {
-		assert(0);
-		return;
-	}
-
-	//レティクルテクスチャ
-	if (!Sprite::LoadTexture(TextureNumber::reticle, L"Resources/Re.png")) {
-		assert(0);
-		return;
-	}
-
-	// ゲージUI
-	if (!Sprite::LoadTexture(TextureNumber::game_boss_frame_1, L"Resources/Sprite/GameUI/BossHpUI/game_boss_frame_1.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::game_boss_frame_2, L"Resources/Sprite/GameUI/BossHpUI/game_boss_frame_2.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::game_boss_gauge, L"Resources/Sprite/GameUI/BossHpUI/game_boss_gauge.png")) {
-		assert(0);
-		return;
-	}
-
-	//黒背景
-	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
-		assert(0);
-		return;
-	}
-
-	//黒背景
-	if (!Sprite::LoadTexture(TextureNumber::rule, L"Resources/Sprite/TitleUI/Rule.png")) {
-		assert(0);
-		return;
-	}
-
-	// スピード
-	if (!Sprite::LoadTexture(TextureNumber::speed, L"Resources/Sprite/GameUI/Speed.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::meter, L"Resources/Sprite/GameUI/meter.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::process, L"Resources/Sprite/GameUI/process.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::breakshield, L"Resources/Sprite/GameUI/breakshield.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::breakmaincore, L"Resources/Sprite/GameUI/breakmaincore.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::breakcore, L"Resources/Sprite/GameUI/breakcore.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::cow_icon, L"Resources/Sprite/GameUI/CowIcon.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::sheep_icon, L"Resources/Sprite/GameUI/SheepIcon.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pig_icon, L"Resources/Sprite/GameUI/PigIcon.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::game_gtxt_1, L"Resources/Sprite/GameUI/game_gtxt_1.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::score_base, L"Resources/Sprite/GameUI/scoreBase.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pause_menu, L"Resources/Sprite/GameUI/PauseMenu.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s1, L"Resources/Sprite/GameUI/PauseMenuS1.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s2, L"Resources/Sprite/GameUI/PauseMenuS2.png")) {
-		assert(0);
-		return;
-	}
-
-	if (!Sprite::LoadTexture(TextureNumber::pause_menu_s3, L"Resources/Sprite/GameUI/PauseMenuS3.png")) {
-		assert(0);
-		return;
-	}
-
-	// デバッグテキスト用テクスチャ読み込み
-	Sprite::LoadTexture(0, L"Resources/Sprite/Common/common_dtxt_1.png");
-	// デバッグテキスト初期化
-	debugText.Initialize(0);
-	// スコアテキスト用テクスチャ読み込み
-	if (!Sprite::LoadTexture(score_txt, L"Resources/Sprite/Common/common_dtxt_2.png")) {
-		assert(0);
-		return;
-	}
-	// スコアテキスト初期化
-	scoreText.Initialize(score_txt);
+	
 }
 
 void GamePlay::SpriteInitialization()
 {
-	// スプライト
-	gameBG = Sprite::Create(TextureNumber::game_bg, { 0.0f,0.0f });
-
-	Reticle = Sprite::Create(TextureNumber::reticle, ReticlePos);
-
-	StoragePos = Sprite::Create(TextureNumber::reticle, { (float)mousePosition.x, (float)mousePosition.y });
-
-	cowIcon = Sprite::Create(TextureNumber::cow_icon, { 5.0f,5.0f });
-	sheepIcon = Sprite::Create(TextureNumber::sheep_icon, { 105.0f,5.0f });
-	pigIcon = Sprite::Create(TextureNumber::pig_icon, { 205.0f,5.0f });
-
-	score_gtxt_1 = Sprite::Create(TextureNumber::game_gtxt_1, { 75.0f,60.0f });
-	score_gtxt_1->SetSize({ 133.0f, 28.0f });
-
-	scoreBase = Sprite::Create(TextureNumber::score_base, { 5.0f,5.0f });
-
-	pauseMenu = Sprite::Create(TextureNumber::pause_menu, { 0.0f, 0.0f });
-	pauseMenuS1 = Sprite::Create(TextureNumber::pause_menu_s1, { 0.0f, 0.0f });
-	pauseMenuS2 = Sprite::Create(TextureNumber::pause_menu_s2, { 0.0f, 0.0f });
-	pauseMenuS3 = Sprite::Create(TextureNumber::pause_menu_s3, { 0.0f, 0.0f });
-
-	// タイマーUI
-	meterTimer = MeterUI::Create({ 1230, 10 }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
+	
 }
 
 void GamePlay::DeviceAndPipelineInitialization()
 {
-	//デバイスをセット
-	FbxObject3d::SetDevice(dxCommon->GetDevice());
-
-	//グラフィックパイプライン生成
-	FbxObject3d::CreateGraphicsPipeline();
+	
 }
 
 void GamePlay::GateInitialization()
 {
-	pigGate = ObjObject::Create();
-	pigGateModel = ObjModel::CreateFromOBJ("butagate");
-	pigGate->SetModel(pigGateModel);
-	pigGate->SetPosition({ -155.0f, 0.0f, 0.0f });
-	pigGate->SetRotation({ 0.0f, 270.0f, 0.0f });
-	pigGate->SetScale({ 3.7f, 3.7f, 3.7f });
-
-	sheepGate = ObjObject::Create();
-	sheepGateModel = ObjModel::CreateFromOBJ("hutsuzigate");
-	sheepGate->SetModel(sheepGateModel);
-	sheepGate->SetPosition({ 0.0f, 0.0f, -155.0f });
-	sheepGate->SetRotation({ 0.0f, 180.0f, 0.0f });
-	sheepGate->SetScale({ 3.7f, 3.7f, 3.7f });
-
-	cowGate = ObjObject::Create();
-	cowGateModel = ObjModel::CreateFromOBJ("ushigate");
-	cowGate->SetModel(cowGateModel);
-	cowGate->SetPosition({ 155.0f, 0.0f, 0.0f });
-	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
-	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
+	
 }
 
 void GamePlay::PlayerFBXInitialization()
 {
-	// プレイヤー
-	player = Player::Create();
-
-	//プレイヤーFBXモデル
-	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
-	modelPlayerWalking = FbxLoader::GetInstance()->LoadModelFromFile("Walking");
-	modelPlayerRun = FbxLoader::GetInstance()->LoadModelFromFile("Running");
-	modelPlayerThrow = FbxLoader::GetInstance()->LoadModelFromFile("Throw");
-	modelPlayerCall = FbxLoader::GetInstance()->LoadModelFromFile("Call");
-
-	//プレイヤーFBXオブジェクト
-	//待機
-	objPlayerStop = new FbxObject3d;
-	objPlayerStop->Initialize();
-	objPlayerStop->SetModel(modelPlayerStop);
-
-	objPlayerStop->SetPosition({ 0.0f, 0.0f, 0.0f });
-	objPlayerStop->SetRotation({ 0.0f, 0.0f, 0.0f });
-	objPlayerStop->SetScale({ 0.5f, 0.5f, 0.5f });
-
-	//歩き
-	objPlayerWalking = new FbxObject3d;
-	objPlayerWalking->Initialize();
-	objPlayerWalking->SetModel(modelPlayerWalking);
-
-	objPlayerWalking->SetPosition({ 0.0f, 0.0f, 0.0f });
-	objPlayerWalking->SetRotation({ 0.0f, 0.0f, 0.0f });
-	objPlayerWalking->SetScale({ 0.5f, 0.5f, 0.5f });
-
-	//走り
-	objPlayerRun = new FbxObject3d;
-	objPlayerRun->Initialize();
-	objPlayerRun->SetModel(modelPlayerRun);
-
-	objPlayerRun->SetPosition({ 0.0f, 0.0f, 0.0f });
-	objPlayerRun->SetRotation({ 0.0f, 0.0f, 0.0f });
-	objPlayerRun->SetScale({ 0.5f, 0.5f, 0.5f });
-
-	//エサ投げ
-	objPlayerThrow = new FbxObject3d;
-	objPlayerThrow->Initialize();
-	objPlayerThrow->SetModel(modelPlayerThrow);
-
-	objPlayerThrow->SetPosition({ 0.0f, 0.0f, 0.0f });
-	objPlayerThrow->SetRotation({ 0.0f, 0.0f, 0.0f });
-	objPlayerThrow->SetScale({ 0.5f, 0.5f, 0.5f });
-
-	//追い出し
-	objPlayerCall = new FbxObject3d;
-	objPlayerCall->Initialize();
-	objPlayerCall->SetModel(modelPlayerCall);
-
-	objPlayerCall->SetPosition({ 0.0f, 0.0f, 0.0f });
-	objPlayerCall->SetRotation({ 0.0f, 0.0f, 0.0f });
-	objPlayerCall->SetScale({ 0.5f, 0.5f, 0.5f });
+	
 }
 
 void GamePlay::ObjObjectInitialization()
 {
-	// 3D OBJ
-	ground = ObjObject::Create();
-	modelGround = ObjModel::CreateFromOBJ("grand");
-	ground->SetModel(modelGround);
-
-	// Spawn barn
-	barn = ObjObject::Create();
-	modelBarn = ObjModel::CreateFromOBJ("RanchHut");
-	barn->SetModel(modelBarn);
-	barn->SetPosition({ 0.0f, 0.0f, 255.0f });
-	barn->SetRotation({ 0.0f, 0.0f, 0.0f });
-	barn->SetScale({ 6.0f, 6.0f, 6.0f });
-
-	// Fences
-	FenceCreation();
-
-	skydome = ObjObject::Create();
-	modelSkydome = ObjModel::CreateFromOBJ("skydome");
-	skydome->SetModel(modelSkydome);
-	skydome->SetScale({ 8.0f, 8.0f, 8.0f });
-
-	ground->SetPosition({ 0.0f, -0.5f, 0.0f });
-	ground->SetRotation({ 0.0f, 0.0f, 0.0f });
-	ground->SetScale({ 80.0f, 1.0f, 80.0f });
-
-	// プレイヤー
-	player->SetPosition({ 0.0f, 0.5f, 0.0f });
-	player->SetRotation({ 0.0f, 0.0f, 0.0f });
-	player->SetScale({ 1.0f, 1.0f, 1.0f });
-
-	modelBullet = ObjModel::CreateFromOBJ("bullet2");
+	
 }
 
 void GamePlay::FenceCreation()
@@ -1820,35 +1845,10 @@ void GamePlay::DrawFences()
 
 void GamePlay::ParticleInitialization()
 {
-	// パーティクル
-	Particle = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect1.png");
-	CallPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/water.png");
-	FoodPart = ParticleManager::Create(dxCommon->GetDevice(), camera, 1, L"Resources/effect7.png");
-
-	//パーティクル発生用座標初期化
-	PigGate_Left = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z - 35 };
-	PigGate_Right = { pigGate->GetPosition().x, pigGate->GetPosition().y + 40, pigGate->GetPosition().z + 35 };
-
-	HitsujiGate_Left = { sheepGate->GetPosition().x + 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
-	HitsujiGate_Right = { sheepGate->GetPosition().x - 35, sheepGate->GetPosition().y + 40, sheepGate->GetPosition().z };
-
-	UshiGate_Left = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z + 35 };
-	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
+	
 }
 
 void GamePlay::InitialAnimalInitialization()
 {
-	modelPig = ObjModel::CreateFromOBJ("buta");
-	modelSheep = ObjModel::CreateFromOBJ("hitsuzi");
-	modelHorse = ObjModel::CreateFromOBJ("ushi");
-
-	for (int i = 0; i < 2; i++)
-	{
-		std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { -130.0f + (260.0f * i), player->GetPosition().y, 130.0f }, { 1.0f, 1.0f, 1.0f }, false);
-		butaList.push_back(std::move(newButa));
-		std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { -130.0f + (260.0f * i), player->GetPosition().y, 0.0f }, { 1.0f, 1.0f, 1.0f }, false);
-		hitsujiList.push_back(std::move(newHitsuji));
-		std::unique_ptr<Ushi> newUshi = Ushi::Create(modelHorse, { -130.0f + (260.0f * i), player->GetPosition().y, -130.0f }, { 1.0f, 1.0f, 1.0f }, false);
-		ushiList.push_back(std::move(newUshi));
-	}
+	
 }

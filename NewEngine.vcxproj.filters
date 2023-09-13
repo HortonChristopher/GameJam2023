@@ -292,6 +292,9 @@
     <ClCompile Include="Items\HitsujiTeki.cpp">
       <Filter>Items</Filter>
     </ClCompile>
+    <ClCompile Include="Title\Result.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FBX.hlsli">
@@ -522,6 +525,9 @@
     </ClInclude>
     <ClInclude Include="Items\HitsujiTeki.h">
       <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\Result.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

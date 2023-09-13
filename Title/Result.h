@@ -3,13 +3,6 @@
 #include "BaseScene.h"
 #include "SceneManager.h"
 #include "DirectXCommon.h"
-#include <Windows.h>
-#include <wrl.h>
-#include <d3d12.h>
-
-#include <sstream>
-#include <iomanip>
-
 #include "Input.h"
 #include "Sprite.h"
 #include "ObjObject.h"
@@ -18,24 +11,18 @@
 #include "DebugText.h"
 #include "ScoreText.h"
 #include "Lerp.h"
-#include "Boss.h"
-#include "BossTurret.h"
-#include "BossCore.h"
-#include "BossMainCore.h"
-#include "BossParts.h"
-#include "BossShield.h"
 
-class Boss;
-class BossCore;
-class BossMainCore;
-class BossParts;
-class BossTurret;
-class BossShield;
+#include <Windows.h>
+#include <wrl.h>
+#include <d3d12.h>
+#include <sstream>
+#include <iomanip>
+#include <DirectXMath.h>
 
-class StageSelect : public BaseScene
+class Result : public BaseScene
 {
 private: // エイリアス
-// Microsoft::WRL::を省略
+	// Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// DirectX::を省略
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -44,31 +31,19 @@ private: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 private: // 静的メンバ変数
-// スプライトのテクスチャ番号
+	// スプライトのテクスチャ番号
 	static enum TextureNumber
 	{
 		debug_txt,
-		result_bg,
-		black,
-		triangle_up,
-		triangle_down,
-		stage_select,
-		stage01,
-		stage02,
-		key_w,
-		key_s,
-		key_space,
-
-		explanation1,
-		explanation2,
+		result,
 	};
 
 public:
 	// コンストラクタ
-	StageSelect();
+	Result();
 
 	// デストラクタ
-	~StageSelect();
+	~Result();
 
 	// 初期化
 	void Initialize() override;
@@ -82,7 +57,6 @@ public:
 	// 描画
 	void Draw() override;
 
-
 private: // メンバ変数
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 	Input* input = Input::GetInstance();
@@ -92,9 +66,5 @@ private: // メンバ変数
 
 	Sprite* stageSelectBG = nullptr;
 
-	Sprite* setsumei1 = nullptr;
-	Sprite* setsumei2 = nullptr;
-
-	int explanationPage = 0;
+	Sprite* resultPage = nullptr;
 };
-
