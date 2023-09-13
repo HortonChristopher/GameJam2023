@@ -35,7 +35,7 @@ void Result::Initialize()
 	resultPage = Sprite::Create(result, { 0.0f, 0.0f });
 
 	camera->SetTarget({ 0, 0, 0 });
-	camera->SetEye({ 0, 0, 10 });`````````````````````
+	camera->SetEye({ 0, 0, 10 });
 	camera->SetUp({ 0, 1, 0 });
 }
 

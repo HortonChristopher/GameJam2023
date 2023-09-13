@@ -40,11 +40,18 @@ private: // 静的メンバ変数
 		sheep_icon,
 		pig_icon,
 
+		pause_menu,
+		pause_menu_s1,
+		pause_menu_s2,
+		pause_menu_s3,
+
 		game_gtxt_1,
 		score_base,
 		timer_base,
 		item_base,
-		bonus_base
+		bonus_base,
+		esa_icon,
+		teki_icon
 	};
 
 public: // 静的メンバ関数
