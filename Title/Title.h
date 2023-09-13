@@ -101,6 +101,7 @@ private: // メンバ変数
 	//スプライト
 	Sprite* titleBG = nullptr;
 	Sprite* titleScreen = nullptr;
+	Sprite* pressSpace = nullptr;
 
 	ObjObject* ground = nullptr;
 	ObjObject* skydome = nullptr;

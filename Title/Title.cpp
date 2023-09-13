@@ -109,16 +109,16 @@ void Title::Initialize()
 		return;
 	}
 
-	if (!Sprite::LoadTexture(TextureNumber::titlefont, L"Resources/Sprite/TitleUI/TitleFont.png")) {
+	if (!Sprite::LoadTexture(TextureNumber::pressspace, L"Resources/Sprite/TitleUI/push.png")) {
 		assert(0);
 		return;
 	}
 
-	if (!Sprite::LoadTexture(TextureNumber::pressspace, L"Resources/Sprite/TitleUI/PressSpace.png")) {
+	if (!Sprite::LoadTexture(TextureNumber::titlefont, L"Resources/Sprite/TitleUI/TitleFont.png")) {
 		assert(0);
 		return;
 	}
-	`
+	
 	if (!Sprite::LoadTexture(TextureNumber::black, L"Resources/Sprite/TitleUI/Black.png")) {
 		assert(0);
 		return;
@@ -126,6 +126,7 @@ void Title::Initialize()
 
 	titleBG = Sprite::Create(TextureNumber::title_bg, { 0.0f,0.0f });
 	titleScreen = Sprite::Create(TextureNumber::titlescreen, { 368.0f, 150.0f });
+	pressSpace = Sprite::Create(TextureNumber::pressspace, { 528.0f, 450.0f });
 
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
@@ -494,6 +495,7 @@ void Title::Draw()
 
 	// 前景スプライト描画
 	titleScreen->Draw();
+	pressSpace->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
