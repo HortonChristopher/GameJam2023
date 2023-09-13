@@ -13,6 +13,17 @@
 #include <Windows.h>
 #include <wrl.h>
 #include <d3d12.h>
+#include <DirectXMath.h>
+#include <memory>
+#include <list>
+#include <array>
+#include <map>
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+#include <vector>
 
 #include "Input.h"
 #include "Sprite.h"
@@ -50,6 +61,11 @@ public:
 
 	// デストラクタ
 	~Title();
+
+	bool IsTooClose(const XMFLOAT3& point1, const XMFLOAT3& point2, float minDistance);
+	XMFLOAT3 GenerateRandomCoordinate(float innerRadius, float outerRadius, float angleMin, float angleMax, const std::vector<XMFLOAT3>& existingPoints, float minDistance);
+	XMFLOAT3 CalculateRotation(const XMFLOAT3& coordinate);
+	std::pair<std::vector<XMFLOAT3>, std::vector<XMFLOAT3>> GenerateCoordinatesAndRotations();
 
 	// 初期化
 	void Initialize() override;
@@ -132,4 +148,21 @@ private: // メンバ変数
 	ObjModel* sheepGateModel = nullptr;
 	ObjObject* cowGate = nullptr;
 	ObjModel* cowGateModel = nullptr;
+
+	ObjObject* pigSign = nullptr;
+	ObjModel* pigSignModel = nullptr;
+	ObjObject* sheepSign = nullptr;
+	ObjModel* sheepSignModel = nullptr;
+	ObjObject* cowSign = nullptr;
+	ObjModel* cowSignModel = nullptr;
+
+	ObjObject* siloObject = nullptr;
+	ObjModel* siloModel = nullptr;
+	std::array<ObjObject*, 20> trees = { {} };
+	std::array<ObjObject*, 80> randomTrees = { {} };
+	ObjModel* treeModel = nullptr;
+
+	bool changeTimerBool = false;
+	const float changeTimerMax = 30.0f;
+	float changeTimer = 0.0f;
 };

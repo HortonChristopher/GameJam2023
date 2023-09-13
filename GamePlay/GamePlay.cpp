@@ -15,8 +15,86 @@ GamePlay::~GamePlay()
 {
 }
 
+bool GamePlay::IsTooClose(const XMFLOAT3& point1, const XMFLOAT3& point2, float minDistance) {
+	float dx = point1.x - point2.x;
+	float dz = point1.z - point2.z;
+	return dx * dx + dz * dz < minDistance * minDistance;
+}
+
+XMFLOAT3 GamePlay::GenerateRandomCoordinate(float innerRadius, float outerRadius, float angleMin, float angleMax, const std::vector<XMFLOAT3>&existingPoints, float minDistance) {
+	XMFLOAT3 coordinate;
+	bool valid;
+	do {
+		valid = true;
+
+		// Generate a random angle between angleMin and angleMax
+		float angle = angleMin + (float(rand()) / RAND_MAX) * (angleMax - angleMin);
+
+		// Generate a random radius between innerRadius and outerRadius
+		float radius = innerRadius + (float(rand()) / RAND_MAX) * (outerRadius - innerRadius);
+
+		// Convert polar coordinates (angle & radius) to Cartesian coordinates
+		coordinate.x = radius * cos(angle);
+		coordinate.y = 0.0f;
+		coordinate.z = radius * sin(angle);
+
+		for (const XMFLOAT3& existingPoint : existingPoints) {
+			if (IsTooClose(coordinate, existingPoint, minDistance)) {
+				valid = false;
+				break;
+			}
+		}
+	} while (!valid);
+
+	return coordinate;
+}
+
+XMFLOAT3 GamePlay::CalculateRotation(const XMFLOAT3& coordinate) {
+	float yaw = atan2(-coordinate.z, -coordinate.x);  // Note the '-' to make it face towards (0, 0, 0)
+	return XMFLOAT3(0.0f, yaw, 0.0f);
+}
+
+std::pair<std::vector<XMFLOAT3>, std::vector<XMFLOAT3>> GamePlay::GenerateCoordinatesAndRotations() {
+	// Seed the random number generator
+	std::srand(std::time(0));
+
+	std::vector<XMFLOAT3> allCoordinates;
+	std::vector<XMFLOAT3> allRotations;
+
+	// Generate 20 coordinates for each of the 4 quadrants
+	for (int quadrant = 0; quadrant < 4; ++quadrant) {
+		float angleMin = float(quadrant) * 0.5f * 3.14159265358979323846f;
+		float angleMax = float(quadrant + 1) * 0.5f * 3.14159265358979323846f;
+
+		float rotationValue = 0.0f;
+
+		// Manually set the rotation based on the quadrant
+		switch (quadrant) {
+		case 0: rotationValue = 0.0f; break; // North-East
+		case 1: rotationValue = 4.71238898038f; break; // South-East (90 degrees in radians)
+		case 2: rotationValue = 3.14159265359f; break; // South-West (180 degrees in radians)
+		case 3: rotationValue = 1.57079632679f; break; // North-West (270 degrees in radians)
+		}
+
+		for (int i = 0; i < 20; ++i) {
+			XMFLOAT3 coordinate = GenerateRandomCoordinate(300.0f, 450.0f, angleMin, angleMax, allCoordinates, 10.0f);
+			allCoordinates.push_back(coordinate);
+
+			// Set rotation manually
+			XMFLOAT3 rotation = XMFLOAT3(0.0f, rotationValue, 0.0f);
+
+			allRotations.push_back(rotation);
+		}
+	}
+
+	return { allCoordinates, allRotations };
+}
+
 void GamePlay::Initialize()
 {
+	// Seed the random number generator
+	std::srand(std::time(0));
+
 	// カメラ生成
 	camera = new Camera(WinApp::window_width, WinApp::window_height);
 
@@ -44,11 +122,15 @@ void GamePlay::Initialize()
 	// サウンド初期化
 	sound->Initialize();
 
-	sound->LoadWav("SE/Game/game_player_shot.wav");
-	sound->LoadWav("SE/Game/game_boss_shot.wav");
-	sound->LoadWav("SE/Game/game_player_damage.wav");
-	sound->LoadWav("SE/Game/game_boss_damage.wav");
-	sound->LoadWav("BGM/Game/game_bgm.wav");
+	sound->LoadWav("SE/Game/Call.wav");
+	sound->LoadWav("SE/Game/GameFinish.wav");
+	sound->LoadWav("SE/Game/Goal.wav");
+	sound->LoadWav("SE/Game/Throw.wav");
+	sound->LoadWav("SE/Game/Decide.wav");
+	sound->LoadWav("SE/Game/Menu.wav");
+	sound->LoadWav("SE/Game/MenuMove.wav");
+	sound->LoadWav("SE/Game/GameBGM.wav");
+
 
 	if (!Sprite::LoadTexture(TextureNumber::game_bg, L"Resources/Sprite/GameUI/game_bg.png")) {
 		assert(0);
@@ -225,7 +307,7 @@ void GamePlay::Initialize()
 
 	cowItemIcon = Sprite::Create(TextureNumber::cow_icon, { 1139.0f,653.0f });
 	cowItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
-	cowItemIcon->SetSize({96.0f, 96.0f});
+	cowItemIcon->SetSize({ 96.0f, 96.0f });
 
 	sheepItemIcon = Sprite::Create(TextureNumber::sheep_icon, { 1139.0f,653.0f });
 	sheepItemIcon->SetAnchorPoint({ 0.5f, 0.5f });
@@ -262,8 +344,6 @@ void GamePlay::Initialize()
 	// タイマーUI
 	meterTimer = MeterUI::Create({ 1275.0f,5.0f }, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f });
 
-
-
 	pigGate = ObjObject::Create();
 	pigGateModel = ObjModel::CreateFromOBJ("butagate");
 	pigGate->SetModel(pigGateModel);
@@ -285,8 +365,28 @@ void GamePlay::Initialize()
 	cowGate->SetRotation({ 0.0f, 90.0f, 0.0f });
 	cowGate->SetScale({ 3.7f, 3.7f, 3.7f });
 
+	pigSign = ObjObject::Create();
+	pigSignModel = ObjModel::CreateFromOBJ("butakanban");
+	pigSign->SetModel(pigSignModel);
+	pigSign->SetPosition({ -152.5f, 0.0f, -40.0f });
+	pigSign->SetRotation({ 0.0f, 270.0f, 0.0f });
+
+	sheepSign = ObjObject::Create();
+	sheepSignModel = ObjModel::CreateFromOBJ("hitsuzikanban");
+	sheepSign->SetModel(sheepSignModel);
+	sheepSign->SetPosition({ 40.0f, 0.0f, -152.5f });
+	sheepSign->SetRotation({ 0.0f, 180.0f, 0.0f });
+
+	cowSign = ObjObject::Create();
+	cowSignModel = ObjModel::CreateFromOBJ("ushikanban");
+	cowSign->SetModel(cowSignModel);
+	cowSign->SetPosition({ 152.5f, 0.0f, 40.0f });
+	cowSign->SetRotation({ 0.0f, 90.0f, 0.0f });
+
 	// プレイヤー
 	player = Player::Create();
+
+	modelEsa = ObjModel::CreateFromOBJ("esa");
 
 	//プレイヤーFBXモデル
 	modelPlayerStop = FbxLoader::GetInstance()->LoadModelFromFile("Stop");
@@ -346,6 +446,126 @@ void GamePlay::Initialize()
 	modelGround = ObjModel::CreateFromOBJ("grand");
 	ground->SetModel(modelGround);
 
+	// Silo
+	siloObject = ObjObject::Create();
+	siloModel = ObjModel::CreateFromOBJ("RanchSilo");
+	siloObject->SetModel(siloModel);
+	siloObject->SetPosition({ 60.0f, 0.0f, 225.0f });
+	siloObject->SetRotation({ 0.0f, 0.0f, 0.0f });
+	siloObject->SetScale({ 6.0f, 6.0f, 6.0f });
+
+	// Tree
+	treeModel = ObjModel::CreateFromOBJ("RanchTree");
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i] = ObjObject::Create();
+		trees[i]->SetModel(treeModel);
+		switch (i)
+		{
+		case 0:
+			trees[i]->SetPosition({ -130.0f, 0.0f, 180.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 1:
+			trees[i]->SetPosition({ -180.0f, 0.0f, 130.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 2:
+			trees[i]->SetPosition({ -190.0f, 0.0f, 190.0f });
+			trees[i]->SetRotation({ 0.0f, 270.0f, 0.0f });
+			break;
+		case 3:
+			trees[i]->SetPosition({ -130.0f, 0.0f, -180.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 4:
+			trees[i]->SetPosition({ -180.0f, 0.0f, -130.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 5:
+			trees[i]->SetPosition({ -190.0f, 0.0f, -190.0f });
+			trees[i]->SetRotation({ 0.0f, 180.0f, 0.0f });
+			break;
+		case 6:
+			trees[i]->SetPosition({ 130.0f, 0.0f, -180.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 7:
+			trees[i]->SetPosition({ 180.0f, 0.0f, -130.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 8:
+			trees[i]->SetPosition({ 190.0f, 0.0f, -190.0f });
+			trees[i]->SetRotation({ 0.0f, 90.0f, 0.0f });
+			break;
+		case 9:
+			trees[i]->SetPosition({ 130.0f, 0.0f, 180.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 10:
+			trees[i]->SetPosition({ 180.0f, 0.0f, 130.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 11:
+			trees[i]->SetPosition({ 190.0f, 0.0f, 190.0f });
+			trees[i]->SetRotation({ 0.0f, 0.0f, 0.0f });
+			break;
+		case 12:
+			trees[i]->SetPosition({ -100.0f, 0.0f, 200.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 13:
+			trees[i]->SetPosition({ -200.0f, 0.0f, 100.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 14:
+			trees[i]->SetPosition({ -100.0f, 0.0f, -200.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 15:
+			trees[i]->SetPosition({ -200.0f, 0.0f, -100.0f });
+			trees[i]->SetRotation({ 0.0f, 225.0f, 0.0f });
+			break;
+		case 16:
+			trees[i]->SetPosition({ 100.0f, 0.0f, -200.0f });
+			trees[i]->SetRotation({ 0.0f, 135.0f, 0.0f });
+			break;
+		case 17:
+			trees[i]->SetPosition({ 200.0f, 0.0f, -100.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		case 18:
+			trees[i]->SetPosition({ 100.0f, 0.0f, 200.0f });
+			trees[i]->SetRotation({ 0.0f, 315.0f, 0.0f });
+			break;
+		case 19:
+			trees[i]->SetPosition({ 200.0f, 0.0f, 100.0f });
+			trees[i]->SetRotation({ 0.0f, 45.0f, 0.0f });
+			break;
+		}
+		trees[i]->SetScale({ 2.5f, 2.5f, 2.5f });
+	}
+
+	// Generate coordinates and rotations
+	std::pair<std::vector<XMFLOAT3>, std::vector<XMFLOAT3>> data = GenerateCoordinatesAndRotations();
+
+	// Extract the vectors from the pair
+	std::vector<XMFLOAT3>& coordinates = data.first;
+	std::vector<XMFLOAT3>& rotations = data.second;
+
+	// Assume object is some array or vector of pointers to your objects
+	for (size_t i = 0; i < coordinates.size(); ++i) {
+		randomTrees[i] = ObjObject::Create();
+		randomTrees[i]->SetModel(treeModel);
+		randomTrees[i]->SetPosition(coordinates[i]);
+
+		float radiansToDegrees = 180.0f / 3.14159265358979323846f;
+		XMFLOAT3 convertedRotation = { 0.0f, rotations[i].y * radiansToDegrees, 0.0f };
+
+		randomTrees[i]->SetRotation(convertedRotation);
+		randomTrees[i]->SetScale({ 2.5f, 2.5f, 2.5f });
+	}
+
 	// Spawn barn
 	barn = ObjObject::Create();
 	modelBarn = ObjModel::CreateFromOBJ("RanchHut");
@@ -367,7 +587,7 @@ void GamePlay::Initialize()
 	ground->SetScale({ 80.0f, 1.0f, 80.0f });
 
 	// プレイヤー
-	player->SetPosition({ 0.0f, 0.5f, 0.0f });
+	player->SetPosition({ 0.0f, 0.0f, 0.0f });
 	player->SetRotation({ 0.0f, 0.0f, 0.0f });
 	player->SetScale({ 1.0f, 1.0f, 1.0f });
 
@@ -403,6 +623,8 @@ void GamePlay::Initialize()
 	UshiGate_Right = { cowGate->GetPosition().x, cowGate->GetPosition().y + 40, cowGate->GetPosition().z - 35 };
 
 	ShowCursor(false);
+
+	sound->PlayWav("SE/Game/GameBGM.wav", 0.07f, true);
 }
 
 void GamePlay::Finalize()
@@ -411,6 +633,7 @@ void GamePlay::Finalize()
 
 void GamePlay::Update()
 {
+
 	if (pause)
 	{
 		if (input->TriggerKey(DIK_ESCAPE))
@@ -423,9 +646,11 @@ void GamePlay::Update()
 			switch (pauseSelection)
 			{
 			case 0:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 1;
 				break;
 			case 1:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 2;
 				break;
 			case 2:
@@ -441,9 +666,11 @@ void GamePlay::Update()
 			case 0:
 				break;
 			case 1:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 0;
 				break;
 			case 2:
+				sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 				pauseSelection = 1;
 				break;
 			default:
@@ -456,9 +683,12 @@ void GamePlay::Update()
 			switch (pauseSelection)
 			{
 			case 0:
+				sound->PlayWav("SE/Game/Decide.wav", 0.7f);
 				pause = false;
 				break;
 			case 1:
+
+				sound->StopWav("SE/Game/GameBGM.wav");
 				//シーン切り替え
 				SceneManager::GetInstance()->ChangeScene("TITLE");
 				break;
@@ -472,6 +702,7 @@ void GamePlay::Update()
 	{
 		if (input->TriggerKey(DIK_ESCAPE))
 		{
+			sound->PlayWav("SE/Game/Menu.wav", 0.7f);
 			pause = true;
 		}
 
@@ -521,7 +752,7 @@ void GamePlay::Update()
 
 		if (pigRespawn >= pigRespawnMax && pigNumber < pigNumberMax)
 		{
-			std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Buta> newButa = Buta::Create(modelPig, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			butaList.push_back(std::move(newButa));
 
 			pigRespawn = 0.0f;
@@ -534,7 +765,7 @@ void GamePlay::Update()
 
 		if (sheepRespawn >= sheepRespawnMax && sheepNumber < sheepNumberMax)
 		{
-			std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Hitsuji> newHitsuji = Hitsuji::Create(modelSheep, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			hitsujiList.push_back(std::move(newHitsuji));
 
 			sheepRespawn = 0.0f;
@@ -547,7 +778,7 @@ void GamePlay::Update()
 
 		if (horseRespawn >= horseRespawnMax && horseNumber < horseNumberMax)
 		{
-			std::unique_ptr<Ushi> newHorse = Ushi::Create(modelHorse, { 0.0f, player->GetPosition().y, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
+			std::unique_ptr<Ushi> newHorse = Ushi::Create(modelHorse, { 0.0f, player->GetPosition().y - 0.5f, 255.0f }, { 1.0f, 1.0f, 1.0f }, true);
 			ushiList.push_back(std::move(newHorse));
 
 			horseRespawn = 0.0f;
@@ -565,30 +796,36 @@ void GamePlay::Update()
 			case BUTA:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = HITSUJI;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = USHI;
 				}
 				break;
 			case HITSUJI:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = USHI;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = BUTA;
 				}
 				break;
 			case USHI:
 				if (mouseMove.lZ < 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = BUTA;
 				}
 				else if (mouseMove.lZ > 0)
 				{
+					sound->PlayWav("SE/Game/MenuMove.wav", 0.7f);
 					animalSelection = HITSUJI;
 				}
 				break;
@@ -601,11 +838,20 @@ void GamePlay::Update()
 		{
 			if (input->TriggerMouseLeft() == true)
 			{
+				if (AnimationFlag_T == false)
+				{
+					sound->PlayWav("SE/Game/Throw.wav", 0.07f);
+				}
+				
 				AnimationFlag_T = true;
 			}
 
 			if (input->TriggerMouseRight() == true)
 			{
+				if (AnimationFlag_C == false)
+				{
+					sound->PlayWav("SE/Game/Call.wav", 0.07f);
+				}
 				AnimationFlag_C = true;
 			}
 			
@@ -622,8 +868,8 @@ void GamePlay::Update()
 					if (!butaEsa)
 					{
 						std::unique_ptr<ButaEsa> newButaEsa = ButaEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -638,8 +884,8 @@ void GamePlay::Update()
 					if (!hitsujiEsa)
 					{
 						std::unique_ptr<HitsujiEsa> newHitsujiEsa = HitsujiEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -655,8 +901,8 @@ void GamePlay::Update()
 					if (!ushiEsa)
 					{
 						std::unique_ptr<UshiEsa> newUshiEsa = UshiEsa::Create(
-							modelBullet,
-							{ x, 0.5f, z },
+							modelEsa,
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -681,7 +927,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<ButaTeki> newButaTeki = ButaTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -697,7 +943,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<HitsujiTeki> newHitsujiTeki = HitsujiTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -713,7 +959,7 @@ void GamePlay::Update()
 					{
 						std::unique_ptr<UshiTeki> newUshiTeki = UshiTeki::Create(
 							modelBullet,
-							{ x, 0.5f, z },
+							{ x, 0.0f, z },
 							{ 0.5f, 0.5f, 0.5f }
 						);
 
@@ -761,6 +1007,7 @@ void GamePlay::Update()
 		if (timer <= 0.0f)
 		{
 			timer = 0.0f;
+			sound->StopWav("SE/Game/GameBGM.wav");
 			//シーン切り替え
 			SceneManager::GetInstance()->ChangeScene("RESULT");
 		}
@@ -1077,19 +1324,34 @@ void GamePlay::Update()
 			3.0f, 15.0f, 3.0f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 
-		camera->SetTarget(player->GetPosition());
-		ground->Update();
-		skydome->SetPosition(player->GetPosition());
-		skydome->Update();
-		camera->Update();
-		camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
-		player->Update();
+	camera->SetTarget({player->GetPosition().x, player->GetPosition().y + 0.1f, player->GetPosition().z});
+	ground->Update();
+	skydome->SetPosition(player->GetPosition());
+	skydome->Update();
+	camera->Update();
+	camera->SetEye({ camera->GetEye().x, camera->GetEye().y + 10.0f, camera->GetEye().z });
+	player->Update();
 
-		// Spawn Barn
-		barn->Update();
+	// Spawn Barn
+	barn->Update();
+	siloObject->Update();
 
-		// Fences
-		UpdateFences();
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i]->Update();
+	}
+
+	for (int i = 0; i < 80; i++)
+	{
+		randomTrees[i]->Update();
+	}
+
+	// Fences
+	UpdateFences();
+
+	pigSign->Update();
+	sheepSign->Update();
+	cowSign->Update();
 
 	pigGate->Update();
 	sheepGate->Update();
@@ -1130,6 +1392,16 @@ void GamePlay::Update()
 					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
 			}
 		}
+
+		if (buta->GetgoalFlag() == true)
+		{
+			if (buta->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				buta->SetGoalSEFlag(true);
+			}
+		}
+
 		buta->Update();
 	}
 
@@ -1166,6 +1438,15 @@ void GamePlay::Update()
 			}
 		}
 
+		if (hitsuji->GetgoalFlag() == true)
+		{
+			if (hitsuji->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				hitsuji->SetGoalSEFlag(true);
+			}
+		}
+
 		hitsuji->Update();
 	}
 
@@ -1199,6 +1480,15 @@ void GamePlay::Update()
 			{
 				FoodPart->ExpelParticle(3, CowPartPos_F, CowPartPos_F,
 					3.0f, 15.0f, 3.0f, 0.0f, { 1.0f, 1.0f, 0.0f, 1.0f }, { 1.0f, 1.0f, 0.0f, 1.0f });
+			}
+		}
+
+		if (ushi->GetgoalFlag() == true)
+		{
+			if (ushi->GetGoalSEFlag() == false)
+			{
+				sound->PlayWav("SE/Game/Goal.wav", 0.07f);
+				ushi->SetGoalSEFlag(true);
 			}
 		}
 		ushi->Update();
@@ -1449,6 +1739,17 @@ void GamePlay::Draw()
 
 	// Spawn Barn
 	barn->Draw();
+	siloObject->Draw();
+
+	for (int i = 0; i < 20; i++)
+	{
+		trees[i]->Draw();
+	}
+
+	for (int i = 0; i < 80; i++)
+	{
+		randomTrees[i]->Draw();
+	}
 
 	// Fences
 	DrawFences();
@@ -1456,6 +1757,10 @@ void GamePlay::Draw()
 	pigGate->Draw();
 	sheepGate->Draw();
 	cowGate->Draw();
+
+	pigSign->Draw();
+	sheepSign->Draw();
+	cowSign->Draw();
 
 	//プレイヤーの描画
 	if (PlayerState == 0)
@@ -1513,30 +1818,30 @@ void GamePlay::Draw()
 		butaEsa->Draw();
 	}
 
-	for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
+	/*for (std::unique_ptr<ButaTeki>& butaTeki : butaTekiList)
 	{
 		butaTeki->Draw();
-	}
+	}*/
 
 	for (std::unique_ptr<HitsujiEsa>& hitsujiEsa : hitsujiEsaList)
 	{
 		hitsujiEsa->Draw();
 	}
 
-	for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
+	/*for (std::unique_ptr<HitsujiTeki>& hitsujiTeki : hitsujiTekiList)
 	{
 		hitsujiTeki->Draw();
-	}
+	}*/
 
 	for (std::unique_ptr<UshiEsa>& ushiEsa : ushiEsaList)
 	{
 		ushiEsa->Draw();
 	}
 
-	for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
+	/*for (std::unique_ptr<UshiTeki>& ushiTeki : ushiTekiList)
 	{
 		ushiTeki->Draw();
-	}
+	}*/
 
 	// パーティクルの描画
 	Particle->Draw(cmdList);
